@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+
+    Copyright (c) 2015-2017 TomTom N.V. All rights reserved.
+
+    This software is the proprietary copyright of TomTom N.V. and its subsidiaries and may be used
+    for internal evaluation purposes or commercial use strictly subject to separate licensee
+    agreement between you and TomTom. If you are the licensee, you are only permitted to use
+    this Software in accordance with the terms of your license agreement. If you are not the
+    licensee then you are not authorised to use this software in any manner and should
+    immediately return it to TomTom N.V.
+
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.fxc.ev.launcher">
+
+    <uses-sdk tools:overrideLibrary="android_libs.ub_uiautomator" />
+
+    <!-- tag::WRITE_EXTERNAL_STORAGE[] -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- end::WRITE_EXTERNAL_STORAGE[] -->
+    <application
+        android:name="com.fxc.ev.launcher.LauncherApplication"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:resizeableActivity="true"
+        android:testOnly="false"
+        android:theme="@style/TomTomTheme">
+
+        <!--<activity
+            android:name="com.fxc.ev.launcher.activities.BaseActivity"
+            android:configChanges="orientation|screenSize"
+            android:noHistory="true"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>-->
+        <activity
+            android:name="com.fxc.ev.launcher.activities.LauncherActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:windowSoftInputMode="stateUnchanged|adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <!-- provide here your keys -->
+
+        <!--tag::doc_config_services[]-->
+
+        <meta-data
+            android:name="OnlineMaps.Key"
+            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
+        <meta-data
+            android:name="OnlineRouting.Key"
+            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
+        <meta-data
+            android:name="OnlineSearch.Key"
+            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
+        <meta-data
+            android:name="OnlineTraffic.Key"
+            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
+        <meta-data
+            android:name="GeofencingApi.Key"
+            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
+
+        <!--end::doc_config_services[]-->
+
+    </application>
+
+</manifest>

@@ -1,0 +1,145 @@
+apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
+
+android {
+
+    buildToolsVersion rootProject.androidBuildToolsVersion
+    compileSdkVersion rootProject.androidCompileSdkVersion
+
+    defaultConfig {
+
+        targetSdkVersion androidTargetSdkVersion
+        minSdkVersion androidMinSdkVersion
+        versionCode buildVersionCode
+        versionName buildVersionName
+        multiDexEnabled true
+        dimension "locale"
+        buildConfigField("String[]", "BUILT_IN_LOCALE", '{"en-US","es-ES","fr-FR","de-DE"}')
+        applicationId 'com.fxc.ev.launcher'
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
+        buildConfigField("String", "TRAFFIC_API_KEY", "\"$trafficApiKey\"")
+        buildConfigField("String", "GEOFENCING_API_KEY", "\"$geofencingApiKey\"")
+        buildConfigField("String", "SEARCH_API_KEY", "\"$searchApiKey\"")
+        buildConfigField("String", "ROUTING_API_KEY", "\"$routingApiKey\"")
+        resValue("string", "maps_api_key", "$mapsApiKey")
+        resValue("string", "traffic_api_key", "$trafficApiKey")
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    lintOptions {
+        abortOnError false
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+
+    packagingOptions {
+        merge 'META-INF/services/javax.annotation.processing.Processor'
+        merge 'META-INF/DEPENDENCIES.txt'
+        merge 'META-INF/LICENSE.txt'
+        merge 'META-INF/NOTICE.txt'
+        merge 'META-INF/NOTICE'
+        merge 'META-INF/LICENSE'
+        merge 'META-INF/DEPENDENCIES'
+        merge 'META-INF/notice.txt'
+        merge 'META-INF/license.txt'
+        merge 'META-INF/dependencies.txt'
+        merge 'META-INF/LGPL2.1'
+        merge 'constants.properties'
+        merge 'META-INF/licence.txt'
+        merge 'META-INF/rxjava.properties'
+    }
+
+    testOptions {
+        animationsDisabled true
+        unitTests.returnDefaultValues = true
+        unitTests.includeAndroidResources = true
+        unitTests.all {
+            // All the usual Gradle options.
+            jvmArgs '-XX:MaxPermSize=256m'
+            testLogging {
+                events "passed", "skipped", "failed", "standardOut", "standardError"
+            }
+        }
+    }
+
+    configurations.all {
+        resolutionStrategy.force "com.android.support:support-annotations:$rootProject.androidVersions.support"
+        resolutionStrategy.force "com.android.support:support-v4:$rootProject.androidVersions.support"
+        resolutionStrategy.force "com.android.support:appcompat-v7:$rootProject.androidVersions.support"
+        resolutionStrategy.force "android.arch.core:runtime:$rootProject.androidVersions.androidarch"
+        resolutionStrategy.force "androidx.core:core-ktx:1.6.0"
+        exclude group: 'com.google.code.findbugs'
+    }
+
+    splits {
+        abi {
+            enable true
+        }
+    }
+}
+
+dependencies {
+    implementation("com.tomtom.online:sdk-maps:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-maps-static-image:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-maps-ui-extensions:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-maps-driving-extensions:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-maps-rx-extensions:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-traffic:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-search:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-routing:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-routing-rxjava2:$rootProject.internalVersions.sampleapp")
+    implementation("com.tomtom.online:sdk-geofencing:$rootProject.internalVersions.sampleapp")
+
+    testImplementation "androidx.test:core:$rootProject.androidXVersions.test.core"
+    testImplementation "org.easytesting:fest:$rootProject.libVersions.test.easytesting"
+    testImplementation "cglib:cglib-nodep:$rootProject.libVersions.test.cglib"
+    testImplementation "org.mockito:mockito-core:$rootProject.libVersions.test.mockito"
+    testImplementation "junit:junit:$rootProject.libVersions.test.junit"
+    testImplementation "org.robolectric:robolectric:$rootProject.libVersions.test.robolectric"
+    testImplementation "org.robolectric:shadows-multidex:$rootProject.libVersions.test.robolectric"
+    implementation "androidx.multidex:multidex:$rootProject.androidXVersions.multidex"
+    testImplementation "org.codehaus.groovy:groovy:$rootProject.libVersions.groovy:grooid"
+
+    testDebugImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
+    testReleaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
+    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.androidXVersions.test.espresso"
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$rootProject.androidXVersions.test.espresso"
+    androidTestImplementation "androidx.test:runner:$rootProject.androidXVersions.test.runner"
+    androidTestImplementation "androidx.test:rules:$rootProject.androidXVersions.test.rules"
+    androidTestImplementation "androidx.test:orchestrator:$rootProject.androidXVersions.test.orchestrator"
+    androidTestImplementation "androidx.test.uiautomator:uiautomator:$rootProject.androidXVersions.test.uiautomator"
+    //del_for_release_stop
+
+    implementation "com.google.android.material:material:$rootProject.androidXVersions.material"
+    implementation "com.github.florent37:singledateandtimepicker:$rootProject.libVersions.singledateandtimepicker"
+    implementation "androidx.constraintlayout:constraintlayout:$rootProject.androidXVersions.constraintlayout"
+    implementation "androidx.lifecycle:lifecycle-viewmodel:$rootProject.androidXVersions.lifecycle"
+    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.androidXVersions.lifecycle"
+    debugImplementation "com.squareup.leakcanary:leakcanary-android:$rootProject.libVersions.leakcanary"
+    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
+
+    // Recommended: Add the Firebase SDK for Google Analytics.
+    implementation "com.google.firebase:firebase-analytics:$rootProject.libVersions.analytics"
+    // Add the Firebase SDK for Crashlytics.
+    implementation "com.google.firebase:firebase-crashlytics:$rootProject.libVersions.crashlytics"
+    //implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
+}
+

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+
+    Copyright (c) 2015-2017 TomTom N.V. All rights reserved.
+
+    This software is the proprietary copyright of TomTom N.V. and its subsidiaries and may be used
+    for internal evaluation purposes or commercial use strictly subject to separate licensee
+    agreement between you and TomTom. If you are the licensee, you are only permitted to use
+    this Software in accordance with the terms of your license agreement. If you are not the
+    licensee then you are not authorised to use this software in any manner and should
+    immediately return it to TomTom N.V.
+
+-->
+
+<resources>
+    <string name="app_name">EV Launcher<!--Maps SDK Examples--></string>
+
+    <string name="hello">Hello World, LogTool!</string>
+    <string name="newyork_city_name">Newyork</string>
+
+    <string name="haarlem_destination_address">Haarlem</string>
+    <string name="amsterdam_to_haarlem_desc">Amsterdam to Haarlem</string>
+
+    <string name="near_me_search">Near me</string>
+    <string name="global_search">Global</string>
+    <string name="search_activity_hint">Search</string>
+    <string name="search_failed_toast">Search failed&#8230;</string>
+    <string name="search_distance_calculating">Calculating&#8230;</string>
+
+    <string name="balloon_tomtom_hq">TomTom HQ</string>
+    <string name="balloon_default_text">Welcome to TomTom</string>
+
+
+    <string name="map_ui_extensions_title">Map UI <!--extensions--></string>
+
+    <string name="dialog_routing_in_progress_msg">Routing in progress...</string>
+
+    <string name="msg_error_general_route_processing">An error occurred during the route planning processing: %1$s.</string>
+
+    <string name="btn_text_gas_stations">Gas stations</string>
+    <string name="btn_text_ev_stations">EV stations</string>
+    <string name="chevron_tracking">Chevron tracking</string>
+    <string name="chevron_tracking_subtitle">Camera follows the chevron</string>
+    <string name="chevron_tracking_start">Start tracking</string>
+    <string name="chevron_tracking_stop">Stop tracking</string>
+    <string name="matching_description">Red circle shows raw GPS position</string>
+
+    <string name="date_not_available">N/A</string>
+
+    <string name="report_service_title">Report service</string>
+    <string name="report_service_subtitle">Drag a pin inside/outside of a fence</string>
+    <string name="btn_one_fence">One fence</string>
+    <string name="btn_two_fences">Two fences</string>
+    <string name="report_service_request_error">Request could not be completed</string>
+    <string name="report_service_only_inside_fences">The location is \ninside of fences: %1$s</string>
+    <string name="report_service_only_outside_fences">The location is \noutside of fences: %1$s</string>
+    <string name="report_service_both_types_of_fences">The location is \ninside of fences: %1$s \noutside of fences: %2$s</string>
+    <string name="report_service_fence_marker_balloon">This is the closest location to \n%1$s border</string>
+    <string name="search_along_route_title">Search along the route</string>
+
+</resources>

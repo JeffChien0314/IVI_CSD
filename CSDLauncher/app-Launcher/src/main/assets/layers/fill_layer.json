@@ -1,0 +1,12 @@
+{
+  "id": "layer-line-id",
+  "type": "line",
+  "layout": {
+    "visibility": "visible"
+  },
+  "paint": {
+    "line-color": "rgba(0, 215, 255, 0.8)",
+    "line-width": 4
+  },
+  "source": "geojson-source-id"
+}
