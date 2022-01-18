@@ -86,7 +86,7 @@ public class LauncherActivity extends BaseActivity
         mapView.setId(R.id.map_view);
         mapContainer.addView(mapView);
 
-        Timber.d("Phone language " + Locale.getDefault().getLanguage());
+        //Timber.d("Phone language " + Locale.getDefault().getLanguage());
         restoreState(savedInstanceState);
     }
 
