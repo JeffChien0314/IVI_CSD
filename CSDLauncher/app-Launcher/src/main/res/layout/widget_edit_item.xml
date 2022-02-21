@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/widget_main_layout"
+        android:layout_width="192px"
+        android:layout_height="120px"
+        android:layout_margin="9px"
+        android:gravity="center_horizontal"
+        android:background="#0A1427"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widget_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="9px"
+            android:ellipsize="end"
+            android:maxEms="5"
+            android:maxLines="1"
+            android:text="widget"
+            android:textColor="#BFFFFFFF"
+            android:textSize="28px" />
+
+        <ImageView
+            android:id="@+id/widget_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:scaleType="centerCrop" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/widget_edit_icon"
+        android:layout_width="45px"
+        android:layout_height="45px"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true" />
+
+    <LinearLayout
+        android:id="@+id/widget_null_layout"
+        android:layout_width="192px"
+        android:layout_height="120px"
+        android:layout_margin="9px"
+        android:background="@drawable/null_widget_frame"
+        android:orientation="vertical" />
+
+</RelativeLayout>

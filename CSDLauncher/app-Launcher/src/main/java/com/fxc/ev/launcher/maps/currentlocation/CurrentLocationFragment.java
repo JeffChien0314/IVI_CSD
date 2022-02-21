@@ -101,6 +101,7 @@ public class CurrentLocationFragment extends Fragment implements FunctionalExamp
 
     public void assignMap() {
         MapView mapView = getActivity().findViewById(R.id.map_view);
+        if (mapView == null) return;
         mapView.addOnMapReadyCallback(map -> {
             Log.v("metis", "assignMap: onMapReady");
             tomtomMap = map;

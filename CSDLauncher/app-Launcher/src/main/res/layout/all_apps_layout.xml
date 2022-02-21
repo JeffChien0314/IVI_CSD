@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#080F1D"
+    android:orientation="vertical">
+
+    <com.fxc.ev.launcher.utils.views.DraggableGridViewPager
+        android:id="@+id/draggable_grid_view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingBottom="161px"
+        android:paddingEnd="60px"
+        android:paddingStart="60px"
+        android:paddingTop="161px" />
+
+    <LinearLayout
+        android:id="@+id/points"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-106px"
+        android:gravity="center"
+        android:orientation="horizontal" />
+
+</LinearLayout>

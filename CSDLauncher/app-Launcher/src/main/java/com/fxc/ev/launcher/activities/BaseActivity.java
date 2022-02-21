@@ -10,6 +10,7 @@
  */
 package com.fxc.ev.launcher.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.FrameLayout;
@@ -26,12 +27,14 @@ public class BaseActivity extends AppCompatActivity {
     public RelativeLayout mMainLayout;
     public FrameLayout mContentContainer;
     public LinearLayout mToolMenuLayout;
+    protected Context mContext;
 
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mContext=this;
         mMainLayout = findViewById(R.id.main_layout);
         mToolMenuLayout = findViewById(R.id.tool_menu_layout);
         mContentContainer = findViewById(R.id.content_container);
