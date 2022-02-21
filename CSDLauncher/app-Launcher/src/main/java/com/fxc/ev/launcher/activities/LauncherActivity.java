@@ -262,8 +262,7 @@ public class LauncherActivity extends BaseActivity
                 FragmentManager fManager = getSupportFragmentManager();
                 FragmentTransaction fTransaction = fManager.beginTransaction();
 
-                //fTransaction.replace(R.id.home_layout, new Frg_WidgetsEdit(), "FrgWidgetsEdit");
-                fTransaction.replace(R.id.home_layout, new Frg_AllApps(), "FrgAllApps");
+                fTransaction.replace(R.id.home_layout, new Frg_WidgetsEdit(), "FrgWidgetsEdit");
                 fTransaction.addToBackStack(null);
                 fTransaction.commitAllowingStateLoss();
             }
