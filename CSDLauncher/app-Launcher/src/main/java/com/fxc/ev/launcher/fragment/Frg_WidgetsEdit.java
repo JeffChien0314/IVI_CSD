@@ -1,22 +1,16 @@
 package com.fxc.ev.launcher.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fxc.ev.launcher.R;
-import com.fxc.ev.launcher.activities.GetAllApps;
 import com.fxc.ev.launcher.activities.LauncherActivity;
 import com.fxc.ev.launcher.bean.PakageMod;
 import com.fxc.ev.launcher.utils.views.DragGridView;
@@ -89,9 +83,6 @@ public class Frg_WidgetsEdit extends Fragment {
             @Override
             public @NotNull View getView(int position, View convertView, ViewGroup parent) {
                 final PakageMod pakageMod = getItem(position);
-                Timber.d("getView1: " + position);
-                Timber.d("getView2: " + pakageMod.name);
-                Timber.d("getView3: " + pakageMod.editIcon);
 
                 if (convertView == null) {
                     convertView = getLayoutInflater().inflate(R.layout.widget_edit_item, null);
