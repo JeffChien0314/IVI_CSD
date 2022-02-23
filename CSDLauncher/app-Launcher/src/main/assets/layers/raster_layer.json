@@ -1,8 +1,0 @@
-{
-  "id": "layer-image-id",
-  "type": "raster",
-  "layout": {
-    "visibility": "visible"
-  },
-  "source": "image-source-id"
-}
