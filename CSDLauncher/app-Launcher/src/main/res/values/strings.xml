@@ -56,5 +56,59 @@
     <string name="report_service_both_types_of_fences">The location is \ninside of fences: %1$s \noutside of fences: %2$s</string>
     <string name="report_service_fence_marker_balloon">This is the closest location to \n%1$s border</string>
     <string name="search_along_route_title">Search along the route</string>
+	
+	<!-- <string name="app_name">NavigationApp</string> -->
+
+    <string name="km_per_hour">km/h</string>
+    <string name="miles_per_hour">mph</string>
+
+    <!-- Next instruction panels -->
+    <string name="next_instruction_panel_exit_shield_label">EXIT</string>
+    <string name="combined_instruction_panel_label">Then</string>
+
+    <string name="navigation_route_marker_waypoint_icon_path">asset:icons@/route-markers/ic_map_3d_waypoint_top_start.png</string>
+    <string name="navigation_route_marker_pin_path">asset:icons@/route-markers/ic_map_poi_pin_base.png</string>
+    <string name="navigation_route_marker_shield_path">asset:icons@/route-markers/ic_map_poi_pin_white_disk_base.png</string>
+    <string name="navigation_route_marker_destination_icon_path">asset:icons@/route-markers/ic_map_destination.png</string>
+    <string name="navigation_experience_destination_reached_message">You have arrived</string>
+    <string name="navigation_experience_select_route_message">Select a route to start navigation</string>
+    <string name="navigation_experience_route_planning_error">Unable to plan route</string>
+
+    <string name="navigation_experience_deviated_from_route">Deviated from route %d meters from start.</string>
+
+    <string name="avoid_category">Avoids</string>
+    <string name="avoid_borders_pref">Border Crossings</string>
+    <string name="avoid_borders_pref_summary">Attempts to minimize the number of country border crossings</string>
+    <string name="avoid_ferry_pref">Ferries</string>
+    <string name="avoid_ferry_pref_summary">Attempts to minimize ferries(boat or car-train) on a route</string>
+    <string name="avoid_motorways_pref">Motorways</string>
+    <string name="avoid_motorways_pref_summary">Attempts to minimize motorways on a route</string>
+    <string name="avoid_tolls_pref">Tolls</string>
+    <string name="avoid_tolls_pref_summary">Attempts to minimize roads that collect a toll on a route</string>
+    <string name="avoid_unpaved_pref">Unpaved</string>
+    <string name="avoid_unpaved_pref_summary">Attempts to minimize roads that are unpaved on a route</string>
+    <string name="avoid_carpools_pref">Carpools</string>
+    <string name="avoid_carpools_pref_summary">Attempts to minimize carpool roads on a route</string>
+    <string name="planning_category">Planning Criteria</string>
+    <string name="avoid_alternatives_pref">Number of Alternatives</string>
+    <string name="avoid_alternatives_default">0</string>
+
+    <string-array name="alternatves_entries">
+        <item>"None"</item>
+        <item>"One"</item>
+        <item>"Two"</item>
+        <item>"Three"</item>
+        <item>"Four"</item>
+        <item>"Five"</item>
+    </string-array>
+    <string-array name="alternatves_values">
+        <item>"0"</item>
+        <item>"1"</item>
+        <item>"2"</item>
+        <item>"3"</item>
+        <item>"4"</item>
+        <item>"5"</item>
+    </string-array>
+
 
 </resources>

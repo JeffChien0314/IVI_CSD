@@ -66,5 +66,21 @@
     <dimen name="mini_map_size">150dp</dimen>
     <dimen name="mini_map_border">2dp</dimen>
     <dimen name="mini_map_margin">10dp</dimen>
+	
+	<dimen name="nk2_fontSizeMini">12dp</dimen>
+    <dimen name="nk2_fontSizeMicro">15dp</dimen>
+    <dimen name="nk2_fontSizeSmall">20dp</dimen>
+    <dimen name="nk2_fontSizeMedium">25dp</dimen>
+    <dimen name="nk2_fontSizeBig">30dp</dimen>
+    <dimen name="nk2_fontSizeLarge">35dp</dimen>
+    <dimen name="nk2_fontSizeExtraLarge">38dp</dimen>
+
+    <dimen name="speedBubbleSpeedLimitTextTopPadding">10dp</dimen>
+    <dimen name="speedBubblePrimaryContainerPaddingEnd">16dp</dimen>
+
+    <dimen name="routeBarStripeWidth">8dp</dimen>
+    <dimen name="routeBarStripeBottomPadding">8dp</dimen>
+
+    <dimen name="tomtom_range_polygon_alpha" type="float">0.3</dimen>
 
 </resources>

@@ -29,7 +29,7 @@
             android:textColor="#80FFFFFF"
             android:textSize="22px" />
 
-        <com.fxc.ev.launcher.utils.views.DragGridView
+        <com.fxc.ev.launcher.utils.view.DragGridView
             android:id="@+id/draggable_grid_view_included"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

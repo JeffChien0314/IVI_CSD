@@ -1,145 +1,144 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
+apply from: '../common.gradle'
+
+file("$rootDir/.env").with { File dotenvFile ->
+    if (dotenvFile.exists()) {
+        dotenvFile.readLines().findAll { String line ->
+            !line.trim().startsWith("#") && line.split("=", 2).size() == 2
+        }.each { String line ->
+            def (key, value) = line.split("=", 2)
+            if (project.findProperty(key) == null) {
+                project.ext.setProperty(key, value)
+            }
+        }
+    }
+}
+
+static def buildConfigStringFromString(String s) {
+    if (s == null) {
+        return "null"  // Will be translated to `String foo = null`
+    }
+    s = s.replace('"', '\\"')  // Allow double quotes in string value
+    return "\"${s}\""  // Will be translated to `String foo = "some value"`
+}
+
+def getBuildConfigStringFromProperty(String propertyName) {
+    def value = project.findProperty(propertyName)
+    return buildConfigStringFromString(value)
+}
 
 android {
-
-    buildToolsVersion rootProject.androidBuildToolsVersion
-    compileSdkVersion rootProject.androidCompileSdkVersion
-
+    buildToolsVersion project.ext.androidBuildToolsVersion
+    compileSdkVersion project.ext.androidCompileSdkVersion
     defaultConfig {
+        applicationId "com.fxc.ev.launcher"
+        targetSdkVersion project.ext.androidTargetSdkVersion
+        minSdkVersion project.ext.androidMinSdkVersion
+        versionCode 1
+        versionName "1.0"
+        ndk {
+            //设置支持的so库架构
+            abiFilters /*"x86",*/"x86_64"
+        }
 
-        targetSdkVersion androidTargetSdkVersion
-        minSdkVersion androidMinSdkVersion
-        versionCode buildVersionCode
-        versionName buildVersionName
-        multiDexEnabled true
-        dimension "locale"
-        buildConfigField("String[]", "BUILT_IN_LOCALE", '{"en-US","es-ES","fr-FR","de-DE"}')
-        applicationId 'com.fxc.ev.launcher'
+        resConfigs 'en','cn'
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        setProperty("archivesBaseName", "navkit2-example-$versionName")
 
-        buildConfigField("String", "MAPS_API_KEY", "\"$mapsApiKey\"")
-        buildConfigField("String", "TRAFFIC_API_KEY", "\"$trafficApiKey\"")
-        buildConfigField("String", "GEOFENCING_API_KEY", "\"$geofencingApiKey\"")
-        buildConfigField("String", "SEARCH_API_KEY", "\"$searchApiKey\"")
-        buildConfigField("String", "ROUTING_API_KEY", "\"$routingApiKey\"")
-        resValue("string", "maps_api_key", "$mapsApiKey")
-        resValue("string", "traffic_api_key", "$trafficApiKey")
+        buildConfigField "String", "API_KEY", getBuildConfigStringFromProperty("apiKey")
+
+        buildConfigField "String", "KEYSTORE_PASSWORD", buildConfigStringFromString(
+                project.findProperty("keyStorePassword") ?: project.findProperty("keystorePassword"))
+
+        buildConfigField "String", "MAP_UPDATE_SERVER_URI", buildConfigStringFromString(
+                project.findProperty("mapUpdateServerUri") ?: "https://api.tomtom.com/nds-test/updates/1/fetch")
+
+        buildConfigField "String", "MAP_UPDATE_SERVER_API_KEY",
+                getBuildConfigStringFromProperty("mapUpdateServerApiKey")
     }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    packagingOptions {
+        pickFirst 'lib/**/libc++_shared.so'
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
     lintOptions {
+        checkReleaseBuilds false
         abortOnError false
     }
 
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-        }
-    }
+}
 
-    packagingOptions {
-        merge 'META-INF/services/javax.annotation.processing.Processor'
-        merge 'META-INF/DEPENDENCIES.txt'
-        merge 'META-INF/LICENSE.txt'
-        merge 'META-INF/NOTICE.txt'
-        merge 'META-INF/NOTICE'
-        merge 'META-INF/LICENSE'
-        merge 'META-INF/DEPENDENCIES'
-        merge 'META-INF/notice.txt'
-        merge 'META-INF/license.txt'
-        merge 'META-INF/dependencies.txt'
-        merge 'META-INF/LGPL2.1'
-        merge 'constants.properties'
-        merge 'META-INF/licence.txt'
-        merge 'META-INF/rxjava.properties'
-    }
-
-    testOptions {
-        animationsDisabled true
-        unitTests.returnDefaultValues = true
-        unitTests.includeAndroidResources = true
-        unitTests.all {
-            // All the usual Gradle options.
-            jvmArgs '-XX:MaxPermSize=256m'
-            testLogging {
-                events "passed", "skipped", "failed", "standardOut", "standardError"
-            }
-        }
-    }
-
-    configurations.all {
-        resolutionStrategy.force "com.android.support:support-annotations:$rootProject.androidVersions.support"
-        resolutionStrategy.force "com.android.support:support-v4:$rootProject.androidVersions.support"
-        resolutionStrategy.force "com.android.support:appcompat-v7:$rootProject.androidVersions.support"
-        resolutionStrategy.force "android.arch.core:runtime:$rootProject.androidVersions.androidarch"
-        resolutionStrategy.force "androidx.core:core-ktx:1.6.0"
-        exclude group: 'com.google.code.findbugs'
-    }
-
-    splits {
-        abi {
-            enable true
-        }
-    }
+ext {
+    navKit2SdkGroup = "com.tomtom.navkit2.sdk"
+    navKit2BomDependencyDetails = [group: "$navKit2SdkGroup", name: "sdk-bom", version: bomVersion]
 }
 
 dependencies {
-    implementation("com.tomtom.online:sdk-maps:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-maps-static-image:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-maps-ui-extensions:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-maps-driving-extensions:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-maps-rx-extensions:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-traffic:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-search:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-routing:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-routing-rxjava2:$rootProject.internalVersions.sampleapp")
-    implementation("com.tomtom.online:sdk-geofencing:$rootProject.internalVersions.sampleapp")
 
-    testImplementation "androidx.test:core:$rootProject.androidXVersions.test.core"
-    testImplementation "org.easytesting:fest:$rootProject.libVersions.test.easytesting"
-    testImplementation "cglib:cglib-nodep:$rootProject.libVersions.test.cglib"
-    testImplementation "org.mockito:mockito-core:$rootProject.libVersions.test.mockito"
-    testImplementation "junit:junit:$rootProject.libVersions.test.junit"
-    testImplementation "org.robolectric:robolectric:$rootProject.libVersions.test.robolectric"
-    testImplementation "org.robolectric:shadows-multidex:$rootProject.libVersions.test.robolectric"
-    implementation "androidx.multidex:multidex:$rootProject.androidXVersions.multidex"
-    testImplementation "org.codehaus.groovy:groovy:$rootProject.libVersions.groovy:grooid"
+    implementation "androidx.appcompat:appcompat:1.3.1"
+    implementation "androidx.cardview:cardview:1.0.0"
+    implementation "androidx.constraintlayout:constraintlayout:1.1.3"
+    implementation "androidx.preference:preference:1.0.0"
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation "com.google.android.material:material:1.2.0"
+    implementation "com.mikepenz:materialdrawer:6.0.9"
 
-    testDebugImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
-    testReleaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
-    androidTestImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.androidXVersions.test.espresso"
-    androidTestImplementation "androidx.test.espresso:espresso-contrib:$rootProject.androidXVersions.test.espresso"
-    androidTestImplementation "androidx.test:runner:$rootProject.androidXVersions.test.runner"
-    androidTestImplementation "androidx.test:rules:$rootProject.androidXVersions.test.rules"
-    androidTestImplementation "androidx.test:orchestrator:$rootProject.androidXVersions.test.orchestrator"
-    androidTestImplementation "androidx.test.uiautomator:uiautomator:$rootProject.androidXVersions.test.uiautomator"
-    //del_for_release_stop
+    implementation "androidx.multidex:multidex:2.0.1"
 
-    implementation "com.google.android.material:material:$rootProject.androidXVersions.material"
-    implementation "com.github.florent37:singledateandtimepicker:$rootProject.libVersions.singledateandtimepicker"
-    implementation "androidx.constraintlayout:constraintlayout:$rootProject.androidXVersions.constraintlayout"
-    implementation "androidx.lifecycle:lifecycle-viewmodel:$rootProject.androidXVersions.lifecycle"
-    implementation "androidx.lifecycle:lifecycle-extensions:$rootProject.androidXVersions.lifecycle"
-    debugImplementation "com.squareup.leakcanary:leakcanary-android:$rootProject.libVersions.leakcanary"
-    releaseImplementation "com.squareup.leakcanary:leakcanary-android-no-op:$rootProject.libVersions.leakcanary"
+    implementation platform(navKit2BomDependencyDetails)
+    implementation(group: "$navKit2SdkGroup", name: "analytics-proxy")
+    implementation(group: "$navKit2SdkGroup", name: "framework-clientlib-common")
+    implementation(group: "$navKit2SdkGroup", name: "framework-http")
+    implementation(group: "$navKit2SdkGroup", name: "framework-protobufcomms-memchannel")
+    implementation(group: "$navKit2SdkGroup", name: "framework-rpc-binder")
+    implementation(group: "$navKit2SdkGroup", name: "framework-security")
+    implementation(group: "$navKit2SdkGroup", name: "globalsettings-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "mapaccesssync-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "mapdisplay-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "mapdisplay-clientlib-traffic-renderer")
+    implementation(group: "$navKit2SdkGroup", name: "mapdisplay-clientlib-trip-renderer")
+    implementation(group: "$navKit2SdkGroup", name: "mapdisplay-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "mapdisplay-tile-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "mapmanagement-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "mapmanagement-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "navassist-datarecorder-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "navassist-datarecorder-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "navassist-suggestions-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "navassist-suggestions-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-drivingassistance-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-drivingassistance-ndsdataaccess")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-drivingassistance-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-mapmatcher-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-onboardmap-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-positioning")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-tile-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-trip-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "navigation-vehicle-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "onboardmap-ndsdataaccess")
+    implementation(group: "$navKit2SdkGroup", name: "poidetails-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "poidetails-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "reversegeocoder-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "reversegeocoder-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "search-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "userprofile-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "userprofile-clientlib-place-converter")
+    implementation(group: "$navKit2SdkGroup", name: "userprofile-navcloudconnector-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "userprofile-navcloudconnector-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "userprofile-onboardservice")
+    implementation(group: "$navKit2SdkGroup", name: "traffic-tile-clientlib")
 
-    // Recommended: Add the Firebase SDK for Google Analytics.
-    implementation "com.google.firebase:firebase-analytics:$rootProject.libVersions.analytics"
-    // Add the Firebase SDK for Crashlytics.
-    implementation "com.google.firebase:firebase-crashlytics:$rootProject.libVersions.crashlytics"
-    //implementation "androidx.core:core-ktx:+"
-    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-}
-repositories {
-    mavenCentral()
 }
 

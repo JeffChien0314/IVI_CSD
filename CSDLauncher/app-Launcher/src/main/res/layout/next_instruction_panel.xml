@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Copyright (C) 2019 TomTom NV. All rights reserved.
+
+This software is the proprietary copyright of TomTom NV and its subsidiaries and may be
+used for internal evaluation purposes or commercial use strictly subject to separate
+license agreement between you and TomTom NV. If you are the licensee, you are only permitted
+to use this software in accordance with the terms of your license agreement. If you are
+not the licensee, you are not authorized to use this software in any manner and should
+immediately return or destroy it.
+-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nipRootContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/nk2_next_instruction_panel"
+    android:paddingStart="24dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="8dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <ImageView
+        android:id="@+id/nipManeuverImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/nk2_nip_roundaboutleft3_uk_primary" />
+
+    <LinearLayout
+        android:id="@+id/nipDistanceContainer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/nipManeuverImage"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/nipDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:minWidth="60dp"
+            android:textColor="@color/white"
+            android:textSize="38sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toEndOf="@+id/nipManeuverImage" />
+
+        <TextView
+            android:id="@+id/nipDistanceUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@+id/nipDistance"
+            app:layout_constraintTop_toBottomOf="@+id/nipDistance" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/nipRoadNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_marginStart="12dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="15sp"
+        app:layout_constraintStart_toEndOf="@id/nipDistanceContainer"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nipExitNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:background="@drawable/nk2_next_instruction_exit"
+        android:paddingLeft="4sp"
+        android:paddingTop="2sp"
+        android:paddingRight="4sp"
+        android:paddingBottom="2sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="15sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/nipRoadNumber"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/nipRoadshieldsExitBarrier"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="nipExitNumber,nipRoadNumber"
+        tools:layout_editor_absoluteX="24dp"
+        tools:layout_editor_absoluteY="6dp" />
+
+    <TextView
+        android:id="@+id/nipRoadName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="4dp"
+        android:maxLines="2"
+        android:textAlignment="viewStart"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:autoSizeMaxTextSize="25sp"
+        app:autoSizeMinTextSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/nipDistanceContainer"
+        app:layout_constraintTop_toBottomOf="@id/nipRoadshieldsExitBarrier" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

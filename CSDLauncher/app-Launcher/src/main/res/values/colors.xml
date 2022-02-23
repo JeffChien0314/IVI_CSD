@@ -14,8 +14,6 @@
 <resources>
     <color name="forest">#7aa920</color>
     <color name="tt_green">#bdd731</color>
-    <color name="black">#000000</color>
-    <color name="white">#fff</color>
     <color name="light">#F2F2F2</color>
     <color name="silver">#E3E3E3</color>
     <color name="stone">#CCCCCC</color>
@@ -23,4 +21,56 @@
     <color name="dark_grey">#262626</color>
     <color name="dark_blue">#27586B</color>
     <color name="list_space_color">#f2f2f2</color>
+	
+	<color name="purple_200">#FFBB86FC</color>
+    <color name="purple_500">#FF6200EE</color>
+    <color name="purple_700">#FF3700B3</color>
+    <color name="teal_200">#FF03DAC5</color>
+    <color name="teal_700">#FF018786</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="colorPrimary">#eb4526</color>
+    <color name="colorPrimaryDark">#9a311a</color>
+    <color name="colorAccent">#ff7952</color>
+    <color name="defaultSpeedBubbleBackgroundColor">#80aaaaaa</color>
+
+    <color name="grey">#e5e5e5</color>
+    <color name="white_alpha90">#e6ffffff</color>
+    <color name="transparent">#00000000</color>
+    <color name="darkcharcoal_alpha40">#664d4d4d</color>
+    <color name="black_alpha35">#59000000</color>
+    <color name="black_alpha40">#66000000</color>
+    <color name="black_alpha50">#80000000</color>
+    <color name="black_alpha60">#99000000</color>
+    <color name="compass_manual_mode">#80808080</color>
+
+    <color name="route_marker_default_shield">#ff00abbc</color>
+
+    <color name="tomtom_traffic_red">#ffda2526</color>
+    <color name="tomtom_traffic_orange">#fff04e23</color>
+    <color name="tomtom_traffic_yellow">#fff8971d</color>
+
+    <color name="nip_default_background">#ff007D67</color>
+    <color name="exit_us_background">#fff5b240</color>
+    <color name="nip_border">#ffffffff</color>
+
+    <color name="nip_alternative_background">#ff1e57a1</color>
+
+    <color name="bottom_panel_text_main">#de000000</color>
+    <color name="bottom_panel_text_auxiliary">#8b000000</color>
+
+    <color name="exampleColorPrimary">@color/md_light_blue_700</color>
+    <color name="exampleColorPrimaryDark">@color/md_light_blue_900</color>
+
+    <color name="slg_background_color">#14747480</color>
+    <color name="slg_lane_guidance">#33000000</color>
+    <color name="slg_lane_guidance_to_follow">#000000</color>
+
+    <color name="tomtom_range_red">#ffda2526</color>
+    <color name="tomtom_range_yellow">#fff8971d</color>
+    <color name="tomtom_range_inner_polygon_fill_color">#000080ff</color>
+    <color name="tomtom_range_outer_polygon_fill_color">#0000ffff</color>
+
+    <color name="map_state_product_list_background">#e7f1f9</color>
 </resources>

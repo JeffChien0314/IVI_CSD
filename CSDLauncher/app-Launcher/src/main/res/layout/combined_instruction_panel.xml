@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+Copyright (C) 2019 TomTom NV. All rights reserved.
+
+This software is the proprietary copyright of TomTom NV and its subsidiaries and may be
+used for internal evaluation purposes or commercial use strictly subject to separate
+license agreement between you and TomTom NV. If you are the licensee, you are only permitted
+to use this software in accordance with the terms of your license agreement. If you are
+not the licensee, you are not authorized to use this software in any manner and should
+immediately return or destroy it.
+-->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/combinedPanelRootContainer"
+    android:layout_width="wrap_content"
+    android:layout_height="44dp"
+    android:background="@drawable/nk2_next_instruction_panel"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <TextView
+        android:id="@+id/combinedInstructionLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:text="@string/combined_instruction_panel_label"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/combinedInstructionManeuverImage"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginStart="16dp"
+        android:adjustViewBounds="true"
+        android:gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/combinedInstructionLabel"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

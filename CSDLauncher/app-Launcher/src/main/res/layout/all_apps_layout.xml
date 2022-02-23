@@ -5,7 +5,7 @@
     android:background="#080F1D"
     android:orientation="vertical">
 
-    <com.fxc.ev.launcher.utils.views.DraggableGridViewPager
+    <com.fxc.ev.launcher.utils.view.DraggableGridViewPager
         android:id="@+id/draggable_grid_view_pager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

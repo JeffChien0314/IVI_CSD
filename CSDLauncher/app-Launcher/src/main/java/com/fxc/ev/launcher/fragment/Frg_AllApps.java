@@ -17,14 +17,14 @@ import android.widget.Toast;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.activities.GetAllApps;
 import com.fxc.ev.launcher.bean.PakageMod;
-import com.fxc.ev.launcher.utils.views.DraggableGridViewPager;
+import com.fxc.ev.launcher.utils.view.DraggableGridViewPager;
 
 import java.util.List;
 
 import androidx.fragment.app.Fragment;
-import timber.log.Timber;
 
 public class Frg_AllApps extends Fragment {
+    public static final String TAG = Frg_AllApps.class.getSimpleName();
 
     private Context mContext;
 
@@ -38,7 +38,6 @@ public class Frg_AllApps extends Fragment {
 
     private DraggableGridViewPager mDraggableGridViewPager;
     private ArrayAdapter<PakageMod> mAdapter;
-
 
 
     @Override
@@ -97,21 +96,21 @@ public class Frg_AllApps extends Fragment {
         mDraggableGridViewPager.setOnPageChangeListener(new DraggableGridViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                Timber.d("onPageScrolled position=" + position + ", positionOffset=" + positionOffset
+                Log.d(TAG, "onPageScrolled position=" + position + ", positionOffset=" + positionOffset
                         + ", positionOffsetPixels=" + positionOffsetPixels);
 
             }
 
             @Override
             public void onPageSelected(int position) {
-                Timber.d("onPageSelected position=" + position);
+                Log.d(TAG, "onPageSelected position=" + position);
                 //改变小圆圈指示器的切换效果
                 setImageBackground(position);
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                Timber.d("onPageScrollStateChanged state=" + state);
+                Log.d(TAG, "onPageScrollStateChanged state=" + state);
             }
         });
 
@@ -136,7 +135,7 @@ public class Frg_AllApps extends Fragment {
         mDraggableGridViewPager.setOnRearrangeListener(new DraggableGridViewPager.OnRearrangeListener() {
             @Override
             public void onRearrange(int oldIndex, int newIndex) {
-                Timber.d("OnRearrangeListener.onRearrange from=" + oldIndex + ", to=" + newIndex);
+                Log.d(TAG, "OnRearrangeListener.onRearrange from=" + oldIndex + ", to=" + newIndex);
                 PakageMod item = mAdapter.getItem(oldIndex);
                 mAdapter.setNotifyOnChange(false);
                 mAdapter.remove(item);

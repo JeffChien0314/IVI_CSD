@@ -13,18 +13,16 @@ import android.widget.TextView;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.activities.LauncherActivity;
 import com.fxc.ev.launcher.bean.PakageMod;
-import com.fxc.ev.launcher.utils.views.DragGridView;
+import com.fxc.ev.launcher.utils.view.DragGridView;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 
 import androidx.fragment.app.Fragment;
-import timber.log.Timber;
 
 public class Frg_WidgetsEdit extends Fragment {
 

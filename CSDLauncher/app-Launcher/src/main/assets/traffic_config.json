@@ -1,0 +1,107 @@
+{
+  "magnitude_unknown": {
+    "pin_base": "asset:icons@/traffic/ic_map_inciacci_base.png",
+    "font": "asset:NotoSans-CondensedBold.ttf",
+    "label_y_offset": 20,
+    "icon_categories" : {
+      "unknown": "asset:icons@/traffic/ic_map_danger_black.png",
+      "accident": "asset:icons@/traffic/ic_map_accident_black.png",
+      "fog": "asset:traffic_icon@/ic_map_mist_black.png",
+      "dangerous_conditions": "asset:icons@/traffic/ic_map_danger_black.png",
+      "rain": "asset:icons@/traffic/ic_map_rain_black.png",
+      "jam": "asset:icons@/traffic/ic_map_traffic_black.png",
+      "ice" : "asset:icons@/traffic/ic_map_ice_black.png",
+      "lane_closed": "asset:icons@/traffic/ic_map_laneclosed_black.png",
+      "road_closed": "asset:icons@/traffic/ic_map_closedroad.png",
+      "road_works": "asset:icons@/traffic/ic_map_roadworks_black.png",
+      "wind": "asset:icons@/traffic/ic_map_wind_black.png",
+      "flooding": "asset:icons@/traffic/ic_map_danger_black.png",
+      "detour": "asset:icons@/traffic/ic_map_danger_black.png",
+      "broken_vehicle": "asset:icons@/traffic/ic_map_broken_vehicle.png"
+    }
+  },
+  "magnitude_minor": {
+    "pin_base": "asset:icons@/traffic/ic_map_slow_base.png",
+    "font": "asset:NotoSans-CondensedBold.ttf",
+    "label_y_offset": 20,
+    "icon_categories" : {
+      "unknown": "asset:icons@/traffic/ic_map_danger_slow.png",
+      "accident": "asset:icons@/traffic/ic_map_accident_slow.png",
+      "fog": "asset:icons@/traffic/ic_map_mist_slow.png",
+      "dangerous_conditions": "asset:icons@/traffic/ic_map_danger_slow.png",
+      "rain": "asset:icons@/traffic/ic_map_rain_slow.png",
+      "jam": "asset:icons@/traffic/ic_map_traffic_slow.png",
+      "ice" : "asset:icons@/traffic/ic_map_ice_slow.png",
+      "lane_closed": "asset:icons@/traffic/ic_map_laneclosed_slow.png",
+      "road_closed": "asset:icons@/traffic/ic_map_closedroad.png",
+      "road_works": "asset:icons@/traffic/ic_map_roadworks_slow.png",
+      "wind": "asset:icons@/traffic/ic_map_wind_slow.png",
+      "flooding": "asset:icons@/traffic/ic_map_danger_slow.png",
+      "detour": "asset:icons@/traffic/ic_map_danger_slow.png",
+      "broken_vehicle": "asset:icons@/traffic/ic_map_broken_vehicle.png"
+    }
+  },
+  "magnitude_moderate": {
+    "pin_base": "asset:icons@/traffic/ic_map_queuing_base.png",
+    "font": "asset:NotoSans-CondensedBold.ttf",
+    "label_y_offset": 20,
+    "icon_categories" : {
+      "unknown": "asset:icons@/traffic/ic_map_danger_queuing.png",
+      "accident": "asset:icons@/traffic/ic_map_accident_queuing.png",
+      "fog": "asset:icons@/traffic/ic_map_mist_queuing.png",
+      "dangerous_conditions": "asset:icons@/traffic/ic_map_danger_queuing.png",
+      "rain": "asset:icons@/traffic/ic_map_rain_queuing.png",
+      "jam": "asset:icons@/traffic/ic_map_traffic_queuing.png",
+      "ice" : "asset:icons@/traffic/ic_map_ice_queuing.png",
+      "lane_closed": "asset:icons@/traffic/ic_map_laneclosed_queuing.png",
+      "road_closed": "asset:icons@/traffic/ic_map_closedroad.png",
+      "road_works": "asset:icons@/traffic/ic_map_roadworks_queuing.png",
+      "wind": "asset:icons@/traffic/ic_map_wind_queuing.png",
+      "flooding": "asset:icons@/traffic/ic_map_danger_queuing.png",
+      "detour": "asset:icons@/traffic/ic_map_danger_queuing.png",
+      "broken_vehicle": "asset:icons@/traffic/ic_map_broken_vehicle.png"
+    }
+  },
+  "magnitude_major": {
+    "pin_base": "asset:icons@/traffic/ic_map_stationary_base.png",
+    "font": "asset:NotoSans-CondensedBold.ttf",
+    "label_y_offset": 20,
+    "icon_categories" : {
+      "unknown": "asset:icons@/traffic/ic_map_danger_stationary.png",
+      "accident": "asset:icons@/traffic/ic_map_accident_stationary.png",
+      "fog": "asset:icons@/traffic/ic_map_mist_stationary.png",
+      "dangerous_conditions": "asset:icons@/traffic/ic_map_danger_stationary.png",
+      "rain": "asset:icons@/traffic/ic_map_rain_stationary.png",
+      "jam": "asset:icons@/traffic/ic_map_traffic_stationary.png",
+      "ice" : "asset:icons@/traffic/ic_map_ice_stationary.png",
+      "lane_closed": "asset:icons@/traffic/ic_map_laneclosed_stationary.png",
+      "road_closed": "asset:icons@/traffic/ic_map_closedroad.png",
+      "road_works": "asset:icons@/traffic/ic_map_roadworks_stationary.png",
+      "wind": "asset:icons@/traffic/ic_map_wind_stationary.png",
+      "flooding": "asset:icons@/traffic/ic_map_danger_stationary.png",
+      "detour": "asset:icons@/traffic/ic_map_danger_stationary.png",
+      "broken_vehicle": "asset:icons@/traffic/ic_map_broken_vehicle.png"
+    }
+  },
+  "magnitude_undefined": {
+    "pin_base": "asset:icons@/traffic/ic_map_inciacci_base.png",
+    "font": "asset:NotoSans-CondensedBold.ttf",
+    "label_y_offset": 20,
+    "icon_categories" : {
+      "unknown": "asset:icons@/traffic/ic_map_danger_black.png",
+      "accident": "asset:icons@/traffic/ic_map_accident_black.png",
+      "fog": "asset:traffic_icon@/ic_map_mist_black.png",
+      "dangerous_conditions": "asset:icons@/traffic/ic_map_danger_black.png",
+      "rain": "asset:icons@/traffic/ic_map_rain_black.png",
+      "jam": "asset:icons@/traffic/ic_map_traffic_black.png",
+      "ice" : "asset:icons@/traffic/ic_map_ice_black.png",
+      "lane_closed": "asset:icons@/traffic/ic_map_laneclosed_black.png",
+      "road_closed": "asset:icons@/traffic/ic_map_closedroad.png",
+      "road_works": "asset:icons@/traffic/ic_map_roadworks_black.png",
+      "wind": "asset:icons@/traffic/ic_map_wind_black.png",
+      "flooding": "asset:icons@/traffic/ic_map_danger_black.png",
+      "detour": "asset:icons@/traffic/ic_map_danger_black.png",
+      "broken_vehicle": "asset:icons@/traffic/ic_map_broken_vehicle.png"
+    }
+  }
+}

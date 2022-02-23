@@ -1,0 +1,16 @@
+<!--
+Copyright (C) 2019 TomTom NV. All rights reserved.
+
+This software is the proprietary copyright of TomTom NV and its subsidiaries and may be
+used for internal evaluation purposes or commercial use strictly subject to separate
+license agreement between you and TomTom NV. If you are the licensee, you are only permitted
+to use this software in accordance with the terms of your license agreement. If you are
+not the licensee, you are not authorized to use this software in any manner and should
+immediately return or destroy it.
+-->
+
+<vector android:height="36dp" android:viewportHeight="640"
+    android:viewportWidth="640" android:width="36dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    <path android:fillColor="#000000" android:pathData="M524.19,255.82C524.19,258.87 524.19,283.25 524.19,286.3C524.19,391.95 444.95,479.31 341.33,489.47C341.33,496.78 341.33,555.3 341.33,562.61C341.33,589.03 300.7,589.03 300.7,562.61C300.7,555.3 300.7,496.78 300.7,489.47C197.08,479.31 115.81,391.95 115.81,286.3C115.81,283.25 115.81,258.87 115.81,255.82C115.81,229.41 156.44,229.41 156.44,255.82C156.44,258.87 156.44,283.25 156.44,286.3C156.44,375.69 229.59,450.87 321.02,450.87C410.41,450.87 483.56,375.69 483.56,286.3C483.56,284.26 483.56,274.1 483.56,255.82C510.65,238.21 524.19,238.21 524.19,255.82Z"/>
+    <path android:fillColor="#000000" android:pathData="M231.62,160.33C231.62,172.92 231.62,273.7 231.62,286.3C231.62,335.06 272.25,375.69 321.02,375.69C369.78,375.69 410.41,335.06 410.41,286.3C410.41,273.7 410.41,172.92 410.41,160.33C410.41,111.57 369.78,70.93 321.02,70.93C272.25,70.93 231.62,111.57 231.62,160.33Z"/>
+</vector>

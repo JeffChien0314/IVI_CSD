@@ -1,6 +1,6 @@
 /**
  * Copyright (c) 2015-2021 TomTom N.V. All rights reserved.
- *
+ * <p>
  * This software is the proprietary copyright of TomTom N.V. and its subsidiaries and may be used
  * for internal evaluation purposes or commercial use strictly subject to separate licensee
  * agreement between you and TomTom. If you are the licensee, you are only permitted to use
@@ -11,56 +11,33 @@
 package com.fxc.ev.launcher;
 
 import android.content.Context;
-import android.os.Build;
 import android.os.Environment;
-import android.os.StrictMode;
-import android.util.Log;
 
-import androidx.annotation.RequiresApi;
 import androidx.multidex.MultiDexApplication;
 
-import com.squareup.leakcanary.LeakCanary;
-import com.tomtom.online.sdk.common.util.LogUtils;
+import com.fxc.ev.launcher.utils.NetworkStats;
+import com.tomtom.navkit2.analytics.AnalyticsCaptureInterface;
+import com.tomtom.navkit2.analytics.AnalyticsProxy;
+import com.tomtom.navkit2.http.Core;
 
 import java.io.File;
+import java.util.Map;
 
 public class LauncherApplication extends MultiDexApplication {
 
-    private static final String ROBO_ELECTRIC_FINGERPRINT = "robolectric";
-    public static final String LOG_FILE_PATH = Environment.getExternalStorageDirectory() + File.separator;
-
-    //tag::doc_log[]
     @Override
     public void onCreate() {
         super.onCreate();
-        LogUtils.enableLogs(Log.VERBOSE);
-        //end::doc_log[]
-        //initStrictMode();
-        if (!isRoboElectricUnitTest()) {
-            LeakCanary.install(this);
-        }
-    }
+        new Core.Initializer(getApplicationContext()).setCacheSize(5 * 1024 * 1024).initialize();
 
-    public boolean isRoboElectricUnitTest() {
-        return ROBO_ELECTRIC_FINGERPRINT.equals(Build.FINGERPRINT);
-    }
+        NetworkStats.sharedInstance().init(getApplicationContext());
 
-    @RequiresApi(api = Build.VERSION_CODES.HONEYCOMB_MR1)
-    private void initStrictMode() {
-        if (BuildConfig.DEBUG) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                    .detectDiskReads()
-                    .detectDiskWrites()
-                    .detectAll()
-                    .penaltyLog()
-                    .build());
-            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                    .detectLeakedSqlLiteObjects()
-                    .detectLeakedClosableObjects()
-                    .penaltyLog()
-                    //.penaltyDeath() TODO RoomDatabase closable
-                    .build());
-        }
+        AnalyticsProxy.setCaptureInterface(new AnalyticsCaptureInterface() {
+            @Override
+            public void logEvent(String key, Map<String, String> attributes) {
+                NetworkStats.sharedInstance().processEvent(key, attributes);
+            }
+        });
     }
 
     @Override

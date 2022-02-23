@@ -20,17 +20,6 @@
         android:resizeableActivity="true"
         android:testOnly="false"
         android:theme="@style/TomTomTheme">
-
-        <!--<activity
-            android:name="com.fxc.ev.launcher.activities.BaseActivity"
-            android:configChanges="orientation|screenSize"
-            android:noHistory="true"
-            android:theme="@style/SplashTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>-->
         <activity
             android:name=".activities.LauncherActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
@@ -38,31 +27,16 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.MONKEY" />
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <!-- provide here your keys -->
+        <activity android:name=".maps.route.RoutePlanningPreferencesActivity" />
 
-        <!--tag::doc_config_services[]-->
-
-        <meta-data
-            android:name="OnlineMaps.Key"
-            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
-        <meta-data
-            android:name="OnlineRouting.Key"
-            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
-        <meta-data
-            android:name="OnlineSearch.Key"
-            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
-        <meta-data
-            android:name="OnlineTraffic.Key"
-            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
-        <meta-data
-            android:name="GeofencingApi.Key"
-            android:value="O6ZsLSthwfjbA4InXjT2RmXDhSMFJaSE" />
-
-        <!--end::doc_config_services[]-->
+        <activity android:name=".activities.InteractiveMapActivity" />
+        <activity android:name=".activities.BaseActivity" />
 
     </application>
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/home_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -10,40 +11,120 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <FrameLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/map_layout"
             android:layout_width="match_parent"
-            android:layout_height="0px"
+            android:layout_height="0dp"
             android:layout_marginBottom="12px"
-            android:layout_weight="1"
-            android:background="#0000FF">
+            android:layout_weight="1">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <com.tomtom.navkit.map.sdk.MapView
+                android:id="@+id/map"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <FrameLayout
-                    android:id="@+id/map_container"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <View
+                android:id="@+id/safeRect"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/speedBubble"
+                app:layout_constraintEnd_toStartOf="@id/voiceGuidanceMode"
+                app:layout_constraintStart_toEndOf="@+id/zoomBarView"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+            <ImageButton
+                android:id="@+id/recenterButton"
+                style="@style/NK2Button.Recenter"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/voiceGuidanceMode"
+                app:layout_constraintStart_toStartOf="parent" />
 
-            </RelativeLayout>
+            <com.fxc.ev.launcher.utils.view.ZoomBarView
+                android:id="@id/zoomBarView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toTopOf="@id/mapModeButton"
+                app:layout_constraintStart_toStartOf="parent" />
 
-            <FrameLayout
-                android:id="@+id/functional_example_control_container"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <com.fxc.ev.launcher.utils.view.OutlineTextView
+                android:id="@+id/eta"
+                style="@style/NK2OutlineTextView.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/route_panel_background"
+                android:gravity="right"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:textColor="@color/white_alpha90"
+                android:textSize="@dimen/nk2_fontSizeSmall"
+                android:textStyle="bold"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <FrameLayout
-                android:id="@+id/route_fragment"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+            <com.fxc.ev.launcher.utils.view.NextInstructionPanelView
+                android:id="@+id/nextInstructionContainerView"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/eta"
+                app:layout_constraintHeight_default="wrap"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0"
+                app:layout_goneMarginLeft="8dp" />
 
-        </FrameLayout>
+            <ImageButton
+                android:id="@+id/mapModeButton"
+                style="@style/NK2Button.MapMode"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="64dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageButton
+                android:id="@+id/planningMenu_btn"
+                style="@style/NK2Button.PlanningMenu"
+                android:layout_marginStart="8dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.fxc.ev.launcher.utils.view.SpeedBubbleView
+                android:id="@id/speedBubble"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="parent"
+                app:layout_constraintHeight_default="wrap"
+                app:layout_constraintStart_toEndOf="@+id/mapModeButton"
+                app:layout_constraintWidth_default="wrap" />
+
+
+            <ImageButton
+                android:id="@+id/voiceGuidanceMode"
+                style="@style/NK2Button.VoiceGuidanceMode"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                android:src="@drawable/nk2_ic_full_voice_guidance_mode"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <RelativeLayout
@@ -66,8 +147,8 @@
                 android:id="@+id/widget_edit_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBottom="@id/grid_view"
                 android:layout_alignEnd="@id/grid_view"
+                android:layout_alignBottom="@id/grid_view"
                 android:layout_marginEnd="13px"
                 android:src="@drawable/btn_widget_edit" />
 

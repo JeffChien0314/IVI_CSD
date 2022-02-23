@@ -16,4 +16,12 @@
         <attr name="first_middle_button_visible" format="boolean" />
         <attr name="second_middle_button_visible" format="boolean" />
     </declare-styleable>
+	
+	<attr name="zoomBarViewStyle" format="reference" />
+    <attr name="outlineTextViewStyle" format="reference" />
+
+    <declare-styleable name="nk2_OutlineTextView">
+        <attr name="outlineWidth" format="dimension" />
+        <attr name="outlineColor" format="color" />
+    </declare-styleable>
 </resources>

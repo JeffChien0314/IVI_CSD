@@ -25,16 +25,6 @@
 
     <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
-    <style name="ControlButton" parent="Theme.AppCompat.Light">
-        <item name="android:layout_width">@dimen/control_button_width</item>
-        <item name="android:layout_height">@dimen/control_button_height</item>
-        <item name="android:layout_margin">@dimen/control_button_margin</item>
-        <item name="android:background">@drawable/action_button</item>
-        <item name="android:textColor">@drawable/action_button_text_color</item>
-        <item name="android:button">@android:color/transparent</item>
-        <item name="android:gravity">center</item>
-    </style>
-
     <style name="DirectionETA" parent="@android:style/TextAppearance.Small">
         <item name="android:textSize">20sp</item>
         <item name="android:textColor">#fff</item>
@@ -95,47 +85,6 @@
         <item name="android:inputType">none</item>
     </style>
 
-
-    <!-- //tag::compass_style[] -->
-    <style name="CompassView" parent="BaseCompactView">
-        <item name="android:layout_gravity">top|start</item>
-        <item name="android:layout_marginStart">@dimen/compass_default_margin_start</item>
-        <item name="android:layout_marginTop">@dimen/compass_default_margin_top</item>
-    </style>
-    <!-- //end::compass_style[] -->
-
-    <!-- //tag::current_location_style[] -->
-    <style name="CenterOnCurrentLocationView" parent="BaseCenterOnCurrentLocationView">
-        <item name="android:layout_gravity">bottom|start</item>
-        <item name="android:layout_marginStart">@dimen/compass_default_margin_start</item>
-        <item name="android:layout_marginBottom">@dimen/current_location_default_margin_bottom</item>
-    </style>
-    <!-- //end::current_location_style[] -->
-
-    <!-- //tag::panning_buttons_style[] -->
-    <style name="ArrowButton" parent="GenericControlButton" />
-
-    <style name="ArrowButtonsGroup" parent="GenericControlButtonsGroup">
-        <item name="android:layout_width">150dp</item>
-        <item name="android:layout_marginRight">80dp</item>
-    </style>
-    <!-- //end::panning_buttons_style[] -->
-
-    <!-- //tag::zooming_buttons_style[] -->
-    <style name="ZoomButton" parent="GenericControlButton" />
-
-    <style name="ZoomButtonsGroup" parent="GenericControlButtonsGroup">
-        <item name="android:layout_width">@dimen/control_button_default_size</item>
-    </style>
-    <!-- //end::zooming_buttons_style[] -->
-
-    <!-- tag::example_of_custom_logo_position[] -->
-    <style name="LogoView" parent="BaseLogoView" >
-        <item name="android:layout_gravity">bottom|left</item>
-        <item name="android:layout_margin">@dimen/common_layout_zero_dp</item>
-    </style>
-    <!-- end::example_of_custom_logo_position[] -->
-
     <style name="Dialog_a">
         <item name="android:windowBackground">@null</item>
         <item name="android:windowIsFloating">true</item>
@@ -143,6 +92,108 @@
         <item name="android:windowIsTranslucent">false</item>
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">24sp</item>
+    </style>
+	
+	<!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="zoomBarViewStyle">@style/NK2ZoomBarView</item>
+        <item name="outlineTextViewStyle">@style/NK2OutlineTextView</item>
+        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
+    </style>
+
+    <style name="ExampleTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
+        <item name="colorPrimary">@color/exampleColorPrimary</item>
+        <item name="colorPrimaryDark">@color/exampleColorPrimaryDark</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="NK2Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:maxHeight">48dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/nk2_btn_round_background</item>
+        <item name="android:padding">4dp</item>
+        <item name="android:elevation">2dp</item>
+    </style>
+
+    <style name="NK2Button.MapMode">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:src">@drawable/nk2_ic_btn_2d_compass</item>
+        <item name="android:padding">4dp</item>
+    </style>
+
+    <style name="NK2Button.Recenter">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:src">@drawable/nk2_ic_btn_recenter</item>
+        <item name="android:padding">4dp</item>
+    </style>
+
+    <style name="NK2Button.Zoom">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">56dp</item>
+        <item name="android:clipToPadding">false</item>
+        <item name="android:clipChildren">false</item>
+        <item name="android:tint">@color/nk2_btn_zoom_icon_tint</item>
+        <item name="android:tintMode">multiply</item>
+    </style>
+
+    <style name="NK2Button.Zoom.In">
+        <item name="android:padding">2dp</item>
+        <item name="android:background">@drawable/nk2_btn_zoomin</item>
+        <item name="android:src">@drawable/nk2_ic_zoom_in</item>
+    </style>
+
+    <style name="NK2Button.Zoom.Out">
+        <item name="android:padding">2dp</item>
+        <item name="android:background">@drawable/nk2_btn_zoomout</item>
+        <item name="android:src">@drawable/nk2_ic_zoom_out</item>
+    </style>
+
+    <style name="NK2Button.PlanningMenu">
+        <item name="android:padding">4dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:src">@drawable/nk2_ic_btn_planning_menu</item>
+        <item name="android:tint">@color/nk2_btn_zoom_icon_tint</item>
+    </style>
+
+    <style name="NK2ZoomBarView">
+        <item name="android:layout_height">112dp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:background">@drawable/nk2_zoombar</item>
+    </style>
+
+    <style name="NK2OutlineTextView">
+        <item name="outlineWidth">1dp</item>
+        <item name="outlineColor">@color/black_alpha50</item>
+    </style>
+
+    <style name="NK2OutlineTextView.Small">
+        <item name="outlineWidth">3dp</item>
+    </style>
+
+    <style name="NK2OutlineTextView.Large">
+        <item name="outlineWidth">4dp</item>
+    </style>
+
+    <style name="NK2Button.VoiceGuidanceMode">
+        <item name="android:padding">4dp</item>
+        <item name="android:layout_width">48dp</item>
     </style>
 
 </resources>
