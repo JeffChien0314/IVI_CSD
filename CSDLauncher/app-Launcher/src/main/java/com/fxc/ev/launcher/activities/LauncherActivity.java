@@ -46,6 +46,8 @@ import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.adapter.HomeWidgetAdapter;
 import com.fxc.ev.launcher.fragment.Frg_WidgetsEdit;
+import com.fxc.ev.launcher.maps.poicatsearch.PoiCategoryConstants;
+import com.fxc.ev.launcher.maps.poicatsearch.PoiSearchThread;
 import com.fxc.ev.launcher.maps.route.RoutePlanningPreferencesActivity;
 import com.fxc.ev.launcher.utils.CameraStackController;
 import com.fxc.ev.launcher.utils.CameraStackController.CameraType;
@@ -64,6 +66,8 @@ import com.tomtom.navkit.map.MapLongClickEvent;
 import com.tomtom.navkit.map.MapLongClickListener;
 import com.tomtom.navkit.map.Marker;
 import com.tomtom.navkit.map.MarkerBuilder;
+import com.tomtom.navkit.map.camera.Camera;
+import com.tomtom.navkit.map.camera.CameraListener;
 import com.tomtom.navkit.map.extension.positioning.PositioningExtension;
 import com.tomtom.navkit2.TrafficRenderer;
 import com.tomtom.navkit2.TripRenderer;
@@ -172,6 +176,11 @@ public class LauncherActivity extends InteractiveMapActivity {
 
     private boolean fullVoiceGuidanceMode = true;
     private boolean navigationServiceBound = false;
+
+    private double mLatitude = 0;
+    private double mLongitude = 0;
+    private MyCameraListener myCameraListener;
+    private Map map;
 
     private ServiceConnection navigationConnection = new ServiceConnection() {
         @Override
@@ -361,12 +370,16 @@ public class LauncherActivity extends InteractiveMapActivity {
     private void initMap() {
         // Limit power consumption with a 20 FPS cap
         getMapHolder().getSurfaceAdapter().setFrameRateCap(20l);
-        Map map = getMapHolder().getMap();
+        map = getMapHolder().getMap();
+
         markerLayer = map.addLayer();
         waypointMarkers = new ArrayList<>();
 
         TripPlan tripPlan = new TripPlan();
         RouteStopVector waypoints = new RouteStopVector();
+
+        myCameraListener = new MyCameraListener();
+        map.getCamera().registerListener(myCameraListener);
 
         map.setMapClickListener(new MapClickListener() {
             @Override
@@ -581,6 +594,38 @@ public class LauncherActivity extends InteractiveMapActivity {
         });
     }
 
+    //Jerry@0308 add CameraListener
+    private class MyCameraListener extends CameraListener {
+        @Override
+        public void onCameraPropertiesChange(Camera camera) {
+            //mLatitude = camera.getProperties().getLookAt().getLatitude();
+            //mLongitude =camera.getProperties().getLookAt().getLongitude();
+
+            //super.onCameraPropertiesChange(camera);
+        }
+
+        @Override
+        public void onCameraPropertiesSteady(Camera camera) {
+            //super.onCameraPropertiesSteady(camera);
+            mLatitude = camera.getProperties().getLookAt().getLatitude();
+            mLongitude = camera.getProperties().getLookAt().getLongitude();
+            Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
+            for (String category : PoiCategoryConstants.ALL_CATEGORY) {
+                PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, category, coordinate, map, waypointMarkers);
+                thread.start();
+            }
+        }
+
+        @Override
+        public void onCameraPropertiesSignificantChange(Camera camera) {
+            //super.onCameraPropertiesSignificantChange(camera);
+            mLatitude = camera.getProperties().getLookAt().getLatitude();
+            mLongitude = camera.getProperties().getLookAt().getLongitude();
+            Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
+
+        }
+    }
+
     private void addWaypointMarker(com.tomtom.navkit.map.Coordinate waypoint) {
         MarkerBuilder markerBuilder = new MarkerBuilder();
         markerBuilder.setCoordinate(waypoint)
@@ -791,6 +836,10 @@ public class LauncherActivity extends InteractiveMapActivity {
 
         if (navigationServiceBound) {
             unbindService(navigationConnection);
+        }
+
+        if (myCameraListener != null) {
+            map.getCamera().unregisterListener(myCameraListener);
         }
 
         super.onDestroy();
