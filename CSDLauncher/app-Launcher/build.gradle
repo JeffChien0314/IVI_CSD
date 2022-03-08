@@ -139,6 +139,7 @@ dependencies {
     implementation(group: "$navKit2SdkGroup", name: "userprofile-navcloudconnector-onboardservice")
     implementation(group: "$navKit2SdkGroup", name: "userprofile-onboardservice")
     implementation(group: "$navKit2SdkGroup", name: "traffic-tile-clientlib")
+    implementation (group: "$navKit2SdkGroup", name: "search-onboardservice")
 
 }
 
