@@ -37,6 +37,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -49,6 +50,7 @@ import com.fxc.ev.launcher.fragment.Frg_WidgetsEdit;
 import com.fxc.ev.launcher.maps.poicatsearch.PoiCategoryConstants;
 import com.fxc.ev.launcher.maps.poicatsearch.PoiSearchThread;
 import com.fxc.ev.launcher.maps.route.RoutePlanningPreferencesActivity;
+import com.fxc.ev.launcher.maps.search.SearchFragment;
 import com.fxc.ev.launcher.utils.CameraStackController;
 import com.fxc.ev.launcher.utils.CameraStackController.CameraType;
 import com.fxc.ev.launcher.utils.DistanceConversions;
@@ -94,6 +96,7 @@ import com.tomtom.navkit2.navigation.TripPlanResult;
 import com.tomtom.navkit2.navigation.TripUpdateListener;
 import com.tomtom.navkit2.navigation.common.Preference;
 import com.tomtom.navkit2.place.Coordinate;
+import com.tomtom.navkit2.place.Location;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -111,7 +114,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
 
 
-public class LauncherActivity extends InteractiveMapActivity {
+public class LauncherActivity extends InteractiveMapActivity implements SearchFragment.OnMarkerChangedListener {
     public static final String TAG = "LauncherActivity";
 
     private ArrayList<View> widgetList = new ArrayList<>();
@@ -154,6 +157,11 @@ public class LauncherActivity extends InteractiveMapActivity {
     private Layer markerLayer;
     private Marker destinationMarker;
     private List<Marker> waypointMarkers;
+    //metis@0309 add -->
+    private MarkerBuilder searchMarkerBuilder;
+    private List<Marker> searchMarkerList = new ArrayList<>();
+    private FragmentManager fragmentManager;
+    //metis@0309 add <--
     //private NetworkDrawer networkDrawer;
 
     // trip planning preferences
@@ -173,6 +181,7 @@ public class LauncherActivity extends InteractiveMapActivity {
     private ImageButton mapModeButton;
     private ImageButton planningSettingsButton;
     private ImageButton voiceGuidanceButton;
+    private Button searchButton; //metis@ add
 
     private boolean fullVoiceGuidanceMode = true;
     private boolean navigationServiceBound = false;
@@ -207,6 +216,10 @@ public class LauncherActivity extends InteractiveMapActivity {
         }
     };
 
+    //metis@0309 获取当前位置
+    public Position getLastKnownPosition() {
+        return lastKnownPosition;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -216,6 +229,8 @@ public class LauncherActivity extends InteractiveMapActivity {
 
         mRead = getSharedPreferences("home_widget", MODE_PRIVATE);
         mEditor = mRead.edit();
+
+        fragmentManager = getSupportFragmentManager(); //metis@0309 add
 
         super.onCreate(savedInstanceState);
 
@@ -240,6 +255,7 @@ public class LauncherActivity extends InteractiveMapActivity {
         AppWidgetHostView hostView;
         int currentAppWidgetId;
         AppWidgetManager mAppWidgetManager = AppWidgetManager.getInstance(this);
+        if (mAppWidgetManager == null) return;
         ArrayList<AppWidgetProviderInfo> mAppwidgetProviderInfos = (ArrayList<AppWidgetProviderInfo>) mAppWidgetManager.getInstalledProviders();
         if (mRead.getString("widget1", "").equals("")) {
             Log.d(TAG, "widget1 null ");
@@ -374,6 +390,7 @@ public class LauncherActivity extends InteractiveMapActivity {
 
         markerLayer = map.addLayer();
         waypointMarkers = new ArrayList<>();
+        searchMarkerBuilder = new MarkerBuilder(); //metis@0309 add
 
         TripPlan tripPlan = new TripPlan();
         RouteStopVector waypoints = new RouteStopVector();
@@ -592,6 +609,29 @@ public class LauncherActivity extends InteractiveMapActivity {
                 Toast.makeText(getApplicationContext(), getString(R.string.navigation_experience_deviated_from_route, metersFromStart), Toast.LENGTH_LONG).show();
             }
         });
+		
+		//metis@0309 显示搜索页面 -->
+        searchButton = findViewById(R.id.search_btn);
+        searchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setMapWidgetVisibility(View.GONE);
+
+                FragmentTransaction fTransaction = fragmentManager.beginTransaction();
+                fTransaction.replace(R.id.search_container, new SearchFragment(), "SearchFragment");
+                fTransaction.addToBackStack(null);
+                fTransaction.commitAllowingStateLoss();
+            }
+        });
+        //metis@0309 显示搜索页面 <--
+    }
+	
+	private void setMapWidgetVisibility(int visibility) {
+        searchButton.setVisibility(visibility);
+        voiceGuidanceButton.setVisibility(visibility);
+        planningSettingsButton.setVisibility(visibility);
+        mapModeButton.setVisibility(visibility);
+        getZoomBarView().setVisibility(visibility);
     }
 
     //Jerry@0308 add CameraListener
@@ -646,6 +686,10 @@ public class LauncherActivity extends InteractiveMapActivity {
 
     private static com.tomtom.navkit2.place.Coordinate toPlaceCoordinate(com.tomtom.navkit.map.Coordinate coordinate) {
         return new com.tomtom.navkit2.place.Coordinate(coordinate.getLatitude(), coordinate.getLongitude());
+    }
+
+    private static com.tomtom.navkit.map.Coordinate toMapCoordinate(com.tomtom.navkit2.place.Coordinate coordinate) {
+        return new com.tomtom.navkit.map.Coordinate(coordinate.latitude(), coordinate.longitude());
     }
 
     public void doReadSettings() {
@@ -756,6 +800,7 @@ public class LauncherActivity extends InteractiveMapActivity {
         // connect to the navigation service which provides trip planning and driving assistance
         final Bundle serviceBundle = makeNavigationServiceBundle();
         final Intent intent = new Intent(this, NavigationService.class);
+        serviceBundle.putString(NavigationService.INITIAL_LANGUAGE_KEY, "zh-TW");
         intent.putExtra(NavigationService.CONFIGURATION, serviceBundle);
         if (!bindService(intent, navigationConnection, Context.BIND_AUTO_CREATE)) {
             Log.e(TAG, "Couldn't bind navigation service");
@@ -782,7 +827,12 @@ public class LauncherActivity extends InteractiveMapActivity {
 
     @Override
     public void onBackPressed() {
+        if (fragmentManager.getBackStackEntryCount() != 0) {
+            fragmentManager.popBackStack();
+            setMapWidgetVisibility(View.VISIBLE);
+        } else {
         super.onBackPressed();
+        }
         initWidgets(); //刷新widget list
     }
 
@@ -845,5 +895,24 @@ public class LauncherActivity extends InteractiveMapActivity {
         super.onDestroy();
     }
 
+    private void removeSearchMarkers() {
+        for (Marker marker : searchMarkerList) {
+            markerLayer.removeMarker(marker);
+        }
+        searchMarkerList.clear();
+    }
 
+    @Override
+    public void onMarkerChange(List<Location> locations) {
+        if (locations != null && locations.size() != 0) {
+            removeSearchMarkers();
+            for (Location location : locations) {
+                com.tomtom.navkit.map.Coordinate coordinate = toMapCoordinate(location.coordinate());
+                searchMarkerBuilder.setCoordinate(coordinate)
+                        // Equivalent for Michi default route markers configuration
+                        .setPinUri(getString(R.string.search_marker_pin_path));
+                searchMarkerList.add(markerLayer.addMarker(searchMarkerBuilder));
+            }
+        }
+    }
 }

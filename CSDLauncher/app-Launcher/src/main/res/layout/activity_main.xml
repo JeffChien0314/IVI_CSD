@@ -8,18 +8,16 @@
     <FrameLayout
         android:id="@+id/content_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/tool_menu_layout"
-        android:layout_marginBottom="12px">
+        android:layout_height="match_parent">
 
     </FrameLayout>
 
-    <LinearLayout
+    <!--<LinearLayout
         android:id="@+id/tool_menu_layout"
         android:layout_width="match_parent"
         android:layout_height="300px"
         android:layout_alignParentBottom="true"
         android:background="#00ff00"
-        android:orientation="horizontal" />
+        android:orientation="horizontal" />-->
 
 </RelativeLayout>

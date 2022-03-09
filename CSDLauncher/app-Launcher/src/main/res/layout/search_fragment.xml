@@ -1,54 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-
-    Copyright (c) 2015-2017 TomTom N.V. All rights reserved.
-
-    This software is the proprietary copyright of TomTom N.V. and its subsidiaries and may be used
-    for internal evaluation purposes or commercial use strictly subject to separate licensee
-    agreement between you and TomTom. If you are the licensee, you are only permitted to use
-    this Software in accordance with the terms of your license agreement. If you are not the
-    licensee then you are not authorised to use this software in any manner and should
-    immediately return it to TomTom N.V.
-
--->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+    android:layout_width="510px"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
+    android:background="@drawable/search_bg">
 
-    <EditText
-        android:id="@+id/search_text"
-        style="@style/SearchEditText"
-        android:layout_marginLeft="@dimen/offset_default"
-        android:layout_marginRight="@dimen/offset_default"
-        android:layout_marginTop="@dimen/offset_default"
-        android:hint="@string/search_activity_hint"
-        android:imeOptions="actionSearch"
-        android:inputType="text" />
+    <LinearLayout
+        android:id="@+id/search_edit_layout"
+        android:layout_width="372px"
+        android:layout_height="60px"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="30px"
+        android:background="@drawable/search_edittext_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
 
-    <com.tomtom.online.sdk.launcher.utils.views.RadioModifierView
-        android:id="@+id/search_modifier_tabs"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/offset_default"
-        app:first_middle_button_visible="false"
-        app:second_middle_button_visible="false" />
+        <ImageView
+            android:id="@+id/search_icon"
+            android:layout_width="30px"
+            android:layout_height="30px"
+            android:layout_marginLeft="15px"
+            android:src="@drawable/icon_search"></ImageView>
 
-    <ProgressBar
-        android:id="@+id/search_progress_bar"
+        <EditText
+            android:id="@+id/search_edit_text"
+            android:layout_width="252px"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15px"
+            android:layout_marginRight="15px"
+            android:background="@null"
+            android:hint="搜索"
+            android:inputType="text"
+            android:textColor="#e8e8e8"
+            android:textColorHint="#40ffffff"
+            android:textSize="28px"></EditText>
+
+        <ImageView
+            android:id="@+id/clear_all"
+            android:layout_width="30px"
+            android:layout_height="30px"
+            android:scaleType="fitXY"
+            android:layout_marginRight="15px"
+            android:layout_gravity="right|center_vertical"
+            android:src="@drawable/icon_clear_all"
+            android:visibility="visible"></ImageView>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/icon_mic"
+        android:layout_width="60px"
+        android:layout_height="60px"
+        android:layout_marginLeft="18px"
+        android:layout_marginTop="30px"
+        android:layout_toRightOf="@+id/search_edit_layout"
+        android:src="@drawable/icon_mic"></ImageView>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/search_results"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        style="@android:style/Widget.ProgressBar.Small"
-        android:visibility="gone"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_below="@+id/search_edit_layout"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="15px"
+        android:layout_marginRight="30px"></androidx.recyclerview.widget.RecyclerView>
 
-    <ListView
-        android:id="@+id/search_results_list"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white"
-        android:choiceMode="singleChoice" />
 
-</LinearLayout>
+</RelativeLayout>

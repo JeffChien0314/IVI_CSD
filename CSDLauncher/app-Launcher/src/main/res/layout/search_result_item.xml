@@ -13,35 +13,105 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="fill_parent"
-    android:background="@drawable/search_result_item_background"
-    android:minHeight="48dp"
-    android:layout_height="wrap_content">
+    android:layout_width="450px"
+    android:layout_height="180px"
+    android:layout_gravity="center"
+    android:background="@drawable/search_result_item_bg">
 
     <ImageView
-        android:id="@+id/dir_image"
-        android:layout_width="@dimen/search_flag_size"
-        android:layout_height="@dimen/search_flag_size"
-        android:src="@drawable/ic_search_listflag"
-        android:layout_marginLeft="@dimen/search_flag_margin_horizontal"
-        android:layout_marginRight="@dimen/search_flag_margin_horizontal"
-        android:layout_marginTop="@dimen/search_flag_margin_vertical"
-        android:layout_marginBottom="@dimen/search_flag_margin_vertical"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"/>
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/apk/res/android"
-        android:id="@+id/search_item_title"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
+        android:id="@+id/icon"
+        android:layout_width="90px"
+        android:layout_height="90px"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:textSize="@dimen/text_size_default"
-        android:layout_toRightOf="@id/dir_image"
-        android:layout_toEndOf="@id/dir_image"
-        android:gravity="center_vertical|start"
-        tools:text="@string/hello"
-        android:textColor="@color/dark_grey" />
+        android:layout_marginRight="24px"
+        android:src="@drawable/icon_search_item_nav" />
+
+    <LinearLayout
+        android:layout_width="204px"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="24px"
+        android:layout_toLeftOf="@id/icon"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="#ffffffff"
+            android:textSize="28px"
+            tools:text="@string/hello" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/name"
+            android:layout_marginTop="6px"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="#80ffffff"
+            android:textSize="22px"
+            tools:text="@string/hello" />
+
+        <TextView
+            android:id="@+id/opening_hours"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/name"
+            android:layout_marginTop="6px"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="#80ffffff"
+            android:textSize="22px"
+            tools:text="@string/hello"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/phone_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/name"
+            android:layout_marginTop="6px"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="#80ffffff"
+            android:textSize="22px"
+            tools:text="@string/hello"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="34px"
+        android:layout_marginRight="34px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5.6"
+            android:textColor="#ffffffff"
+            android:textSize="30px">
+        </TextView>
+
+        <TextView
+            android:id="@+id/distance_units"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="km"
+            android:textColor="#ffffffff"
+            android:textSize="22px">
+        </TextView>
+    </LinearLayout>
 
 
 </RelativeLayout>

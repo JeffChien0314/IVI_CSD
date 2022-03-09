@@ -34,16 +34,17 @@ android {
         applicationId "com.fxc.ev.launcher"
         targetSdkVersion project.ext.androidTargetSdkVersion
         minSdkVersion project.ext.androidMinSdkVersion
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
-        ndk {
+        /*ndk {
             //设置支持的so库架构
-            abiFilters /*"x86",*/"x86_64"
-        }
+            abiFilters "x86","x86_64"
+        }*/
 
         resConfigs 'en','cn'
 
-        setProperty("archivesBaseName", "navkit2-example-$versionName")
+        //setProperty("archivesBaseName", "navkit2-example-$versionName")
 
         buildConfigField "String", "API_KEY", getBuildConfigStringFromProperty("apiKey")
 
@@ -59,8 +60,24 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            debuggable false
+            minifyEnabled false
+            multiDexEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            android.applicationVariants.all { variant ->
+                variant.outputs.all { output ->
+                    def outputFile = output.outputFile
+                    if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                        def fileName = "EVLauncher.apk"
+                        outputFileName = fileName
+                    }
+                }
+            }
+        }
+        debug {
+            debuggable true
+            multiDexEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -76,6 +93,12 @@ android {
     lintOptions {
         checkReleaseBuilds false
         abortOnError false
+    }
+
+    splits {
+        abi {
+            enable true
+        }
     }
 
 }
@@ -133,13 +156,13 @@ dependencies {
     implementation(group: "$navKit2SdkGroup", name: "reversegeocoder-clientlib")
     implementation(group: "$navKit2SdkGroup", name: "reversegeocoder-onboardservice")
     implementation(group: "$navKit2SdkGroup", name: "search-clientlib")
+    implementation(group: "$navKit2SdkGroup", name: "search-onboardservice") //metis@0224 add
     implementation(group: "$navKit2SdkGroup", name: "userprofile-clientlib")
     implementation(group: "$navKit2SdkGroup", name: "userprofile-clientlib-place-converter")
     implementation(group: "$navKit2SdkGroup", name: "userprofile-navcloudconnector-clientlib")
     implementation(group: "$navKit2SdkGroup", name: "userprofile-navcloudconnector-onboardservice")
     implementation(group: "$navKit2SdkGroup", name: "userprofile-onboardservice")
     implementation(group: "$navKit2SdkGroup", name: "traffic-tile-clientlib")
-    implementation (group: "$navKit2SdkGroup", name: "search-onboardservice")
 
 }
 

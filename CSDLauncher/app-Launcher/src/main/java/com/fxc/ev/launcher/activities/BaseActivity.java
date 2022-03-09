@@ -26,9 +26,8 @@ public class BaseActivity extends AppCompatActivity {
 
     public RelativeLayout mMainLayout;
     public FrameLayout mContentContainer;
-    public LinearLayout mToolMenuLayout;
+    //public LinearLayout mToolMenuLayout;
     protected Context mContext;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,7 +37,7 @@ public class BaseActivity extends AppCompatActivity {
 
         mContext = this;
         mMainLayout = findViewById(R.id.main_layout);
-        mToolMenuLayout = findViewById(R.id.tool_menu_layout);
+        //mToolMenuLayout = findViewById(R.id.tool_menu_layout);
         mContentContainer = findViewById(R.id.content_container);
 
         initContentContainerView();

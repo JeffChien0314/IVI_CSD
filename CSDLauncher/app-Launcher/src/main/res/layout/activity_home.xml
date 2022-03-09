@@ -32,9 +32,21 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toTopOf="@+id/speedBubble"
-                app:layout_constraintEnd_toStartOf="@id/voiceGuidanceMode"
-                app:layout_constraintStart_toEndOf="@+id/zoomBarView"
+                app:layout_constraintEnd_toStartOf="@+id/zoomBarView"
+                app:layout_constraintStart_toEndOf="@+id/planningMenu_btn"
                 app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/search_btn"
+                android:layout_width="342px"
+                android:layout_height="90px"
+                android:background="#0A1427"
+                android:text="搜索"
+                android:textColor="#ffffff"
+                android:layout_marginTop="30px"
+                android:layout_marginLeft="30px"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent" />
 
             <ImageButton
                 android:id="@+id/recenterButton"
@@ -50,10 +62,10 @@
                 android:id="@id/zoomBarView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toTopOf="@id/mapModeButton"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:layout_marginTop="12px"
+                android:layout_marginRight="30px"
+                app:layout_constraintTop_toBottomOf="@id/mapModeButton"
+                app:layout_constraintRight_toRightOf="parent" />
 
             <com.fxc.ev.launcher.utils.view.OutlineTextView
                 android:id="@+id/eta"
@@ -90,10 +102,10 @@
             <ImageButton
                 android:id="@+id/mapModeButton"
                 style="@style/NK2Button.MapMode"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="64dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:layout_marginTop="30px"
+                android:layout_marginRight="30px"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintRight_toRightOf="parent" />
 
             <ImageButton
                 android:id="@+id/planningMenu_btn"
@@ -123,6 +135,17 @@
                 android:src="@drawable/nk2_ic_full_voice_guidance_mode"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
+
+            <FrameLayout
+                android:id="@+id/search_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="30px"
+                android:layout_marginBottom="30px"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

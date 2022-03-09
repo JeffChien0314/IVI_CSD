@@ -11,17 +11,13 @@
     immediately return it to TomTom N.V.
 
 -->
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:state_pressed="true">
-        <shape xmlns:android="http://schemas.android.com/apk/res/android"
-            android:shape="rectangle">
-            <solid android:color="@color/light" />
-        </shape>
-    </item>
-    <item>
-        <shape xmlns:android="http://schemas.android.com/apk/res/android"
-            android:shape="rectangle">
-            <solid android:color="@color/white" />
-        </shape>
-    </item>
-</selector>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <solid android:color="#282828" />
+
+    <corners
+        android:bottomLeftRadius="24px"
+        android:bottomRightRadius="24px"
+        android:topLeftRadius="24px"
+        android:topRightRadius="24px" />
+</shape>

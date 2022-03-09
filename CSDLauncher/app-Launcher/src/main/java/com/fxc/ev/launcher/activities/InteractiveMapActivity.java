@@ -92,6 +92,10 @@ public class InteractiveMapActivity extends BaseActivity {
         return mapHolder;
     }
 
+    protected ZoomBarView getZoomBarView() {
+        return zoomBarView;
+    }
+
     protected CameraStackController getCameraStackController() {
         return cameraStackController;
     }
@@ -155,11 +159,13 @@ public class InteractiveMapActivity extends BaseActivity {
             @Override
             public void OnZoomIn(ZoomBarView zoomBarView) {
                 map.getCamera().updateProperties(new CameraUpdate().zoomIn(), ZOOM_INTERPOLATION, ZOOM_DURATION);
+                Log.v(TAG, "OnZoomIn:getScale: " + map.getCamera().getProperties().getScale());
             }
 
             @Override
             public void OnZoomOut(ZoomBarView zoomBarView) {
                 map.getCamera().updateProperties(new CameraUpdate().zoomOut(), ZOOM_INTERPOLATION, ZOOM_DURATION);
+                Log.v(TAG, "OnZoomOut:getScale: " + map.getCamera().getProperties().getScale());
             }
         });
 
