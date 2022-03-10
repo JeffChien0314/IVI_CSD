@@ -43,7 +43,7 @@ public class Frg_WidgetsEdit extends Fragment {
 
 
     private void initAllWidgetList() {
-        pakageModList.add(new PakageMod(null, "Analog clock", getResources().getDrawable(R.drawable.icon_widget_edit_music), null));
+        pakageModList.add(new PakageMod(null, "Music", getResources().getDrawable(R.drawable.icon_widget_edit_music), null));
         pakageModList.add(new PakageMod(null, "my test widget", getResources().getDrawable(R.drawable.icon_widget_edit_recents), null));
         pakageModList.add(new PakageMod(null, "widget1", null, null));
         pakageModList.add(new PakageMod(null, "widget2", null, null));

@@ -261,7 +261,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             Log.d(TAG, "widget1 null ");
             for (int i = 0; i < mAppwidgetProviderInfos.size(); i++) {
                 AppWidgetProviderInfo widgetInfo = mAppwidgetProviderInfos.get(i);
-                if (widgetInfo.label.equals("Analog clock")) {
+                if (widgetInfo.label.equals("Music")) {
                     currentAppWidgetId = mAppWidgetHost.allocateAppWidgetId();
                     hostView = mAppWidgetHost.createView(mContext, currentAppWidgetId, widgetInfo);
                     widgetList.set(0, hostView);
