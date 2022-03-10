@@ -904,7 +904,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     @Override
     public void onMarkerChange(List<Location> locations) {
-        if (locations != null && locations.size() != 0) {
             removeSearchMarkers();
             for (Location location : locations) {
                 com.tomtom.navkit.map.Coordinate coordinate = toMapCoordinate(location.coordinate());
@@ -913,6 +912,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                         .setPinUri(getString(R.string.search_marker_pin_path));
                 searchMarkerList.add(markerLayer.addMarker(searchMarkerBuilder));
             }
-        }
+
     }
 }

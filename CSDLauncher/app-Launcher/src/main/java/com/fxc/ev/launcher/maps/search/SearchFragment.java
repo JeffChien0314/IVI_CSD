@@ -56,6 +56,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     private LauncherActivity launcherActivity;
     //private FtsResultVector ftsResultVector;
     private ArrayList<SearchResultItem> searchResultItemArrayList = new ArrayList<>();
+    List<Location> locationList = new ArrayList<>();
     private int STEP_INIT_SEARCH = 0x1000;
 
     public OnMarkerChangedListener onMarkerChangedListener;
@@ -71,12 +72,11 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
                 FtsResultVector ftsResultVector = (FtsResultVector) msg.obj;
                 if (ftsResultVector != null) {
                     searchResultItemArrayList.clear();
+                    locationList.clear();
                     if (ftsResultVector.size() != 0) {
-                        List<Location> locationList = new ArrayList<>();
                         for (FtsResult ftsResult : ftsResultVector) {
                             if (!TextUtils.isEmpty(ftsResult.getPoiName())) {
                                 SearchResultItem searchResultItem = new SearchResultItem();
-
                                 searchResultItem.setName(ftsResult.getPoiName());
                                 searchResultItem.setAddress(ftsResult.getAddress());
                                 searchResultItem.setDistance(ftsResult.getDistance());
@@ -87,8 +87,8 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
                                 searchResultItemArrayList.add(searchResultItem);
                             }
                         }
-                        onMarkerChangedListener.onMarkerChange(locationList);
                     }
+                        onMarkerChangedListener.onMarkerChange(locationList);
                     searchResultsAdapter.notifyDataSetChanged();
                 }
             }
@@ -128,7 +128,6 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
             public void onClick(View v) {
                 searchEditText.setText("");
                 searchEditText.setHint("搜索");
-                clearAllImageView.setVisibility(View.GONE);
                 searchResultItemArrayList.clear();
                 searchResultsAdapter.notifyDataSetChanged();
             }
@@ -149,6 +148,8 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
                 if (!TextUtils.isEmpty(searchEditText.getText().toString())) {
                     clearAllImageView.setVisibility(View.VISIBLE);
                     search(searchEditText.getText().toString());
+                } else {
+                    clearAllImageView.setVisibility(View.GONE);
                 }
             }
         });
