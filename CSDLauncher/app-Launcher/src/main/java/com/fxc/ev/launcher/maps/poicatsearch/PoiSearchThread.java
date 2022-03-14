@@ -11,9 +11,6 @@ import com.tomtom.navkit.map.Layer;
 import com.tomtom.navkit.map.Map;
 import com.tomtom.navkit.map.Marker;
 import com.tomtom.navkit2.place.Coordinate;
-import com.tomtom.navkit2.place.PoiCategory;
-import com.tomtom.navkit2.place.PoiCategoryList;
-import com.tomtom.navkit2.place.PoiCategorySet;
 import com.tomtom.navkit2.search.ExecutionMode;
 import com.tomtom.navkit2.search.FilterByGeoRadius;
 import com.tomtom.navkit2.search.FtsResult;
@@ -21,13 +18,10 @@ import com.tomtom.navkit2.search.FtsResultVector;
 import com.tomtom.navkit2.search.FtsResults;
 import com.tomtom.navkit2.search.FtsResultsListener;
 import com.tomtom.navkit2.search.Input;
-import com.tomtom.navkit2.search.PoiSuggestionResult;
-import com.tomtom.navkit2.search.PoiSuggestionResultVector;
 import com.tomtom.navkit2.search.PoiSuggestionResults;
 import com.tomtom.navkit2.search.PoiSuggestionsListener;
 import com.tomtom.navkit2.search.Search;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PoiSearchThread extends Thread {
@@ -57,11 +51,11 @@ public class PoiSearchThread extends Thread {
     }
 
     private Input getInput(String query, Coordinate coordinate) {
-        FilterByGeoRadius filter = new FilterByGeoRadius(coordinate, PoiCategoryConstants.RADIUS_IN_METERS);
+        FilterByGeoRadius filter = new FilterByGeoRadius(coordinate, Constants.RADIUS_IN_METERS);
         Input.Builder builder = new Input.Builder();
         builder.setSearchString(query)
                 .setLanguage("zh-TW")
-                .setLimit(PoiCategoryConstants.LIMIT)
+                .setLimit(Constants.LIMIT)
                 .setExecutionMode(ExecutionMode.kOnline)
                 .setFilterByGeoRadius(filter);
         Input input = builder.build();

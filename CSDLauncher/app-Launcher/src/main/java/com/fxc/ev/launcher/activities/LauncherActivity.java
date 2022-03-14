@@ -47,7 +47,7 @@ import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.adapter.HomeWidgetAdapter;
 import com.fxc.ev.launcher.fragment.Frg_WidgetsEdit;
-import com.fxc.ev.launcher.maps.poicatsearch.PoiCategoryConstants;
+import com.fxc.ev.launcher.maps.poicatsearch.Constants;
 import com.fxc.ev.launcher.maps.poicatsearch.PoiSearchThread;
 import com.fxc.ev.launcher.maps.route.RoutePlanningPreferencesActivity;
 import com.fxc.ev.launcher.maps.search.SearchFragment;
@@ -460,6 +460,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                                 tripUpdateListener = null;
                                 hideEtaPanel();
                                 hideNextInstructionPanel();
+                                stopPreview();
                                 navigation.deleteTrip(trip);
                                 trip = null;
                             }
@@ -476,6 +477,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
                                 @Override
                                 public void onTripArrival(Trip trip) {
+                                    setMapWidgetVisibility2(View.VISIBLE);//Jerry@20220314
                                     Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
                                 }
                             };
@@ -487,6 +489,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                             getCameraStackController().addTripToOverviewCamera(tripRenderer);
                             if (trip.routeList().size() <= 1) {
                                 navigation.startNavigation(trip);
+                                if(Constants.IS_DEMO){//Jerry@20220314 add
+                                    startDemo();
+                                }
                             } else {
                                 Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
                                 tripRenderer.addClickListener(new TripRendererClickListener() {
@@ -494,6 +499,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                                     public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
                                         trip.setPreferredRoute(route);
                                         navigation.startNavigation(trip);
+                                        if(Constants.IS_DEMO){//Jerry@20220314 add
+                                            startDemo();
+                                        }
                                     }
                                 });
                             }
@@ -587,6 +595,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 if (!instructions.isEmpty()) {
                     getNextInstructionPanelView().update(distanceToInstructionInMeters, instructions);
                     visibility = View.VISIBLE;
+                    if(View.VISIBLE == searchButton.getVisibility()){//Jerry@20220314
+                        setMapWidgetVisibility2(View.GONE);
+                    }
                 }
                 getNextInstructionPanelView().setVisibility(visibility);
             }
@@ -634,6 +645,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         getZoomBarView().setVisibility(visibility);
     }
 
+    private void setMapWidgetVisibility2(int visibility) {
+        searchButton.setVisibility(visibility);
+        voiceGuidanceButton.setVisibility(visibility);
+    }
+
     //Jerry@0308 add CameraListener
     private class MyCameraListener extends CameraListener {
         @Override
@@ -650,7 +666,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             mLatitude = camera.getProperties().getLookAt().getLatitude();
             mLongitude = camera.getProperties().getLookAt().getLongitude();
             Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
-            for (String category : PoiCategoryConstants.ALL_CATEGORY) {
+            for (String category : Constants.ALL_CATEGORY) {
                 PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, category, coordinate, map, waypointMarkers);
                 thread.start();
             }
@@ -748,7 +764,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         getEtaTextView().setText(completeSpannable);
-        getEtaTextView().setVisibility(View.VISIBLE);
+        //getEtaTextView().setVisibility(View.VISIBLE);//Jerry@20220314 mark:invisible
     }
 
     private void hideEtaPanel() {
@@ -757,6 +773,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     private void hideNextInstructionPanel() {
         getNextInstructionPanelView().setVisibility(View.GONE);
+        searchButton.setVisibility(View.VISIBLE);//Jerry@20220314 add:visible
     }
 
     private void doMapModeButtonAnimation(CameraType newCameraType) {
@@ -852,6 +869,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     @Override
     protected void onDestroy() {
+        stopPreview();
         if (tripRenderer != null) {
             getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
             tripRenderer.stop();
@@ -913,5 +931,20 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 searchMarkerList.add(markerLayer.addMarker(searchMarkerBuilder));
             }
 
+    }
+
+    //Jerry@20220314 add
+    private void stopPreview() {
+        if (trip != null) {
+            trip.stopPreview();
+        }
+    }
+
+    //Jerry@20220314 add
+    private void startDemo() {
+        Log.i(TAG, "Starting trip preview");
+        if (trip != null) {
+            trip.startPreview(Constants.SPEED_MULTIPLIER);
+        }
     }
 }
