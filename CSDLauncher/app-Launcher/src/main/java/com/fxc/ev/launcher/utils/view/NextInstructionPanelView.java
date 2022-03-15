@@ -99,14 +99,14 @@ public class NextInstructionPanelView extends ConstraintLayout {
         // both panels, were we to enter the interactive mode and stay there over several
         // instruction updates, some of which
         // possibly having combined instructions.
-        combinedInstructionPanel.setVisibility(INVISIBLE);
+        /*combinedInstructionPanel.setVisibility(INVISIBLE);//Jerry@20220315 marker:not display
         if (currentCombinedInstruction != null) {
           combinedInstructionPanel.update(currentCombinedInstruction, currentCountryCode);
           // Make the CIP visible when the underlying image is indeed around
           if (combinedInstructionPanel.hasCombinedManeuverImage()) {
             combinedInstructionPanel.setVisibility(VISIBLE);
           }
-        }
+        }*/
       } else {
         // There is no NIP, hence no CIP; by using "gone" we do not take any space in the layout.
         // Note that the children of the NIP panel and of the CIP panel will also seem "gone" as a

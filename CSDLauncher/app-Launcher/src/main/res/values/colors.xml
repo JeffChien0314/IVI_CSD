@@ -73,4 +73,7 @@
     <color name="tomtom_range_outer_polygon_fill_color">#0000ffff</color>
 
     <color name="map_state_product_list_background">#e7f1f9</color>
+
+    <color name="nip_default_background_0C0C0C">#0C0C0C</color>
+    <color name="nip_direction_color_80ffffff">#80ffffff</color>
 </resources>

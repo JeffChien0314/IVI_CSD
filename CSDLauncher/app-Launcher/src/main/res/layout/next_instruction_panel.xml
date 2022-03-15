@@ -16,27 +16,50 @@ immediately return or destroy it.
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nipRootContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/nk2_next_instruction_panel"
-    android:paddingStart="24dp"
-    android:paddingTop="6dp"
-    android:paddingEnd="12dp"
-    android:paddingBottom="8dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent">
+    android:layout_height="150px"
+    android:background="@drawable/nk2_next_instruction_panel">
 
     <ImageView
         android:id="@+id/nipManeuverImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_width="60px"
+        android:layout_height="60px"
+        android:layout_marginLeft="60px"
+        android:layout_marginTop="24px"
         android:visibility="visible"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/nk2_nip_roundaboutleft3_uk_primary" />
 
     <LinearLayout
+        android:id="@+id/nipDistanceLayout"
+        android:layout_width="180px"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="@id/nipManeuverImage"
+        app:layout_constraintRight_toRightOf="@id/nipManeuverImage"
+        app:layout_constraintTop_toBottomOf="@id/nipManeuverImage">
+
+        <TextView
+            android:id="@+id/nipDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:textSize="30px"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/nipDistanceUnit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10px"
+            android:textColor="@color/white"
+            android:textSize="30px"
+            android:textStyle="normal" />
+
+    </LinearLayout>
+
+    <!--<LinearLayout
         android:id="@+id/nipDistanceContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -68,7 +91,7 @@ immediately return or destroy it.
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="@+id/nipDistance"
             app:layout_constraintTop_toBottomOf="@+id/nipDistance" />
-    </LinearLayout>
+    </LinearLayout>-->
 
     <TextView
         android:id="@+id/nipRoadNumber"
@@ -78,23 +101,20 @@ immediately return or destroy it.
         android:gravity="center"
         android:textColor="@color/white"
         android:textStyle="bold"
+        android:visibility="gone"
         app:autoSizeMaxTextSize="20sp"
         app:autoSizeMinTextSize="15sp"
-        app:layout_constraintStart_toEndOf="@id/nipDistanceContainer"
+        app:layout_constraintStart_toEndOf="@id/nipDistanceLayout"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/nipExitNumber"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
         android:background="@drawable/nk2_next_instruction_exit"
-        android:paddingLeft="4sp"
-        android:paddingTop="2sp"
-        android:paddingRight="4sp"
-        android:paddingBottom="2sp"
         android:textColor="@color/black"
         android:textStyle="bold"
+        android:visibility="gone"
         app:autoSizeMaxTextSize="20sp"
         app:autoSizeMinTextSize="15sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/nipRoadNumber"
@@ -109,21 +129,52 @@ immediately return or destroy it.
         tools:layout_editor_absoluteX="24dp"
         tools:layout_editor_absoluteY="6dp" />
 
-    <TextView
-        android:id="@+id/nipRoadName"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="4dp"
-        android:maxLines="2"
-        android:textAlignment="viewStart"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        app:autoSizeMaxTextSize="25sp"
-        app:autoSizeMinTextSize="15sp"
+    <LinearLayout
+        android:id="@+id/nipRoadLayout"
+        android:layout_width="222px"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="60px"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/nipDistanceContainer"
-        app:layout_constraintTop_toBottomOf="@id/nipRoadshieldsExitBarrier" />
+        app:layout_constraintLeft_toRightOf="@id/nipManeuverImage"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Direction"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAlignment="viewStart"
+            android:textColor="@color/nip_direction_color_80ffffff"
+            android:textStyle="normal"
+            android:textSize="30px"/>
+
+        <TextView
+            android:id="@+id/nipRoadName"
+            android:layout_width="222px"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6px"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textAlignment="viewStart"
+            android:textColor="@color/white"
+            android:textStyle="normal"
+            android:textSize="30px"
+            app:layout_constraintBottom_toBottomOf="@id/nipRoadNumber"
+            app:layout_constraintLeft_toLeftOf="@id/nipRoadNumber" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/nipTTSControl"
+        android:layout_width="60px"
+        android:layout_height="60px"
+        android:background="@drawable/icon_volume_normal"
+        android:layout_marginLeft="18px"
+        app:layout_constraintLeft_toRightOf="@id/nipRoadLayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

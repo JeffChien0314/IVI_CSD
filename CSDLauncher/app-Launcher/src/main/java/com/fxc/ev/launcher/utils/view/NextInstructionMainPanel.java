@@ -91,7 +91,7 @@ public class NextInstructionMainPanel extends LinearLayout {
 
         updateRoadShieldsView(formattedRoadShields(currentInstruction.getNextSignificantRoad().getRoadNumbers()));
 
-        updateExitShieldView(currentInstruction, countryCode);
+        //updateExitShieldView(currentInstruction, countryCode);//Jerry@20220315 mark:not display
     }
 
     private void updateDistance(int distanceToInstructionInMeters, String countryCode) {
@@ -140,11 +140,14 @@ public class NextInstructionMainPanel extends LinearLayout {
     }
 
     private int backgroundColor(CountrySpecifics.PanelBackgroundVariant backgroundColor) {
-        if (backgroundColor == CountrySpecifics.PanelBackgroundVariant.ALTERNATIVE) {
+        //Jerry@20220315 add:-->
+        /*if (backgroundColor == CountrySpecifics.PanelBackgroundVariant.ALTERNATIVE) {
             return ContextCompat.getColor(getContext(), R.color.nip_alternative_background);
         } else {
             return ContextCompat.getColor(getContext(), R.color.nip_default_background);
-        }
+        }*/
+        return ContextCompat.getColor(getContext(), R.color.nip_default_background_0C0C0C);
+        //<--Jerry@20220315 add:
     }
 
     private String formatStreetnameAndTowards(Instruction instruction) {
