@@ -693,6 +693,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     private void setMapWidgetVisibility2(int visibility) {
         searchButton.setVisibility(visibility);
+        favHomeBtn.setVisibility(visibility);
+        favOfficeBtn.setVisibility(visibility);
         voiceGuidanceButton.setVisibility(visibility);
     }
 
