@@ -47,7 +47,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFragment extends Fragment implements AdapterView.OnItemClickListener {
+public class SearchFragment extends Fragment  {
     public static final String TAG = "metis.SearchFragment";
     private View rootView;
     private EditText searchEditText;
@@ -67,6 +67,7 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     private RecyclerView favRecyclerView;
     private LinearLayout favItemLayout;
     private LinearLayout interestItemLayout;
+    private TextView mInterestMore;
 
     public OnMarkerChangedListener onMarkerChangedListener;
 
@@ -197,6 +198,15 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         searchResultRecyclerView.setLayoutManager(linearLayoutManager);
         searchResultsAdapter = new SearchResultsAdapter(getContext(), searchResultItemArrayList);
         searchResultRecyclerView.setAdapter(searchResultsAdapter);
+
+        searchResultsAdapter.setItemClickListener(new SearchResultsAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(SearchResultItem searchResultItem) {
+                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
+                launcherActivity.setCurrentFragment(routePreviewFragment);
+                routePreviewFragment.setData(searchResultItem);
+            }
+        });
     }
 
     private void initFavoritesView() {
@@ -205,12 +215,20 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         favMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                launcherActivity.setCurrentFragment(new FavoritesEditFragment());
             }
         });
 
         favItemLayout = rootView.findViewById(R.id.fav_item_layout);
         interestItemLayout = rootView.findViewById(R.id.interest_item_layout);
+        mInterestMore = rootView.findViewById(R.id.interest_more);
+        mInterestMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launcherActivity.setCurrentFragment(new InterestEditFragment());
+            }
+        });
+
 
         List<KeyValuePair> list1 = new ArrayList<>();
         List<KeyValuePair> list2 = new ArrayList<>();
@@ -350,12 +368,6 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
         bundle.putString(PoiDetailsOnboardService.SEARCH_SERVICE_API_KEY, BuildConfig.API_KEY);
 
         return bundle;
-    }
-
-
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //onSearchItemSelectedListener.onSearchItemSelectedListener(position, searchResultList.get(position));
     }
 
     @Override

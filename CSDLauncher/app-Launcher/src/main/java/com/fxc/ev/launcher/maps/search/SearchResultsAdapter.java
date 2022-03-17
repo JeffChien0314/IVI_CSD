@@ -21,6 +21,11 @@ import java.util.ArrayList;
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.SearchItemViewHolder> {
     public static final String TAG = "SearchResultsAdapter";
     private ArrayList<SearchResultItem> searchResultItemArrayList;
+    private OnItemClickListener mItemClickListener;
+
+    public interface OnItemClickListener {
+        void onItemClick(SearchResultItem searchResultItem);
+    }
 
     public SearchResultsAdapter(Context context, ArrayList<SearchResultItem> searchResultItemArrayList) {
         this.searchResultItemArrayList = searchResultItemArrayList;
@@ -51,10 +56,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             if (!TextUtils.isEmpty(String.valueOf(searchResultItem.getDistance()))) {
                 holder.distance.setVisibility(View.VISIBLE);
                 int distance = searchResultItem.getDistance();
-                if (distance > 1000) {
-                    String s = String.valueOf(distance * 0.001).substring(0, 3);
-                    Log.v(TAG, "distance: " + s);
-                    holder.distance.setText(s);
+                if (distance >= 10 * 1000) {
+                    holder.distance.setText(String.valueOf(distance * 0.001));
+                    holder.distanceUnits.setText("km");
+                } else if (distance > 1000 && distance < 10 * 1000) {
+                    holder.distance.setText(String.valueOf(distance * 0.001).substring(0, 3));
                     holder.distanceUnits.setText("km");
                 } else {
                     holder.distance.setText(String.valueOf(distance));
@@ -63,7 +69,21 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             } else {
                 holder.distance.setVisibility(View.GONE);
             }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mItemClickListener != null) {
+                        mItemClickListener.onItemClick(searchResultItem);
+                    }
+                }
+            });
         }
+    }
+
+
+    public void setItemClickListener(OnItemClickListener itemClickListener) {
+        mItemClickListener = itemClickListener;
     }
 
     @Override

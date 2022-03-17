@@ -109,6 +109,7 @@ import java.util.Scanner;
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.preference.PreferenceManager;
@@ -222,6 +223,14 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     //metis@0309 获取当前位置
     public Position getLastKnownPosition() {
         return lastKnownPosition;
+    }
+
+    public void setCurrentFragment(Fragment currentFragment) {
+        setMapWidgetVisibility(View.GONE);
+        FragmentTransaction fTransaction = fragmentManager.beginTransaction();
+        fTransaction.replace(R.id.search_container, currentFragment, currentFragment.getTag());
+        fTransaction.addToBackStack(null);
+        fTransaction.commitAllowingStateLoss();
     }
 
     @Override
@@ -631,12 +640,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setMapWidgetVisibility(View.GONE);
-
-                FragmentTransaction fTransaction = fragmentManager.beginTransaction();
+                setCurrentFragment(new SearchFragment());
+                /*FragmentTransaction fTransaction = fragmentManager.beginTransaction();
                 fTransaction.replace(R.id.search_container, new SearchFragment(), "SearchFragment");
                 fTransaction.addToBackStack(null);
-                fTransaction.commitAllowingStateLoss();
+                fTransaction.commitAllowingStateLoss();*/
             }
         });
         //metis@0309 显示搜索页面 <--
@@ -851,9 +859,10 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     @Override
     public void onBackPressed() {
+        Log.v(TAG, "getBackStackEntryCount:" + fragmentManager.getBackStackEntryCount());
         if (fragmentManager.getBackStackEntryCount() != 0) {
             fragmentManager.popBackStack();
-            setMapWidgetVisibility(View.VISIBLE);
+            if (fragmentManager.getBackStackEntryCount() == 1) setMapWidgetVisibility(View.VISIBLE);
         } else {
         super.onBackPressed();
         }
