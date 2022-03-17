@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nipRootContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/nk2_outline_panel"
+    android:paddingBottom="13px"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintStart_toStartOf="parent">
+
+    <LinearLayout
+        android:id="@+id/nipEndNavigationLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:visibility="gone"
+        android:paddingTop="30px"
+        android:paddingBottom="30px"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/nipEndNavigation"
+            android:layout_width="450px"
+            android:layout_height="60px"
+            android:background="#F63E1F"
+            android:text="@string/nip_instruction_end_route"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="30px"
+            android:visibility="visible"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/nipOutlineLayout"
+        android:layout_width="402px"
+        android:layout_height="34px"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="13px"
+        android:gravity="left|center_vertical"
+        android:orientation="horizontal"
+        app:layout_goneMarginTop="0px"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/nipEndNavigationLayout">
+
+        <TextView
+            android:id="@+id/nipOutlineDistance"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="99999.5km"
+            android:textColor="@color/white"
+            android:textSize="28px" />
+
+        <TextView
+            android:id="@+id/nipOutlineTimeRemaining"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="12 hr 10 min"
+            android:textColor="@color/nip_direction_color_80ffffff"
+            android:textSize="28px" />
+
+        <TextView
+            android:id="@+id/nipOutlineTime"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="12:30"
+            android:textColor="@color/nip_direction_color_80ffffff"
+            android:textSize="28px" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/nipEndNavigationToggle"
+        android:layout_width="30px"
+        android:layout_height="30px"
+        android:layout_marginRight="30px"
+        android:layout_marginTop="13px"
+        android:background="@drawable/icon_step_expand_normal"
+        app:layout_constraintBottom_toBottomOf="@id/nipOutlineLayout"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/nipOutlineLayout" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

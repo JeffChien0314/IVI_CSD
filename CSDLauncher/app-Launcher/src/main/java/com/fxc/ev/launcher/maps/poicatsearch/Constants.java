@@ -9,4 +9,6 @@ public class Constants {
     public static String[] SUB_CATEGORY = {"停车场"};
 
     public static final float SPEED_MULTIPLIER = 2.0f;
+
+    public static final String STOP_NAVIGATION = "stop navigation";
 }

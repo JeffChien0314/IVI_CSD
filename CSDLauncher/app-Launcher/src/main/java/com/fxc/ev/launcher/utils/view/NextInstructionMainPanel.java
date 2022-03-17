@@ -89,7 +89,7 @@ public class NextInstructionMainPanel extends LinearLayout {
 
         streetnameAndTowards.setText(formatStreetnameAndTowards(currentInstruction));
 
-        updateRoadShieldsView(formattedRoadShields(currentInstruction.getNextSignificantRoad().getRoadNumbers()));
+        //updateRoadShieldsView(formattedRoadShields(currentInstruction.getNextSignificantRoad().getRoadNumbers()));//Jerry@20220317 mark:not display
 
         //updateExitShieldView(currentInstruction, countryCode);//Jerry@20220315 mark:not display
     }

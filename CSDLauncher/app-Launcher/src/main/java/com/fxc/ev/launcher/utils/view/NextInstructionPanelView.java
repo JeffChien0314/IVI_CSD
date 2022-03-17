@@ -23,6 +23,7 @@ import com.fxc.ev.launcher.R;
 import com.tomtom.navkit2.drivingassistance.Position;
 import com.tomtom.navkit2.guidance.Instruction;
 
+import java.util.Date;
 import java.util.List;
 
 public class NextInstructionPanelView extends ConstraintLayout {
@@ -31,6 +32,7 @@ public class NextInstructionPanelView extends ConstraintLayout {
 
   private final NextInstructionMainPanel nextInstructionMainPanel;
   private final CombinedInstructionPanel combinedInstructionPanel;
+  private final OutlineView outlineViewPanel;
   private Instruction currentInstruction = null;
   private Instruction currentCombinedInstruction = null;
   private int currentDistanceToInstructionInMeters = 0;
@@ -50,6 +52,7 @@ public class NextInstructionPanelView extends ConstraintLayout {
     inflate(context, R.layout.next_instruction_container_view, this);
     nextInstructionMainPanel = findViewById(R.id.nextInstructionMainPanel);
     combinedInstructionPanel = findViewById(R.id.nextInstructionCombinedPanel);
+    outlineViewPanel = findViewById(R.id.outlineViewText);//Jerry@20220317 add
   }
 
   public void updatePosition(Position position) {
@@ -93,6 +96,7 @@ public class NextInstructionPanelView extends ConstraintLayout {
         nextInstructionMainPanel.update(
             currentInstruction, currentDistanceToInstructionInMeters, currentCountryCode);
         nextInstructionMainPanel.setVisibility(VISIBLE);
+        outlineViewPanel.setVisibility(VISIBLE);//Jerry@20220316 add
         // The CIP is not yet "visible". However, it is not "gone", as it should take space in the
         // layout
         // to ensure that the amount of Y-translation we compute is large enough to hide
@@ -113,7 +117,13 @@ public class NextInstructionPanelView extends ConstraintLayout {
         // result.
         nextInstructionMainPanel.setVisibility(GONE);
         combinedInstructionPanel.setVisibility(GONE);
+        outlineViewPanel.setVisibility(GONE);//Jerry@20220316 add
       }
     }
+  }
+
+  //Jerry220220317 add update navigation distance&time
+  public void updateTripOutlineView(String distance, int timeRemaining, Date date){
+    outlineViewPanel.updateTripInfo(distance,timeRemaining,date);
   }
 }

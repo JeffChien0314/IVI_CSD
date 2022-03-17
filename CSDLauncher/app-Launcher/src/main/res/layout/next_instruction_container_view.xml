@@ -24,6 +24,16 @@ immediately return or destroy it.
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <com.fxc.ev.launcher.utils.view.OutlineView
+        android:id="@+id/outlineViewText"
+        android:layout_height="wrap_content"
+        android:layout_width="510px"
+        app:layout_constraintWidth_default="wrap"
+        app:layout_constraintHeight_default="wrap"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/nextInstructionMainPanel"
+        app:layout_constraintStart_toStartOf="parent"/>
+
     <com.fxc.ev.launcher.utils.view.CombinedInstructionPanel
         android:id="@+id/nextInstructionCombinedPanel"
         android:layout_height="0dp"

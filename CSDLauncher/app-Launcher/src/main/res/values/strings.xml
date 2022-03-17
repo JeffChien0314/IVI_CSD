@@ -117,6 +117,9 @@
     <string name="depot_poi_search_position_marker_path">asset:icons@/route-markers/depot.png</string>
     <string name="gas_station_poi_search_position_marker_path">asset:icons@/route-markers/gas_station.png</string>
     <string name="font_style">asset://simkai.ttf</string>
+    <string name="nip_instruction_end_route">End Route</string>
+    <string name="nip_instruction_remaining"> ・ %d hr %d min ・ </string>
+    <string name="nip_instruction_remaining_min"> ・ %d min ・ </string>
 	
 	<!--metis@0309 add !-->
 	<string name="search_marker_pin_path">asset:icons@/route-markers/icon_pin.png</string>

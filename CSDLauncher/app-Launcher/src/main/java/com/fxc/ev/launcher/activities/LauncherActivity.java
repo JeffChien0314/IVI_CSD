@@ -17,9 +17,11 @@ import android.appwidget.AppWidgetHost;
 import android.appwidget.AppWidgetHostView;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProviderInfo;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
@@ -194,6 +196,30 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private double mLongitude = 0;
     private MyCameraListener myCameraListener;
     private Map map;
+	
+	//Jerry@20220317 add for stop navigation
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Log.d("Jerry", "intent.getAction():"+intent.getAction());
+            if(Constants.STOP_NAVIGATION.equals(intent.getAction())){
+                if (tripRenderer != null) {
+                    getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
+                    tripRenderer.stop();
+                    tripRenderer = null;
+                }
+                if (trip != null) {
+                    trip.removeListener(tripUpdateListener);
+                    tripUpdateListener = null;
+                    hideEtaPanel();
+                    hideNextInstructionPanel();
+                    stopPreview();
+                    navigation.deleteTrip(trip);
+                    trip = null;
+                }
+            }
+        }
+    };
 
     private ServiceConnection navigationConnection = new ServiceConnection() {
         @Override
@@ -396,6 +422,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     private void initMap() {
+        //Jerry@20220317 add for stopping navigation-->
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Constants.STOP_NAVIGATION);
+        registerReceiver(broadcastReceiver,intentFilter);
+        //<--Jerry@20220317 add for stopping navigation
         // Limit power consumption with a 20 FPS cap
         getMapHolder().getSurfaceAdapter().setFrameRateCap(20l);
         map = getMapHolder().getMap();
@@ -769,6 +800,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         int trafficDelayInMins = Math.round(progress.remainingTrafficDelayInSeconds() / 60.0f);
         String trafficDelayText = trafficDelayInMins > 0 ? "\u26a0 +" + trafficDelayInMins + "min" : "";
 
+        //Jerry@20220317 add:get navigation remaining time
+        int remainingTimeInSeconds = progress.remainingTimeInSeconds()+progress.remainingTrafficDelayInSeconds();
+
         String completeText = etaAndDistanceText + trafficDelayText;
         SpannableString completeSpannable = new SpannableString(completeText);
         int trafficTextColor = Color.rgb(0xFF, 0xAA, 0xAA);
@@ -778,8 +812,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 completeText.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 
-        getEtaTextView().setText(completeSpannable);
+        //Jerry@20220317 modify-->
+        //getEtaTextView().setText(completeSpannable);//Jerry@20220314 mark:invisible
         //getEtaTextView().setVisibility(View.VISIBLE);//Jerry@20220314 mark:invisible
+        getNextInstructionPanelView().updateTripOutlineView(fd.distance.concat(" "+fd.unit), remainingTimeInSeconds, eta.getTime());
+        //<--Jerry@20220317 modify
     }
 
     private void hideEtaPanel() {
@@ -924,6 +961,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
         if (myCameraListener != null) {
             map.getCamera().unregisterListener(myCameraListener);
+        }
+
+        //Jerry@20220317 add
+        if(broadcastReceiver!=null){
+            unregisterReceiver(broadcastReceiver);
         }
 
         super.onDestroy();

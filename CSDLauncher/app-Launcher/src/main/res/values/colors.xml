@@ -76,6 +76,7 @@
 
     <color name="nip_default_background_0C0C0C">#0C0C0C</color>
     <color name="nip_direction_color_80ffffff">#80ffffff</color>
+    <color name="nip_outline_background_282828">#282828</color>
 
     <!--metis@0316 add for search-->
     <!-- <color name="fav_enable_background">#418EFF</color>
