@@ -182,6 +182,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private ImageButton planningSettingsButton;
     private ImageButton voiceGuidanceButton;
     private Button searchButton; //metis@ add
+    private Button favHomeBtn; //metis@0314 add
+    private Button favOfficeBtn; //metis@0314 add
+
 
     private boolean fullVoiceGuidanceMode = true;
     private boolean navigationServiceBound = false;
@@ -622,6 +625,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         });
 		
 		//metis@0309 显示搜索页面 -->
+        favHomeBtn = findViewById(R.id.favorites_home);
+        favOfficeBtn = findViewById(R.id.favorites_office);
         searchButton = findViewById(R.id.search_btn);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -639,6 +644,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 	
 	private void setMapWidgetVisibility(int visibility) {
         searchButton.setVisibility(visibility);
+        favHomeBtn.setVisibility(visibility);
+        favOfficeBtn.setVisibility(visibility);
         voiceGuidanceButton.setVisibility(visibility);
         planningSettingsButton.setVisibility(visibility);
         mapModeButton.setVisibility(visibility);

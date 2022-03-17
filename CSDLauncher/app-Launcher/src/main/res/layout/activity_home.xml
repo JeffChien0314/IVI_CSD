@@ -38,15 +38,37 @@
 
             <Button
                 android:id="@+id/search_btn"
-                android:layout_width="342px"
-                android:layout_height="90px"
-                android:background="#0A1427"
-                android:text="搜索"
-                android:textColor="#ffffff"
-                android:layout_marginTop="30px"
+                android:layout_width="510px"
+                android:layout_height="120px"
                 android:layout_marginLeft="30px"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent" />
+                android:layout_marginTop="30px"
+                android:background="@drawable/icon_search_btn_bg"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <Button
+                android:id="@+id/favorites_home"
+                android:layout_width="127px"
+                android:layout_height="60px"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="30px"
+                android:background="@drawable/icon_fav_home_bg"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/search_btn">
+
+            </Button>
+
+            <Button
+                android:id="@+id/favorites_office"
+                android:layout_width="127px"
+                android:layout_height="60px"
+                android:layout_marginLeft="30px"
+                android:layout_marginTop="30px"
+                android:background="@drawable/icon_fav_office_bg"
+                app:layout_constraintLeft_toRightOf="@+id/favorites_home"
+                app:layout_constraintTop_toBottomOf="@+id/search_btn">
+
+            </Button>
 
             <ImageButton
                 android:id="@+id/recenterButton"
@@ -64,8 +86,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12px"
                 android:layout_marginRight="30px"
-                app:layout_constraintTop_toBottomOf="@id/mapModeButton"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/mapModeButton" />
 
             <com.fxc.ev.launcher.utils.view.OutlineTextView
                 android:id="@+id/eta"
@@ -102,8 +124,8 @@
                 style="@style/NK2Button.MapMode"
                 android:layout_marginTop="30px"
                 android:layout_marginRight="30px"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintRight_toRightOf="parent" />
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageButton
                 android:id="@+id/planningMenu_btn"
@@ -141,9 +163,9 @@
                 android:layout_marginLeft="30px"
                 android:layout_marginTop="30px"
                 android:layout_marginBottom="30px"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -151,7 +173,8 @@
         <RelativeLayout
             android:id="@+id/widget_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <GridView
                 android:id="@+id/grid_view"

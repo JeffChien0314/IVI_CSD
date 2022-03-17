@@ -39,9 +39,9 @@
             android:id="@+id/clear_all"
             android:layout_width="30px"
             android:layout_height="30px"
-            android:scaleType="fitXY"
-            android:layout_marginRight="15px"
             android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="15px"
+            android:scaleType="fitXY"
             android:src="@drawable/icon_clear_all"
             android:visibility="visible"></ImageView>
 
@@ -57,13 +57,146 @@
         android:src="@drawable/icon_mic"></ImageView>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/search_results"
+        android:id="@+id/search_results_recyclerview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_edit_layout"
         android:layout_marginLeft="30px"
-        android:layout_marginTop="15px"
-        android:layout_marginRight="30px"></androidx.recyclerview.widget.RecyclerView>
+        android:layout_marginTop="30px"
+        android:layout_marginRight="30px"
+        android:visibility="gone">
 
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <LinearLayout
+        android:id="@+id/fav_main_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/search_edit_layout"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="42px"
+        android:layout_marginRight="30px"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <RelativeLayout
+            android:id="@+id/favorites_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/favorites_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Favorites"
+                android:textColor="#ffffff"
+                android:textSize="30px">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/favorites_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@id/favorites_title"
+                android:layout_alignParentRight="true"
+                android:text="More"
+                android:textColor="#80ffffff"
+                android:textSize="22px">
+
+            </TextView>
+
+            <LinearLayout
+                android:id="@+id/fav_item_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/favorites_title"
+                android:layout_marginTop="12px"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/interest_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30px">
+
+            <TextView
+                android:id="@+id/interest_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Interest"
+                android:textColor="#ffffff"
+                android:textSize="30px">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/interest_more"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/interest_title"
+                android:layout_alignParentRight="true"
+                android:text="More"
+                android:textColor="#80ffffff"
+                android:textSize="22px">
+
+            </TextView>
+
+            <LinearLayout
+                android:id="@+id/interest_item_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/interest_title"
+                android:layout_marginTop="12px"
+                android:orientation="vertical">
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/recents_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30px">
+
+            <TextView
+                android:id="@+id/recents_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Recents"
+                android:textColor="#ffffff"
+                android:textSize="30px">
+
+            </TextView>
+
+            <TextView
+                android:id="@+id/recents_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/recents_title"
+                android:layout_alignParentRight="true"
+                android:text="More"
+                android:textColor="#80ffffff"
+                android:textSize="22px">
+
+            </TextView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recents_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="100px"
+                android:layout_below="@id/recents_title"
+                android:layout_marginTop="30px">
+
+            </androidx.recyclerview.widget.RecyclerView>
+
+        </RelativeLayout>
+
+    </LinearLayout>
 
 </RelativeLayout>

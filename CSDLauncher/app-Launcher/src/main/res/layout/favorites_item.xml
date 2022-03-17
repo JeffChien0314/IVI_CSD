@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="60px"
+    android:layout_below="@+id/favorites_title"
+    android:layout_marginTop="30px"
+    android:background="@drawable/fav_item_btn_disable_bg"
+    android:gravity="center_vertical"
+    android:paddingLeft="18px"
+    android:paddingRight="18px"
+    android:paddingTop="15px"
+    android:paddingBottom="15px">
+
+    <ImageView
+        android:id="@+id/fav_img"
+        android:layout_width="30px"
+        android:layout_height="30px"
+        android:src="@drawable/icon_home_normal">
+    </ImageView>
+
+    <TextView
+        android:id="@+id/fav_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="6px"
+        android:text="Home"
+        android:textColor="#40ffffff"
+        android:textSize="22px"
+        android:singleLine="true">
+
+    </TextView>
+</LinearLayout>

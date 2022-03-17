@@ -76,4 +76,20 @@
 
     <color name="nip_default_background_0C0C0C">#0C0C0C</color>
     <color name="nip_direction_color_80ffffff">#80ffffff</color>
+
+    <!--metis@0316 add for search-->
+    <!-- <color name="fav_enable_background">#418EFF</color>
+    <color name="fav_disable_background">#282828</color>
+    <color name="interest_parking_background">#54B4F7</color>
+    <color name="interest_charging_station_background">#5BC579</color>
+    <color name="interest_market_background">#EEAD43</color>
+    <color name="interest_cafe_background">#DA82BB</color>
+    <color name="interest_restaurant_background">#EF8082</color>
+    <color name="interest_hotel_background">#E98F50</color>
+    <color name="interest_atm_background">#969696</color>
+    <color name="interest_gas_station_background">#9A86F7</color>-->
+
+    <color name="fav_text_enable_color">#FFFFFFFF</color>
+    <color name="fav_text_disable_color">#40FFFFFF</color>
+    <!--metis@0316 add for search-->
 </resources>

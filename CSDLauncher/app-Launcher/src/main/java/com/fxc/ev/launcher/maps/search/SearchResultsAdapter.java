@@ -19,7 +19,7 @@ import java.util.ArrayList;
 
 
 public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdapter.SearchItemViewHolder> {
-    public static final String TAG = "metis.SearchResultsAdapter";
+    public static final String TAG = "SearchResultsAdapter";
     private ArrayList<SearchResultItem> searchResultItemArrayList;
 
     public SearchResultsAdapter(Context context, ArrayList<SearchResultItem> searchResultItemArrayList) {

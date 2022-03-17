@@ -14,6 +14,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -59,10 +61,31 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     List<Location> locationList = new ArrayList<>();
     private int STEP_INIT_SEARCH = 0x1000;
 
+    //metis@0315 add for favorites
+    private LinearLayout favMainLayout;
+    private TextView favMore;
+    private RecyclerView favRecyclerView;
+    private LinearLayout favItemLayout;
+    private LinearLayout interestItemLayout;
+
     public OnMarkerChangedListener onMarkerChangedListener;
 
     public interface OnMarkerChangedListener {
         public void onMarkerChange(List<Location> locations);
+    }
+
+    public class KeyValuePair {
+        public String name;
+        public int image;
+        public int background;
+        public int textColor;
+
+        public KeyValuePair(String name, int image, int background, int textColor) {
+            this.name = name;
+            this.image = image;
+            this.background = background;
+            this.textColor = textColor;
+        }
     }
 
     private Handler handler = new Handler() {
@@ -82,13 +105,18 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
                                 searchResultItem.setDistance(ftsResult.getDistance());
                                 searchResultItem.setPhoneNums(ftsResult.getPoiPhoneNumbers());
                                 searchResultItem.setLocation(ftsResult.getLocation());
-                                Log.v(TAG, "categorties:" + ftsResult.getPoiCategories());
+
                                 locationList.add(ftsResult.getLocation());
                                 searchResultItemArrayList.add(searchResultItem);
                             }
                         }
+                        searchResultRecyclerView.setVisibility(View.VISIBLE);
+                        favMainLayout.setVisibility(View.GONE);
+                    } else {
+                        searchResultRecyclerView.setVisibility(View.GONE);
+                        favMainLayout.setVisibility(View.VISIBLE);
                     }
-                        onMarkerChangedListener.onMarkerChange(locationList);
+                    onMarkerChangedListener.onMarkerChange(locationList);
                     searchResultsAdapter.notifyDataSetChanged();
                 }
             }
@@ -121,6 +149,12 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
     }
 
     private void initViews() {
+        initSearchEditView();
+        initFavoritesView();
+    }
+
+    //metis@0315 初始化搜索输入框view
+    private void initSearchEditView() {
         searchEditText = rootView.findViewById(R.id.search_edit_text);
         clearAllImageView = rootView.findViewById(R.id.clear_all);
         clearAllImageView.setOnClickListener(new View.OnClickListener() {
@@ -130,6 +164,8 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
                 searchEditText.setHint("搜索");
                 searchResultItemArrayList.clear();
                 searchResultsAdapter.notifyDataSetChanged();
+                searchResultRecyclerView.setVisibility(View.GONE);
+                favMainLayout.setVisibility(View.VISIBLE);
             }
         });
         searchEditText.addTextChangedListener(new TextWatcher() {
@@ -154,13 +190,106 @@ public class SearchFragment extends Fragment implements AdapterView.OnItemClickL
             }
         });
 
-        searchResultRecyclerView = rootView.findViewById(R.id.search_results);
+        searchResultRecyclerView = rootView.findViewById(R.id.search_results_recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
         searchResultRecyclerView.addItemDecoration(spaceItemDecoration);
         searchResultRecyclerView.setLayoutManager(linearLayoutManager);
         searchResultsAdapter = new SearchResultsAdapter(getContext(), searchResultItemArrayList);
         searchResultRecyclerView.setAdapter(searchResultsAdapter);
+    }
+
+    private void initFavoritesView() {
+        favMainLayout = rootView.findViewById(R.id.fav_main_layout);
+        favMore = rootView.findViewById(R.id.favorites_more);
+        favMore.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        favItemLayout = rootView.findViewById(R.id.fav_item_layout);
+        interestItemLayout = rootView.findViewById(R.id.interest_item_layout);
+
+        List<KeyValuePair> list1 = new ArrayList<>();
+        List<KeyValuePair> list2 = new ArrayList<>();
+        list1.add(new KeyValuePair("Home", R.drawable.icon_home_normal, R.drawable.fav_item_btn_disable_bg, R.color.fav_text_disable_color));
+        list1.add(new KeyValuePair("Office", R.drawable.icon_office_normal, R.drawable.fav_item_btn_disable_bg, R.color.fav_text_disable_color));
+        list1.add(new KeyValuePair("favorites11111111111111", R.drawable.icon_star_normal, R.drawable.fav_item_btn_disable_bg, R.color.fav_text_disable_color));
+
+        list2.add(new KeyValuePair("Parking", R.drawable.icon_parking_normal, R.drawable.interest_parking_bg, R.color.fav_text_enable_color));
+        list2.add(new KeyValuePair("Charging station", R.drawable.icon_charge_staiotn_normal, R.drawable.interest_charging_station_bg, R.color.fav_text_enable_color));
+        list2.add(new KeyValuePair("Supermarket", R.drawable.icon_market_normal, R.drawable.interest_market_bg, R.color.fav_text_enable_color));
+        list2.add(new KeyValuePair("Cafe", R.drawable.icon_cafe_normal, R.drawable.interest_market_bg, R.color.fav_text_enable_color));
+        list2.add(new KeyValuePair("Restaurant", R.drawable.icon_restaurant_normal, R.drawable.interest_restaurant_bg, R.color.fav_text_enable_color));
+
+        initAutoLinearLayout(favItemLayout, list1);
+        initAutoLinearLayout(interestItemLayout, list2);
+
+    }
+
+    private void initAutoLinearLayout(LinearLayout parentLayout, List<KeyValuePair> dataList) {
+        boolean isNewLayout = false;
+        int maxWith = 450;
+        int elseWith = maxWith; //剩下的宽度
+
+        LinearLayout rowLinearLayout = new LinearLayout(launcherActivity);
+        LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rowLp.setMargins(0, 18, 0, 0);
+        rowLinearLayout.setLayoutParams(rowLp);
+
+        LinearLayout.LayoutParams itemViewLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        itemViewLp.setMargins(6, 0, 0, 0);
+
+        for (int i = 0; i < dataList.size(); i++) {
+            if (isNewLayout) {
+                parentLayout.addView(rowLinearLayout);
+                rowLinearLayout = new LinearLayout(launcherActivity);
+                rowLinearLayout.setLayoutParams(rowLp);
+                isNewLayout = false;
+            }
+
+            LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(launcherActivity).inflate(R.layout.favorites_item, null);
+            TextView favName = linearLayout.findViewById(R.id.fav_name);
+            ImageView favImg = linearLayout.findViewById(R.id.fav_img);
+
+            favName.setText(dataList.get(i).name);
+            favName.setTextColor(launcherActivity.getResources().getColor(dataList.get(i).textColor));
+            favImg.setImageResource(dataList.get(i).image);
+            linearLayout.setBackgroundResource(dataList.get(i).background);
+
+            int textLength = (int) favName.getPaint().measureText(favName.getText().toString());
+            int layoutWith = 72 + textLength;
+            Log.v(TAG, "textLength:" + textLength + ",layoutWith: " + layoutWith);
+
+            if (maxWith < layoutWith) {
+                parentLayout.addView(rowLinearLayout);
+                rowLinearLayout = new LinearLayout(launcherActivity);
+                rowLinearLayout.setLayoutParams(rowLp);
+                rowLinearLayout.addView(linearLayout);
+                isNewLayout = true;
+                continue;
+            }
+
+            if (elseWith < layoutWith) {
+                isNewLayout = true;
+                i--;
+                //重置剩余宽度
+                elseWith = maxWith;
+                continue;
+            } else {
+                //剩余宽度减去文本框的宽度+间隔=新的剩余宽度
+                elseWith -= layoutWith + 18;
+                if (rowLinearLayout.getChildCount() != 0) {
+                    linearLayout.setLayoutParams(itemViewLp);
+                }
+                rowLinearLayout.addView(linearLayout);
+            }
+        }
+        //添加最后一行，但要防止重复添加
+        parentLayout.removeView(rowLinearLayout);
+        parentLayout.addView(rowLinearLayout);
     }
 
     private void search(String searchContent) {
