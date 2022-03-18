@@ -213,6 +213,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     tripUpdateListener = null;
                     hideEtaPanel();
                     hideNextInstructionPanel();
+                    setMapWidgetVisibility2(View.VISIBLE);
                     stopPreview();
                     navigation.deleteTrip(trip);
                     trip = null;
