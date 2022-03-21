@@ -11,4 +11,5 @@ public class Constants {
     public static final float SPEED_MULTIPLIER = 2.0f;
 
     public static final String STOP_NAVIGATION = "stop navigation";
+    public static final String TTS_CONTROL_TOGGLE = "navigation_tts_control";
 }

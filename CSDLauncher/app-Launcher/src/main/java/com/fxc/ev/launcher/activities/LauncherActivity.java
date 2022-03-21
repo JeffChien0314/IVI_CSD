@@ -58,6 +58,7 @@ import com.fxc.ev.launcher.utils.CameraStackController.CameraType;
 import com.fxc.ev.launcher.utils.DistanceConversions;
 import com.fxc.ev.launcher.utils.EtaFormatter;
 import com.fxc.ev.launcher.utils.PermissionsManager;
+import com.fxc.ev.launcher.utils.SharedPreferenceUtils;
 import com.fxc.ev.launcher.utils.Toaster;
 import com.tomtom.navkit.map.ClickCoordinates;
 import com.tomtom.navkit.map.InvalidExtensionId;
@@ -78,8 +79,10 @@ import com.tomtom.navkit2.TripRenderer;
 import com.tomtom.navkit2.drivingassistance.DrivingContextApi;
 import com.tomtom.navkit2.drivingassistance.Position;
 import com.tomtom.navkit2.drivingassistance.PositionUpdateListener;
+import com.tomtom.navkit2.guidance.AudioInstructionListener;
 import com.tomtom.navkit2.guidance.Instruction;
 import com.tomtom.navkit2.guidance.NextInstructionListener;
+import com.tomtom.navkit2.guidance.StockTextToSpeechEngine;
 import com.tomtom.navkit2.mapdisplay.trip.TripRendererClickListener;
 import com.tomtom.navkit2.navigation.Navigation;
 import com.tomtom.navkit2.navigation.NavigationService;
@@ -196,7 +199,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private double mLongitude = 0;
     private MyCameraListener myCameraListener;
     private Map map;
-	
+    boolean isNavigationTTSMute = false;//Jerry@20220321 add
 	//Jerry@20220317 add for stop navigation
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -218,6 +221,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     navigation.deleteTrip(trip);
                     trip = null;
                 }
+            }else if(Constants.TTS_CONTROL_TOGGLE.equals(intent.getAction())){//Jerry@20220321 add
+                isNavigationTTSMute = intent.getBooleanExtra(Constants.TTS_CONTROL_TOGGLE,false);
             }
         }
     };
@@ -424,8 +429,10 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     private void initMap() {
         //Jerry@20220317 add for stopping navigation-->
+        isNavigationTTSMute = (boolean) SharedPreferenceUtils.get(LauncherActivity.this,Constants.TTS_CONTROL_TOGGLE,Constants.TTS_CONTROL_TOGGLE,false);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.STOP_NAVIGATION);
+        intentFilter.addAction(Constants.TTS_CONTROL_TOGGLE);
         registerReceiver(broadcastReceiver,intentFilter);
         //<--Jerry@20220317 add for stopping navigation
         // Limit power consumption with a 20 FPS cap
@@ -509,6 +516,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                                 trip = null;
                             }
                             trip = result.trip();
+
                             tripUpdateListener = new TripUpdateListener() {
                                 @Override
                                 public void onRoutesChange(Trip trip) {
@@ -526,6 +534,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                                 }
                             };
                             trip.addListener(tripUpdateListener);
+
+
+
                             updateEtaPanelForRoutesOnTrip(trip);
                             trafficRenderer.setTrafficMarkerVisibility(false);
                             tripRenderer = TripRenderer.create(trip, getMapHolder().getMap(), trafficConfiguration);
@@ -621,6 +632,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         });
 
         voiceGuidanceButton = findViewById(R.id.voiceGuidanceMode);
+        voiceGuidanceButton.setVisibility(View.GONE);//Jerry@20220321 add:not display
         voiceGuidanceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -631,7 +643,29 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
 
-        navigation = new Navigation(mContext);
+        //Jerry@20220321 add:tts control-->
+        StockTextToSpeechEngine engine = new StockTextToSpeechEngine(LauncherActivity.this){
+
+            @Override
+            public void onAudioPrepare(AudioMessage message, MessageKind kind, String id) {
+                if(isNavigationTTSMute) {
+                    message.setMessage("");
+                }
+                super.onAudioPrepare(message, kind, id);
+            }
+
+            @Override
+            public void onNextTriggerTimeChanged(int expected_time_sec) {
+                super.onNextTriggerTimeChanged(expected_time_sec);
+            }
+
+            @Override
+            public void onInit(int status) {
+                super.onInit(status);
+            }
+        };
+        navigation = new Navigation(mContext, (AudioInstructionListener) engine);
+        //<--Jerry@20220321 add:tts control
         navigation.addNextInstructionListener(new NextInstructionListener() {
             @Override
             public void onNextInstructionChange(int distanceToInstructionInMeters, List<Instruction> instructions) {
@@ -686,7 +720,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         searchButton.setVisibility(visibility);
         favHomeBtn.setVisibility(visibility);
         favOfficeBtn.setVisibility(visibility);
-        voiceGuidanceButton.setVisibility(visibility);
+        //voiceGuidanceButton.setVisibility(visibility);//Jerry@20220318 add:not display
         planningSettingsButton.setVisibility(visibility);
         mapModeButton.setVisibility(visibility);
         getZoomBarView().setVisibility(visibility);
@@ -696,7 +730,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         searchButton.setVisibility(visibility);
         favHomeBtn.setVisibility(visibility);
         favOfficeBtn.setVisibility(visibility);
-        voiceGuidanceButton.setVisibility(visibility);
+        //voiceGuidanceButton.setVisibility(visibility);//Jerry@20220318 add:not display
     }
 
     //Jerry@0308 add CameraListener

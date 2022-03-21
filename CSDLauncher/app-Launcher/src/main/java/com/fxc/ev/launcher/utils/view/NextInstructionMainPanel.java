@@ -12,12 +12,14 @@
 package com.fxc.ev.launcher.utils.view;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.GradientDrawable;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.TextUtils;
 import android.text.style.AbsoluteSizeSpan;
 import android.util.AttributeSet;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,8 +29,10 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.fxc.ev.launcher.R;
+import com.fxc.ev.launcher.maps.poicatsearch.Constants;
 import com.fxc.ev.launcher.utils.CountrySpecifics;
 import com.fxc.ev.launcher.utils.DistanceConversions;
+import com.fxc.ev.launcher.utils.SharedPreferenceUtils;
 import com.tomtom.navkit2.guidance.Instruction;
 import com.tomtom.navkit2.navigation.common.StringVector;
 
@@ -50,7 +54,9 @@ public class NextInstructionMainPanel extends LinearLayout {
     private ImageView primaryManeuverImageView;
     private TextView exitNumberTextView;
     private GradientDrawable exitBackground;
+    private ImageView nipTTSControl;//Jerry220220317 add
     private final NextInstructionImageHelper nextInstructionImageHelper;
+    private boolean isMute = false;//Jerry220220321 add
 
     public NextInstructionMainPanel(Context context) {
         this(context, null);
@@ -73,6 +79,39 @@ public class NextInstructionMainPanel extends LinearLayout {
         exitNumberTextView = findViewById(R.id.nipExitNumber);
         exitBackground = (GradientDrawable) exitNumberTextView.getBackground();
         nextInstructionImageHelper = new NextInstructionImageHelper();
+        nipTTSControl = findViewById(R.id.nipTTSControl);//Jerry220220317 add
+
+        //Jerry220220321 add
+        setTTSControlImageBG(context);
+        addListener(context);
+    }
+
+    private void setTTSControlImageBG(Context context) {
+        isMute = (boolean)SharedPreferenceUtils.get(context,Constants.TTS_CONTROL_TOGGLE,Constants.TTS_CONTROL_TOGGLE,false);
+        if(!isMute){
+            nipTTSControl.setBackgroundResource(R.drawable.icon_volume_normal);
+        }else{
+            nipTTSControl.setBackgroundResource(R.drawable.icon_mute_normal);
+        }
+    }
+
+    private void addListener(Context context) {
+        nipTTSControl.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(!isMute){
+                    isMute = true;
+                    nipTTSControl.setBackgroundResource(R.drawable.icon_mute_normal);
+                }else{
+                    isMute = false;
+                    nipTTSControl.setBackgroundResource(R.drawable.icon_volume_normal);
+                }
+                SharedPreferenceUtils.put(context,Constants.TTS_CONTROL_TOGGLE,Constants.TTS_CONTROL_TOGGLE,isMute);
+                Intent intent = new Intent(Constants.TTS_CONTROL_TOGGLE);
+                intent.putExtra(Constants.TTS_CONTROL_TOGGLE,isMute);
+                context.sendBroadcast(intent);
+            }
+        });
     }
 
     public void update(
