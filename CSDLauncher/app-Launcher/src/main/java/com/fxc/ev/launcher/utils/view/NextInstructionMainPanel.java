@@ -55,6 +55,7 @@ public class NextInstructionMainPanel extends LinearLayout {
     private TextView exitNumberTextView;
     private GradientDrawable exitBackground;
     private ImageView nipTTSControl;//Jerry220220317 add
+    private TextView nipRoadDirection;//Jerry220220321 add
     private final NextInstructionImageHelper nextInstructionImageHelper;
     private boolean isMute = false;//Jerry220220321 add
 
@@ -80,6 +81,7 @@ public class NextInstructionMainPanel extends LinearLayout {
         exitBackground = (GradientDrawable) exitNumberTextView.getBackground();
         nextInstructionImageHelper = new NextInstructionImageHelper();
         nipTTSControl = findViewById(R.id.nipTTSControl);//Jerry220220317 add
+        nipRoadDirection = findViewById(R.id.nipRoadDirection);//Jerry220220321 add
 
         //Jerry220220321 add
         setTTSControlImageBG(context);
@@ -124,7 +126,7 @@ public class NextInstructionMainPanel extends LinearLayout {
 
         updateDistance(distanceToInstructionInMeters, countryCode);
 
-        nextInstructionImageHelper.setManeuverImageForInstruction(primaryManeuverImageView, currentInstruction);
+        nextInstructionImageHelper.setManeuverImageForInstruction(primaryManeuverImageView, currentInstruction,nipRoadDirection);//Jerry@20220321 add
 
         streetnameAndTowards.setText(formatStreetnameAndTowards(currentInstruction));
 

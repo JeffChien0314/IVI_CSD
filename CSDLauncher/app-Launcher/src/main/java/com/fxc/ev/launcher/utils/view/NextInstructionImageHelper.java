@@ -13,6 +13,7 @@ package com.fxc.ev.launcher.utils.view;
 
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
@@ -39,8 +40,9 @@ public class NextInstructionImageHelper {
     }
   }
 
-  public void setManeuverImageForInstruction(ImageView manouverImageView, Instruction instruction) {
-    updateManeuverImage(maneuverImage(instruction), manouverImageView);
+  //Jerry@20220321 modify:add TextView param
+  public void setManeuverImageForInstruction(ImageView manouverImageView, Instruction instruction, TextView directionView) {
+    updateManeuverImage(maneuverImage(instruction,directionView), manouverImageView);
   }
 
   private void updateManeuverImage(ManeuverImage maneuverImage, ImageView maneuverImageView) {
@@ -67,36 +69,44 @@ public class NextInstructionImageHelper {
     }
   }
 
-  private ManeuverImage maneuverImage(Instruction instruction) {
+  private ManeuverImage maneuverImage(Instruction instruction,TextView directionView) {
     ManeuverImage maneuverImage = null;
 
     switch (instruction.getType()) {
       case TURN:
         maneuverImage = maneuverImageFromTurn(instruction.getTurn(), instruction.getDrivingSide());
+        directionView.setText(instruction.getTurn().getDirection().name());//Jerry@20220321 add
         break;
       case FORK:
         maneuverImage = maneuverImageFromFork(instruction.getFork(), instruction.getDrivingSide());
+        directionView.setText(instruction.getFork().getSelectedChoice().name());//Jerry@20220321 add
         break;
       case ROUNDABOUT:
         maneuverImage =
             maneuverImageFromRoundabout(instruction.getRoundabout(), instruction.getDrivingSide());
+        directionView.setText(instruction.getRoundabout().getDirection().name());//Jerry@20220321 add
         break;
       case EXIT_ROUNDABOUT:
         maneuverImage =
             maneuverImageFromRoundabout(
                 instruction.getExitRoundabout().getRoundabout(), instruction.getDrivingSide());
+        directionView.setText(instruction.getExitRoundabout().getRoundabout().getDirection().name());//Jerry@20220321 add
         break;
       case EXIT:
         maneuverImage = maneuverImageFromExit(instruction.getExit(), instruction.getDrivingSide());
+        directionView.setText(instruction.getExit().getDirection().name());//Jerry@20220321 add
         break;
       case ROAD_FORM_CHANGE:
         maneuverImage = maneuverImageFromRoadFormChange(instruction);
+        directionView.setText(instruction.getNextSignificantRoad().getType().name());//Jerry@20220321 add
         break;
       case FOLLOW_ROAD:
         maneuverImage = maneuverImageFromFollowRoad();
+        directionView.setText(instruction.getType().name());//Jerry@20220321 add
         break;
       case ITINERARY_POINT:
         maneuverImage = maneuverImageFromItineraryPoint(instruction.getItineraryPoint());
+        directionView.setText(instruction.getItineraryPoint().getSide().name());//Jerry@20220321 add
         break;
     }
     return maneuverImage;

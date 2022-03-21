@@ -142,9 +142,9 @@ immediately return or destroy it.
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
+            android:id="@+id/nipRoadDirection"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Direction"
             android:ellipsize="end"
             android:maxLines="1"
             android:textAlignment="viewStart"

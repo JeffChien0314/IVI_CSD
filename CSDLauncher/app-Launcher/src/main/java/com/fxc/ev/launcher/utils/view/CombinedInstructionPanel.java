@@ -16,6 +16,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -59,7 +60,7 @@ public class CombinedInstructionPanel extends LinearLayout {
         ((GradientDrawable) panelRootView.getBackground()).setColor(panelBackgroundColor);
 
         nextInstructionImageHelper.setManeuverImageForInstruction(
-                combinedManeuverImageView, instruction);
+                combinedManeuverImageView, instruction, null);//Jerry@20220321 modify
     }
 
     public boolean hasCombinedManeuverImage() {
