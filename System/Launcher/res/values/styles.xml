@@ -34,4 +34,26 @@
         <item name="android:layout_height">@*android:dimen/car_list_divider_height</item>
         <item name="android:background">@*android:color/car_list_divider</item>
     </style>
+	
+	<style name="VerticalSeekbarStyle">
+        <item name="android:maxWidth">690px</item>
+        <item name="android:maxHeight">12px</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@color/black</item>
+        <item name="android:minWidth">690px</item>
+        <item name="android:minHeight">12px</item>
+        <item name="android:thumb">@drawable/select_seekbar_thumb</item>
+    </style>
+
+    <style name="AirSeekbarStyle">
+        <item name="android:maxWidth">690px</item>
+        <item name="android:maxHeight">12px</item>
+        <item name="android:indeterminateOnly">false</item>
+        <item name="android:indeterminateDrawable">@color/black</item>
+        <item name="android:progressDrawable">@drawable/air_seekbar_bg</item>
+        <item name="android:minWidth">690px</item>
+        <item name="android:minHeight">12px</item>
+        <item name="android:thumb">@null</item>
+    </style>
+	
 </resources>

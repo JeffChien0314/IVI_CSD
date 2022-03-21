@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (C) 2018 The Android Open Source Project
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~      http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License
+  -->
+
+<com.android.systemui.statusbar.car.CarNavigationBarView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:systemui="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/nav_control_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
+
+    <LinearLayout
+        android:id="@+id/temperature_layout"
+        android:layout_width="120px"
+        android:layout_height="240px"
+        android:layout_marginStart="18px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/temperature_up"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_temperature_arrow_up_normal"
+            systemui:intent="intent:#Intent;action=com.fxc.ev.temperature.left;launchFlags=0x10000000;end"
+systemui:packages="com.android.car.carlauncher"            
+systemui:selectedIcon="@drawable/icon_temperature_arrow_up_pressed"
+            systemui:useMoreIcon="false"/>
+
+
+        <TextView
+            android:id="@+id/temperature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="37px"
+            android:layout_marginBottom="37px"
+            android:text="22.0°"
+            android:textColor="#ffffff"
+            android:textSize="38px" />
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/temperature_down"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_temperature_arrow_down_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_temperature_arrow_down_pressed"
+            systemui:useMoreIcon="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/air_layout"
+        android:layout_width="120px"
+        android:layout_height="240px"
+        android:layout_marginLeft="18px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/air_arrow_up"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_air_volume_arrow_up_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_air_volume_arrow_up_pressed"
+            systemui:useMoreIcon="false"/>
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/air"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="30px"
+            systemui:icon="@drawable/icon_fan_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_fan_pressed"
+            systemui:useMoreIcon="false"/>
+
+       <TextView
+            android:id="@+id/air_value"
+            android:layout_width="60px"
+            android:layout_height="26px"
+            android:layout_marginTop="-9px"
+            android:layout_marginBottom="13px"
+            android:text="AUTO"
+            android:textColor="#ffffff"
+            android:textSize="22px"/>
+
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/air_arrow_down"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_air_volume_arrow_down_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_air_volume_arrow_down_pressed"
+            systemui:useMoreIcon="false"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/air_circulation_layout"
+        android:layout_width="120px"
+        android:layout_height="240px"
+        android:layout_marginLeft="18px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/app"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="30px"
+           systemui:componentNames="com.android.car.carlauncher/.AppGridActivity"
+           systemui:icon="@drawable/icon_app_normal"
+            systemui:intent="intent:#Intent;component=com.android.car.carlauncher/.AppGridActivity;launchFlags=0x24000000;end"
+            systemui:selectedIcon="@drawable/icon_app_pressed"
+            systemui:useMoreIcon="false"/>
+
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/air_circulation"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="60px"
+            android:layout_marginBottom="30px"
+            systemui:componentNames="com.android.car.carlauncher/.AppGridActivity"
+            systemui:icon="@drawable/icon_air_circulation_1_normal"
+            systemui:intent="intent:#Intent;component=com.android.car.carlauncher/.AppGridActivity;launchFlags=0x24000000;end"
+            systemui:selectedIcon="@drawable/icon_air_circulation_1_pressed"
+            systemui:useMoreIcon="false"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/home_layout"
+        android:layout_width="240px"
+        android:layout_height="270px"
+        android:layout_marginLeft="6px"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/home"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="30px"
+systemui:componentNames="com.android.car.carlauncher/.CarLauncher"
+            systemui:icon="@drawable/icon_home_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_home_pressed"
+            systemui:useMoreIcon="false"/>
+
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/climate_menu"
+            style="@style/NavigationBarButton"
+            android:layout_width="113px"
+            android:layout_height="72px"
+            android:layout_marginTop="88px"
+            systemui:icon="@drawable/icon_climate_menu_normal"
+systemui:intent="intent:#Intent;action=com.fxc.ev.climateMenu;launchFlags=0x10000000;end"
+systemui:packages="com.android.car.carlauncher"
+            systemui:selectedIcon="@drawable/icon_climate_menu_pressed"
+            systemui:useMoreIcon="false" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/volume_layout"
+        android:layout_width="120px"
+        android:layout_height="240px"
+        android:layout_marginLeft="6px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/volume"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="30px"
+            systemui:icon="@drawable/icon_volume_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_volume_pressed"
+            systemui:useMoreIcon="false"/>
+
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/front_window"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="60px"
+            android:layout_marginBottom="30px"
+            systemui:icon="@drawable/icon_heated_front_window_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_heated_front_window_pressed"
+           systemui:useMoreIcon="false"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/air_layout_2"
+        android:layout_width="120px"
+        android:layout_height="240px"
+        android:layout_marginLeft="18px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/air_arrow_up_2"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_air_volume_arrow_up_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_air_volume_arrow_up_pressed"
+           systemui:useMoreIcon="false"/>
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/air_2"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="30px"
+            systemui:icon="@drawable/icon_fan_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_fan_pressed"
+           systemui:useMoreIcon="false"/>
+
+        <TextView
+            android:id="@+id/air_2_value"
+            android:layout_width="60px"
+            android:layout_height="26px"
+            android:layout_marginTop="-9px"
+            android:layout_marginBottom="13px"
+            android:text="AUTO"
+            android:textColor="#ffffff"
+            android:textSize="22px"/>
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/air_arrow_down_2"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_air_volume_arrow_down_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_air_volume_arrow_down_pressed"
+            systemui:useMoreIcon="false"  />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/temperature_layout_2"
+        android:layout_width="120px"
+        android:layout_height="240px"
+        android:layout_marginLeft="18px"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/temperature_up_2"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_temperature_arrow_up_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_temperature_arrow_up_pressed"
+           systemui:useMoreIcon="false"/>
+
+        <TextView
+            android:id="@+id/temperature_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="37px"
+            android:layout_marginBottom="37px"
+            android:text="22.0°"
+            android:textColor="#ffffff"
+            android:textSize="38px" />
+
+        <com.android.systemui.statusbar.car.CarFacetButton
+            android:id="@+id/temperature_down_2"
+            style="@style/NavigationBarButton"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            systemui:icon="@drawable/icon_temperature_arrow_down_normal"
+            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:selectedIcon="@drawable/icon_temperature_arrow_down_pressed"
+           systemui:useMoreIcon="false"/>
+
+
+    </LinearLayout>
+
+
+</com.android.systemui.statusbar.car.CarNavigationBarView>

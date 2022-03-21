@@ -1,0 +1,480 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#80000000">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/seekbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.android.car.carlauncher.VerticalSeekBar
+            android:id="@+id/temperature_seekbar_left"
+            style="@style/VerticalSeekbarStyle"
+            android:layout_width="60px"
+            android:layout_height="750px"
+            android:layout_marginBottom="28px"
+            android:layout_marginStart="48px"
+            android:background="#15284A"
+            android:max="32"
+            android:min="0"
+            android:progress="20"
+            android:progressDrawable="@drawable/temperature_seekbar_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/temperature_left_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="22.0°"
+            android:textColor="#FFFFFF"
+            android:textSize="60px"
+            app:layout_constraintBottom_toTopOf="@id/temperature_seekbar_left"
+            app:layout_constraintEnd_toEndOf="@id/temperature_seekbar_left"
+            app:layout_constraintStart_toStartOf="@id/temperature_seekbar_left" />
+
+        <com.android.car.carlauncher.IndicatorVerticalSeekBar
+            android:id="@+id/air_seekbar_left"
+            android:layout_width="60px"
+            android:layout_height="750px"
+            android:layout_marginBottom="28px"
+            android:layout_marginStart="186px"
+            android:background="#15284A"
+            android:maxHeight="12px"
+            android:maxWidth="690px"
+            android:progressDrawable="@drawable/air_seekbar_bg"
+            android:thumb="@null"
+            android:thumbOffset="0dp"
+            app:indicator_count="6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!--<RelativeLayout
+            android:layout_width="60px"
+            android:layout_height="750px"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="28px"
+            android:layout_marginStart="186px"
+            android:background="#15284A"
+            android:gravity="center">
+
+            <com.example.myapplication.IndicatorVerticalSeekBar
+                android:id="@+id/air_seekbar_left"
+                android:layout_width="12px"
+                android:layout_height="690px"
+                android:maxHeight="690px"
+                android:progressDrawable="@drawable/air_seekbar_bg"
+                android:thumb="@null"
+                android:thumbOffset="0dp"
+                app:indicator_count="6" />
+
+        </RelativeLayout>-->
+
+        <TextView
+            android:id="@+id/air_left_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:textColor="#FFFFFF"
+            android:textSize="60px"
+            app:layout_constraintBottom_toTopOf="@id/air_seekbar_left"
+            app:layout_constraintEnd_toEndOf="@id/air_seekbar_left"
+            app:layout_constraintStart_toStartOf="@id/air_seekbar_left" />
+
+
+        <com.android.car.carlauncher.VerticalSeekBar
+            android:id="@+id/volume_seekbar"
+            style="@style/VerticalSeekbarStyle"
+            android:layout_width="60px"
+            android:layout_height="750px"
+            android:layout_marginBottom="28px"
+            android:layout_marginEnd="324px"
+            android:background="#15284A"
+            android:max="30"
+            android:progress="0"
+            android:progressDrawable="@drawable/volume_seekbar_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <com.android.car.carlauncher.IndicatorVerticalSeekBar
+            android:id="@+id/air_seekbar_right"
+            android:layout_width="60px"
+            android:layout_height="750px"
+            android:layout_marginBottom="28px"
+            android:layout_marginEnd="186px"
+            android:background="#15284A"
+            android:maxHeight="12px"
+            android:maxWidth="690px"
+            android:progressDrawable="@drawable/air_seekbar_bg"
+            android:thumb="@null"
+            android:thumbOffset="0dp"
+            app:indicator_count="6"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/air_right_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:textColor="#FFFFFF"
+            android:textSize="60px"
+            app:layout_constraintBottom_toTopOf="@id/air_seekbar_right"
+            app:layout_constraintEnd_toEndOf="@id/air_seekbar_right"
+            app:layout_constraintStart_toStartOf="@id/air_seekbar_right" />
+
+        <com.android.car.carlauncher.VerticalSeekBar
+            android:id="@+id/temperature_seekbar_right"
+            style="@style/VerticalSeekbarStyle"
+            android:layout_width="60px"
+            android:layout_height="750px"
+            android:layout_marginBottom="28px"
+            android:layout_marginEnd="48px"
+            android:background="#15284A"
+            android:max="32"
+            android:min="0"
+            android:progress="20"
+            android:progressDrawable="@drawable/temperature_seekbar_bg"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/temperature_right_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="22.0°"
+            android:textColor="#FFFFFF"
+            android:textSize="60px"
+            app:layout_constraintBottom_toTopOf="@id/temperature_seekbar_right"
+            app:layout_constraintEnd_toEndOf="@id/temperature_seekbar_right"
+            app:layout_constraintStart_toStartOf="@id/temperature_seekbar_right" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/climate_menu_layout"
+        android:layout_width="match_parent"
+        android:layout_height="888px"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="center_horizontal"
+        android:background="@drawable/menu_open_bg"
+        tools:context=".MainActivity"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/down_arrow"
+            android:layout_width="60px"
+            android:layout_height="60px"
+            android:layout_marginTop="24px"
+            android:src="@drawable/icon_arrow_down_normal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/power_related"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60px"
+            android:layout_marginTop="48px"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/down_arrow">
+
+            <ImageView
+                android:id="@+id/btn_power"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="18px"
+                android:src="@drawable/btn_thermal_control_normal" />
+
+            <ImageView
+                android:id="@+id/btn_auto"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="129px"
+                android:src="@drawable/btn_auto_normal_picture" />
+
+            <ImageView
+                android:id="@+id/btn_ac"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="18px"
+                android:src="@drawable/btn_ac_normal" />
+
+            <ImageView
+                android:id="@+id/btn_max"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="18px"
+                android:src="@drawable/btn_max_normal" />
+
+            <ImageView
+                android:id="@+id/btn_control_rear"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="129px"
+                android:src="@drawable/btn_control_rear_normal" />
+
+            <ImageView
+                android:id="@+id/btn_steering_wheel_heating"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="18px"
+                android:src="@drawable/btn_steering_wheel_heating_normal" />
+
+            <ImageView
+                android:id="@+id/btn_wiper_heating_heating"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:src="@drawable/btn_wiper_heating_normal" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/btn_sync"
+            android:layout_width="180px"
+            android:layout_height="60px"
+            android:layout_marginBottom="48px"
+            android:layout_marginTop="66px"
+            android:src="@drawable/btn_sync_normal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/power_related" />
+
+        <LinearLayout
+            android:id="@+id/wind_dirctions_related"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="60px"
+            android:layout_marginTop="42px"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_sync">
+
+            <LinearLayout
+                android:id="@+id/wind_dirctions_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="47px"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btn_wind_direction_left1"
+                    android:layout_width="90px"
+                    android:layout_height="90px"
+                    android:layout_marginBottom="18px"
+                    android:src="@drawable/btn_wind_direction_1_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_wind_direction_left2"
+                    android:layout_width="90px"
+                    android:layout_height="90px"
+                    android:layout_marginBottom="18px"
+                    android:src="@drawable/btn_wind_direction_2_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_wind_direction_left3"
+                    android:layout_width="90px"
+                    android:layout_height="90px"
+                    android:src="@drawable/btn_wind_direction_3_normal" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btn_seat_left"
+                android:layout_width="300px"
+                android:layout_height="300px"
+                android:layout_marginRight="84px"
+                android:src="@drawable/seat_normal_left" />
+
+            <ImageView
+                android:id="@+id/btn_seat_right"
+                android:layout_width="300px"
+                android:layout_height="300px"
+                android:layout_marginRight="47px"
+                android:src="@drawable/seat_normal_right" />
+
+            <LinearLayout
+                android:id="@+id/wind_dirctions_right"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btn_wind_direction_right1"
+                    android:layout_width="90px"
+                    android:layout_height="90px"
+                    android:layout_marginBottom="18px"
+                    android:src="@drawable/btn_wind_direction_1_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_wind_direction_right2"
+                    android:layout_width="90px"
+                    android:layout_height="90px"
+                    android:layout_marginBottom="18px"
+                    android:src="@drawable/btn_wind_direction_2_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_wind_direction_right3"
+                    android:layout_width="90px"
+                    android:layout_height="90px"
+                    android:src="@drawable/btn_wind_direction_3_normal" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/temperature_related"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="168px"
+            android:layout_marginTop="32px"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/wind_dirctions_related">
+
+            <ImageView
+                android:id="@+id/btn_seat_temperature_hot_left"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="9px"
+                android:src="@drawable/seat_temperature_hot_normal" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15px"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_hot_left3"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/gray_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_hot_left2"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/gray_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_hot_left1"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:src="@drawable/gray_normal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60px"
+                android:layout_marginTop="15px"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_cold_left3"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/gray_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_cold_left2"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/code_enable" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_cold_left1"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:src="@drawable/code_enable" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btn_seat_temperature_cold_left"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="9px"
+                android:src="@drawable/btn_seat_temperature_cold_active" />
+
+            <ImageView
+                android:id="@+id/btn_seat_temperature_hot_right"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginLeft="108px"
+                android:src="@drawable/seat_temperature_hot_active" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15px"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_hot_right3"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/gray_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_hot_right2"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/hot_enable" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_hot_right1"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:src="@drawable/hot_enable" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="60px"
+                android:layout_marginTop="15px"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_cold_right3"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/gray_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_cold_right2"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:layout_marginBottom="21px"
+                    android:src="@drawable/gray_normal" />
+
+                <ImageView
+                    android:id="@+id/btn_seat_temperature_cold_right1"
+                    android:layout_width="30px"
+                    android:layout_height="6px"
+                    android:src="@drawable/gray_normal" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/btn_seat_temperature_cold_right"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginRight="9px"
+                android:src="@drawable/btn_seat_temperature_cold_normal" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</RelativeLayout>
