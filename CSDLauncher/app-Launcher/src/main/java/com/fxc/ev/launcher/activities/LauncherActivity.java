@@ -200,6 +200,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private MyCameraListener myCameraListener;
     private Map map;
     boolean isNavigationTTSMute = false;//Jerry@20220321 add
+    private TripPlan tripPlan;
+    private RouteStopVector waypoints;
+
 	//Jerry@20220317 add for stop navigation
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -442,9 +445,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         markerLayer = map.addLayer();
         waypointMarkers = new ArrayList<>();
         searchMarkerBuilder = new MarkerBuilder(); //metis@0309 add
-
-        TripPlan tripPlan = new TripPlan();
-        RouteStopVector waypoints = new RouteStopVector();
+        
+        tripPlan = new TripPlan();
+        waypoints = new RouteStopVector();
 
         myCameraListener = new MyCameraListener();
         map.getCamera().registerListener(myCameraListener);
@@ -471,105 +474,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 // concurrently
                 if (destinationMarker == null) {
                     com.tomtom.navkit.map.Coordinate destination = e.getClickCoordinates().getCoordinate();
-
-                    MarkerBuilder markerBuilder = new MarkerBuilder();
-                    markerBuilder.setCoordinate(destination)
-                            // Equivalent for Michi default route markers configuration
-                            .setPinUri(getString(R.string.navigation_route_marker_pin_path))
-                            .setShieldUri(getString(R.string.navigation_route_marker_shield_path))
-                            .setShieldColor(toMapColor(ContextCompat.getColor(getApplicationContext(), R.color.route_marker_default_shield)))
-                            .setShieldAnchor(SHIELD_ANCHOR_X, SHIELD_ANCHOR_Y)
-                            .setIconUri(getString(R.string.navigation_route_marker_destination_icon_path))
-                            .setIconAnchor(DESTINATION_ICON_ANCHOR_X, DESTINATION_ICON_ANCHOR_Y);
-                    destinationMarker = markerLayer.addMarker(markerBuilder);
-
-                    tripPlan.setDestination(toPlaceCoordinate(destination));
-
-                    doReadSettings();
-
-                    tripPlan.setNumberOfAlternatives(numberOfAlternatives);
-                    tripPlan.getRoutingParameters().setBorderCrossingsPreference(bordersPreference);
-                    tripPlan.getRoutingParameters().setFerriesPreference(ferriesPreference);
-                    tripPlan.getRoutingParameters().setMotorwaysPreference(motorwaysPreference);
-                    tripPlan.getRoutingParameters().setTollsPreference(tollsPreference);
-                    tripPlan.getRoutingParameters().setUnpavedRoadsPreference(unpavedPreference);
-                    tripPlan.getRoutingParameters().setCarpoolsPreference(carpoolsPreference);
-
-                    navigation.planTrip(tripPlan, new TripPlanCallback() {
-                        @Override
-                        public void onTripPlanned(TripPlanResult result) {
-                            waypoints.clear();
-                            removeAllMarkers();
-
-                            if (tripRenderer != null) {
-                                getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
-                                tripRenderer.stop();
-                                tripRenderer = null;
-                            }
-                            if (trip != null) {
-                                trip.removeListener(tripUpdateListener);
-                                tripUpdateListener = null;
-                                hideEtaPanel();
-                                hideNextInstructionPanel();
-                                stopPreview();
-                                navigation.deleteTrip(trip);
-                                trip = null;
-                            }
-                            trip = result.trip();
-
-                            tripUpdateListener = new TripUpdateListener() {
-                                @Override
-                                public void onRoutesChange(Trip trip) {
-                                    updateEtaPanelForRoutesOnTrip(trip);
-                                }
-
-                                @Override
-                                public void onStateChange(Trip trip) {
-                                }
-
-                                @Override
-                                public void onTripArrival(Trip trip) {
-                                    setMapWidgetVisibility2(View.VISIBLE);//Jerry@20220314
-                                    Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
-                                }
-                            };
-                            trip.addListener(tripUpdateListener);
-
-
-
-                            updateEtaPanelForRoutesOnTrip(trip);
-                            trafficRenderer.setTrafficMarkerVisibility(false);
-                            tripRenderer = TripRenderer.create(trip, getMapHolder().getMap(), trafficConfiguration);
-
-                            getCameraStackController().addTripToOverviewCamera(tripRenderer);
-                            if (trip.routeList().size() <= 1) {
-                                navigation.startNavigation(trip);
-                                if(Constants.IS_DEMO){//Jerry@20220314 add
-                                    startDemo();
-                                }
-                            } else {
-                                Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
-                                tripRenderer.addClickListener(new TripRendererClickListener() {
-                                    @Override
-                                    public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
-                                        trip.setPreferredRoute(route);
-                                        navigation.startNavigation(trip);
-                                        if(Constants.IS_DEMO){//Jerry@20220314 add
-                                            startDemo();
-                                        }
-                                    }
-                                });
-                            }
-                        }
-
-                        @Override
-                        public void onTripPlanFailed(TripPlanError error) {
-                            trafficRenderer.setTrafficMarkerVisibility(true);
-                            Toast.makeText(mContext, getString(R.string.navigation_experience_route_planning_error), Toast.LENGTH_LONG).show();
-                            waypoints.clear();
-                            removeAllMarkers();
-                        }
-                    });
+                    startNavigation(destination);//Jerry@20220322 add
                 }
             }
         });
@@ -714,6 +619,106 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
         //metis@0309 显示搜索页面 <--
+    }
+
+    //Jerry@20220322 add
+    private void startNavigation(com.tomtom.navkit.map.Coordinate destination){
+        MarkerBuilder markerBuilder = new MarkerBuilder();
+        markerBuilder.setCoordinate(destination)
+                // Equivalent for Michi default route markers configuration
+                .setPinUri(getString(R.string.navigation_route_marker_pin_path))
+                .setShieldUri(getString(R.string.navigation_route_marker_shield_path))
+                .setShieldColor(toMapColor(ContextCompat.getColor(getApplicationContext(), R.color.route_marker_default_shield)))
+                .setShieldAnchor(SHIELD_ANCHOR_X, SHIELD_ANCHOR_Y)
+                .setIconUri(getString(R.string.navigation_route_marker_destination_icon_path))
+                .setIconAnchor(DESTINATION_ICON_ANCHOR_X, DESTINATION_ICON_ANCHOR_Y);
+        destinationMarker = markerLayer.addMarker(markerBuilder);
+
+        tripPlan.setDestination(toPlaceCoordinate(destination));
+
+        doReadSettings();
+
+        tripPlan.setNumberOfAlternatives(numberOfAlternatives);
+        tripPlan.getRoutingParameters().setBorderCrossingsPreference(bordersPreference);
+        tripPlan.getRoutingParameters().setFerriesPreference(ferriesPreference);
+        tripPlan.getRoutingParameters().setMotorwaysPreference(motorwaysPreference);
+        tripPlan.getRoutingParameters().setTollsPreference(tollsPreference);
+        tripPlan.getRoutingParameters().setUnpavedRoadsPreference(unpavedPreference);
+        tripPlan.getRoutingParameters().setCarpoolsPreference(carpoolsPreference);
+
+        navigation.planTrip(tripPlan, new TripPlanCallback() {
+            @Override
+            public void onTripPlanned(TripPlanResult result) {
+                waypoints.clear();
+                removeAllMarkers();
+
+                if (tripRenderer != null) {
+                    getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
+                    tripRenderer.stop();
+                    tripRenderer = null;
+                }
+                if (trip != null) {
+                    trip.removeListener(tripUpdateListener);
+                    tripUpdateListener = null;
+                    hideEtaPanel();
+                    hideNextInstructionPanel();
+                    stopPreview();
+                    navigation.deleteTrip(trip);
+                    trip = null;
+                }
+                trip = result.trip();
+
+                tripUpdateListener = new TripUpdateListener() {
+                    @Override
+                    public void onRoutesChange(Trip trip) {
+                        updateEtaPanelForRoutesOnTrip(trip);
+                    }
+
+                    @Override
+                    public void onStateChange(Trip trip) {
+                    }
+
+                    @Override
+                    public void onTripArrival(Trip trip) {
+                        setMapWidgetVisibility2(View.VISIBLE);//Jerry@20220314
+                        Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
+                    }
+                };
+                trip.addListener(tripUpdateListener);
+
+                updateEtaPanelForRoutesOnTrip(trip);
+                trafficRenderer.setTrafficMarkerVisibility(false);
+                tripRenderer = TripRenderer.create(trip, getMapHolder().getMap(), trafficConfiguration);
+
+                getCameraStackController().addTripToOverviewCamera(tripRenderer);
+                if (trip.routeList().size() <= 1) {
+                    navigation.startNavigation(trip);
+                    if(Constants.IS_DEMO){//Jerry@20220314 add
+                        startDemo();
+                    }
+                } else {
+                    Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
+                    tripRenderer.addClickListener(new TripRendererClickListener() {
+                        @Override
+                        public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
+                            trip.setPreferredRoute(route);
+                            navigation.startNavigation(trip);
+                            if(Constants.IS_DEMO){//Jerry@20220314 add
+                                startDemo();
+                            }
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onTripPlanFailed(TripPlanError error) {
+                trafficRenderer.setTrafficMarkerVisibility(true);
+                Toast.makeText(mContext, getString(R.string.navigation_experience_route_planning_error), Toast.LENGTH_LONG).show();
+                waypoints.clear();
+                removeAllMarkers();
+            }
+        });
     }
 	
 	private void setMapWidgetVisibility(int visibility) {
