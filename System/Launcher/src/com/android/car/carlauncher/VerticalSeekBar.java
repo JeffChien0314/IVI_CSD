@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.example.myapplication;
+package com.android.car.carlauncher;
 
 import android.content.Context;
 import android.graphics.Canvas;

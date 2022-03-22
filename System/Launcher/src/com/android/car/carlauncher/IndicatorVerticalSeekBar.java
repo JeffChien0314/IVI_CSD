@@ -1,4 +1,4 @@
-package com.example.myapplication;
+package com.android.car.carlauncher;
 
 import android.content.Context;
 import android.content.res.TypedArray;
@@ -10,7 +10,6 @@ import android.util.Log;
 
 
 /**
- * Created by Administrator on 2018/6/4.
  * 带刻度尺的 SeekBar
  */
 
