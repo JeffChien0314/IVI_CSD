@@ -445,7 +445,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         markerLayer = map.addLayer();
         waypointMarkers = new ArrayList<>();
         searchMarkerBuilder = new MarkerBuilder(); //metis@0309 add
-        
+
         tripPlan = new TripPlan();
         waypoints = new RouteStopVector();
 
@@ -622,7 +622,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220322 add
-    private void startNavigation(com.tomtom.navkit.map.Coordinate destination){
+    public void startNavigation(com.tomtom.navkit.map.Coordinate destination){
         MarkerBuilder markerBuilder = new MarkerBuilder();
         markerBuilder.setCoordinate(destination)
                 // Equivalent for Michi default route markers configuration
