@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?><!-- single item in a search result list -->
+<!--
+
+    Copyright (c) 2015-2017 TomTom N.V. All rights reserved.
+
+    This software is the proprietary copyright of TomTom N.V. and its subsidiaries and may be used
+    for internal evaluation purposes or commercial use strictly subject to separate licensee
+    agreement between you and TomTom. If you are the licensee, you are only permitted to use
+    this Software in accordance with the terms of your license agreement. If you are not the
+    licensee then you are not authorised to use this software in any manner and should
+    immediately return it to TomTom N.V.
+
+-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="450px"
+    android:layout_height="150px"
+    android:layout_gravity="center"
+    android:background="@drawable/search_result_item_bg">
+
+    <LinearLayout
+        android:id="@+id/icon_layout"
+        android:layout_width="60px"
+        android:layout_height="60px"
+        android:layout_alignParentLeft="true"
+        android:layout_centerInParent="true"
+        android:layout_marginLeft="24px"
+        android:layout_marginRight="24px"
+        android:gravity="center">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="30px"
+            android:layout_height="30px"
+            android:src="@drawable/icon_home_normal" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/text_layout"
+        android:layout_width="180px"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@id/icon_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="#ffffffff"
+            android:textSize="28px"
+            tools:text="@string/hello" />
+
+        <TextView
+            android:id="@+id/address"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@+id/name"
+            android:layout_marginTop="6px"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:singleLine="true"
+            android:textColor="#80ffffff"
+            android:textSize="22px"
+            tools:text="@string/hello" />
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/icon_edit"
+        android:layout_width="60px"
+        android:layout_height="60px"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="24px"
+        android:layout_toRightOf="@+id/text_layout"
+        android:src="@drawable/icon_edit_normal" />
+
+    <ImageView
+        android:id="@+id/icon_move"
+        android:layout_width="60px"
+        android:layout_height="60px"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/icon_edit"
+        android:layout_marginLeft="18px"
+        android:layout_marginRight="30px"
+        android:src="@drawable/icon_move_normal" />
+
+</RelativeLayout>
+

@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -57,7 +58,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 holder.distance.setVisibility(View.VISIBLE);
                 int distance = searchResultItem.getDistance();
                 if (distance >= 10 * 1000) {
-                    holder.distance.setText(String.valueOf(distance * 0.001));
+                    holder.distance.setText(String.valueOf(distance / 1000));
                     holder.distanceUnits.setText("km");
                 } else if (distance > 1000 && distance < 10 * 1000) {
                     holder.distance.setText(String.valueOf(distance * 0.001).substring(0, 3));
@@ -68,6 +69,12 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 }
             } else {
                 holder.distance.setVisibility(View.GONE);
+            }
+
+            if (searchResultItem.getSearchType().equals("search")) {
+                holder.icon.setImageResource(R.drawable.icon_search_item_nav);
+            } else {
+                holder.icon.setImageResource(0);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -98,6 +105,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         private TextView phoneNum;
         private TextView distance;
         private TextView distanceUnits;
+        private ImageView icon;
 
         public SearchItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -107,6 +115,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
             phoneNum = itemView.findViewById(R.id.phone_num);
             distance = itemView.findViewById(R.id.distance);
             distanceUnits = itemView.findViewById(R.id.distance_units);
+            icon = itemView.findViewById(R.id.icon);
         }
     }
 }

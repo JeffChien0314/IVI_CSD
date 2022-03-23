@@ -11,7 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -27,6 +27,7 @@ import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.activities.LauncherActivity;
 import com.fxc.ev.launcher.utils.ApplicationPreferences;
+import com.fxc.ev.launcher.utils.SpUtils;
 import com.fxc.ev.launcher.utils.SpaceItemDecoration;
 import com.tomtom.navkit2.PoiDetailsOnboardService;
 import com.tomtom.navkit2.SearchOnboardService;
@@ -43,11 +44,37 @@ import com.tomtom.navkit2.search.PoiSuggestionResults;
 import com.tomtom.navkit2.search.PoiSuggestionsListener;
 import com.tomtom.navkit2.search.Search;
 
+import static com.fxc.ev.launcher.maps.search.Constants.TYPE_FAVORITE;
+import static com.fxc.ev.launcher.maps.search.Constants.TYPE_SEARCH;
+import static com.fxc.ev.launcher.maps.search.Constants.atmBg;
+import static com.fxc.ev.launcher.maps.search.Constants.atmIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.cafeBg;
+import static com.fxc.ev.launcher.maps.search.Constants.cafeIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.chargingStationBg;
+import static com.fxc.ev.launcher.maps.search.Constants.chargingStationIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.favItemDisableBg;
+import static com.fxc.ev.launcher.maps.search.Constants.favItemEnableBg;
+import static com.fxc.ev.launcher.maps.search.Constants.gasStationBg;
+import static com.fxc.ev.launcher.maps.search.Constants.gasStationIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.homeDisableIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.homeEnableIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.hotelBg;
+import static com.fxc.ev.launcher.maps.search.Constants.hotelIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.marketBg;
+import static com.fxc.ev.launcher.maps.search.Constants.marketIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.officeDisableIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.parkingBg;
+import static com.fxc.ev.launcher.maps.search.Constants.parkingIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.restaurantBg;
+import static com.fxc.ev.launcher.maps.search.Constants.restaurantIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.textDisableColor;
+import static com.fxc.ev.launcher.maps.search.Constants.textEnableColor;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchFragment extends Fragment  {
+public class SearchFragment extends Fragment {
     public static final String TAG = "metis.SearchFragment";
     private View rootView;
     private EditText searchEditText;
@@ -65,28 +92,22 @@ public class SearchFragment extends Fragment  {
     private LinearLayout favMainLayout;
     private TextView favMore;
     private RecyclerView favRecyclerView;
-    private LinearLayout favItemLayout;
-    private LinearLayout interestItemLayout;
+    private LinearLayout favItemParentLayout;
+    private LinearLayout interestItemParentLayout;
+    private LinearLayout itemLayout;
     private TextView mInterestMore;
+    private List<FavEditItem> mFavEditItemList = new ArrayList<>();
+    private List<FavEditItem> mInterestEditItemList = new ArrayList<>();
+    private InputMethodManager mInputMethodManager;
+    private String mSearchType = TYPE_SEARCH;
+    private int clickIndex;
+    /*public static final String TYPE_SEARCH = "search";
+    public static final String TYPE_FAVORITE = "favorite";*/
 
     public OnMarkerChangedListener onMarkerChangedListener;
 
     public interface OnMarkerChangedListener {
         public void onMarkerChange(List<Location> locations);
-    }
-
-    public class KeyValuePair {
-        public String name;
-        public int image;
-        public int background;
-        public int textColor;
-
-        public KeyValuePair(String name, int image, int background, int textColor) {
-            this.name = name;
-            this.image = image;
-            this.background = background;
-            this.textColor = textColor;
-        }
     }
 
     private Handler handler = new Handler() {
@@ -106,6 +127,7 @@ public class SearchFragment extends Fragment  {
                                 searchResultItem.setDistance(ftsResult.getDistance());
                                 searchResultItem.setPhoneNums(ftsResult.getPoiPhoneNumbers());
                                 searchResultItem.setLocation(ftsResult.getLocation());
+                                searchResultItem.setSearchType(mSearchType);
 
                                 locationList.add(ftsResult.getLocation());
                                 searchResultItemArrayList.add(searchResultItem);
@@ -117,6 +139,7 @@ public class SearchFragment extends Fragment  {
                         searchResultRecyclerView.setVisibility(View.GONE);
                         favMainLayout.setVisibility(View.VISIBLE);
                     }
+                    mSearchType = TYPE_SEARCH; //reset mSearchType value to search
                     onMarkerChangedListener.onMarkerChange(locationList);
                     searchResultsAdapter.notifyDataSetChanged();
                 }
@@ -202,9 +225,23 @@ public class SearchFragment extends Fragment  {
         searchResultsAdapter.setItemClickListener(new SearchResultsAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(SearchResultItem searchResultItem) {
-                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
-                launcherActivity.setCurrentFragment(routePreviewFragment);
-                routePreviewFragment.setData(searchResultItem);
+                if (searchResultItem.getSearchType().equals(TYPE_SEARCH)) {
+                    RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
+                    launcherActivity.setCurrentFragment(routePreviewFragment);
+                    routePreviewFragment.setData(searchResultItem);
+                } else if (searchResultItem.getSearchType().equals(TYPE_FAVORITE)) {
+
+                    updateItemData(clickIndex, mFavEditItemList, /*"Home",*/ homeEnableIcon
+                            , favItemEnableBg, textEnableColor, searchResultItem.getLocation(), searchResultItem.getAddress());
+
+
+                    SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
+
+                    favItemParentLayout.removeAllViews();
+                    initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5));
+                    searchResultRecyclerView.setVisibility(View.GONE);
+                    favMainLayout.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -219,8 +256,8 @@ public class SearchFragment extends Fragment  {
             }
         });
 
-        favItemLayout = rootView.findViewById(R.id.fav_item_layout);
-        interestItemLayout = rootView.findViewById(R.id.interest_item_layout);
+        favItemParentLayout = rootView.findViewById(R.id.fav_item_layout);
+        interestItemParentLayout = rootView.findViewById(R.id.interest_item_layout);
         mInterestMore = rootView.findViewById(R.id.interest_more);
         mInterestMore.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -229,25 +266,33 @@ public class SearchFragment extends Fragment  {
             }
         });
 
+        mFavEditItemList = SpUtils.getDataList(launcherActivity, "favorites_edit_item_list", "favorites", FavEditItem.class);
+        Log.v(TAG, "mFavEditItemList:" + mFavEditItemList.size());
+        if (mFavEditItemList.size() == 0) {
+            mFavEditItemList.add(new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+            mFavEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+            SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
+        }
 
-        List<KeyValuePair> list1 = new ArrayList<>();
-        List<KeyValuePair> list2 = new ArrayList<>();
-        list1.add(new KeyValuePair("Home", R.drawable.icon_home_normal, R.drawable.fav_item_btn_disable_bg, R.color.fav_text_disable_color));
-        list1.add(new KeyValuePair("Office", R.drawable.icon_office_normal, R.drawable.fav_item_btn_disable_bg, R.color.fav_text_disable_color));
-        list1.add(new KeyValuePair("favorites11111111111111", R.drawable.icon_star_normal, R.drawable.fav_item_btn_disable_bg, R.color.fav_text_disable_color));
+        mInterestEditItemList = SpUtils.getDataList(launcherActivity, "interest_edit_list", "interest", FavEditItem.class);
+        if (mInterestEditItemList.size() == 0) {
+            mInterestEditItemList.add(new FavEditItem("Parking", parkingIcon, parkingBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("Charging station", chargingStationIcon, chargingStationBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("Supermarket", marketIcon, marketBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("Cafe", cafeIcon, cafeBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("Restaurant", restaurantIcon, restaurantBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("Hotel", hotelIcon, hotelBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("ATM", atmIcon, atmBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("Gas Station", gasStationIcon, gasStationBg, textEnableColor, null, null));
 
-        list2.add(new KeyValuePair("Parking", R.drawable.icon_parking_normal, R.drawable.interest_parking_bg, R.color.fav_text_enable_color));
-        list2.add(new KeyValuePair("Charging station", R.drawable.icon_charge_staiotn_normal, R.drawable.interest_charging_station_bg, R.color.fav_text_enable_color));
-        list2.add(new KeyValuePair("Supermarket", R.drawable.icon_market_normal, R.drawable.interest_market_bg, R.color.fav_text_enable_color));
-        list2.add(new KeyValuePair("Cafe", R.drawable.icon_cafe_normal, R.drawable.interest_market_bg, R.color.fav_text_enable_color));
-        list2.add(new KeyValuePair("Restaurant", R.drawable.icon_restaurant_normal, R.drawable.interest_restaurant_bg, R.color.fav_text_enable_color));
+            SpUtils.setDataList(launcherActivity, "interest_edit_list", "interest", mInterestEditItemList);
+        }
 
-        initAutoLinearLayout(favItemLayout, list1);
-        initAutoLinearLayout(interestItemLayout, list2);
-
+        initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5));
+        initAutoLinearLayout(interestItemParentLayout, SpUtils.clipList(mInterestEditItemList, 5));
     }
 
-    private void initAutoLinearLayout(LinearLayout parentLayout, List<KeyValuePair> dataList) {
+    private <T> void initAutoLinearLayout(LinearLayout parentLayout, List<T> dataList) {
         boolean isNewLayout = false;
         int maxWith = 450;
         int elseWith = maxWith; //剩下的宽度
@@ -261,6 +306,7 @@ public class SearchFragment extends Fragment  {
         itemViewLp.setMargins(6, 0, 0, 0);
 
         for (int i = 0; i < dataList.size(); i++) {
+            FavEditItem favEditItem = (FavEditItem) dataList.get(i);
             if (isNewLayout) {
                 parentLayout.addView(rowLinearLayout);
                 rowLinearLayout = new LinearLayout(launcherActivity);
@@ -268,14 +314,38 @@ public class SearchFragment extends Fragment  {
                 isNewLayout = false;
             }
 
-            LinearLayout linearLayout = (LinearLayout) LayoutInflater.from(launcherActivity).inflate(R.layout.favorites_item, null);
-            TextView favName = linearLayout.findViewById(R.id.fav_name);
-            ImageView favImg = linearLayout.findViewById(R.id.fav_img);
+            itemLayout = (LinearLayout) LayoutInflater.from(launcherActivity)
+                    .inflate(R.layout.favorites_item, null);
+            TextView favName = itemLayout.findViewById(R.id.fav_name);
+            ImageView favImg = itemLayout.findViewById(R.id.fav_img);
 
-            favName.setText(dataList.get(i).name);
-            favName.setTextColor(launcherActivity.getResources().getColor(dataList.get(i).textColor));
-            favImg.setImageResource(dataList.get(i).image);
-            linearLayout.setBackgroundResource(dataList.get(i).background);
+            favName.setText(favEditItem.getName());
+            favName.setTextColor(launcherActivity.getResources().getColor(favEditItem.getTextColor()));
+            favImg.setImageResource(favEditItem.getImage());
+            itemLayout.setBackgroundResource(favEditItem.getBackground());
+            itemLayout.setTag(i);
+
+            itemLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Log.v(TAG, "被点击啦！");
+                    clickIndex = (int) v.getTag();
+                    Log.v(TAG, "被点击啦!, clickIndex: " + clickIndex);
+                    if (favEditItem.getLocation() == null) {
+                        searchEditText.requestFocus();
+                        mSearchType = TYPE_FAVORITE;
+                        showSoftInput();
+                    } else {
+                        SearchResultItem searchResultItem = new SearchResultItem();
+                        searchResultItem.setLocation(favEditItem.getLocation());
+                        searchResultItem.setName(favEditItem.getName());
+
+                        RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
+                        launcherActivity.setCurrentFragment(routePreviewFragment);
+                        routePreviewFragment.setData(searchResultItem);
+                    }
+                }
+            });
 
             int textLength = (int) favName.getPaint().measureText(favName.getText().toString());
             int layoutWith = 72 + textLength;
@@ -285,7 +355,7 @@ public class SearchFragment extends Fragment  {
                 parentLayout.addView(rowLinearLayout);
                 rowLinearLayout = new LinearLayout(launcherActivity);
                 rowLinearLayout.setLayoutParams(rowLp);
-                rowLinearLayout.addView(linearLayout);
+                rowLinearLayout.addView(itemLayout);
                 isNewLayout = true;
                 continue;
             }
@@ -300,9 +370,9 @@ public class SearchFragment extends Fragment  {
                 //剩余宽度减去文本框的宽度+间隔=新的剩余宽度
                 elseWith -= layoutWith + 18;
                 if (rowLinearLayout.getChildCount() != 0) {
-                    linearLayout.setLayoutParams(itemViewLp);
+                    itemLayout.setLayoutParams(itemViewLp);
                 }
-                rowLinearLayout.addView(linearLayout);
+                rowLinearLayout.addView(itemLayout);
             }
         }
         //添加最后一行，但要防止重复添加
@@ -370,9 +440,35 @@ public class SearchFragment extends Fragment  {
         return bundle;
     }
 
+    private <T> List<T> updateItemData(int updateIndex, List<T> list, int image, int background, int textColor, Location location, String address) {
+        FavEditItem favEditItem = (FavEditItem) list.get(updateIndex);
+        //favEditItem.setName(name);
+        favEditItem.setImage(image);
+        favEditItem.setBackground(background);
+        favEditItem.setTextColor(textColor);
+        favEditItem.setLocation(location);
+        favEditItem.setAddress(address);
+
+        return list;
+    }
+
+    private void showSoftInput() {
+        mInputMethodManager = (InputMethodManager) launcherActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (mInputMethodManager != null) {
+            mInputMethodManager.showSoftInput(searchEditText, 0);
+        }
+    }
+
+    private void hideSoftInput() {
+        if (mInputMethodManager != null && mInputMethodManager.isActive()) {
+            mInputMethodManager.hideSoftInputFromWindow(launcherActivity.getWindow().getDecorView().getWindowToken(), 0);
+        }
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         search.close();
+        mSearchType = TYPE_SEARCH;//reset mSearchType value to search
     }
 }

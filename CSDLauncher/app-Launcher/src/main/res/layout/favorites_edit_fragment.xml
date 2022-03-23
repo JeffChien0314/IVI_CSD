@@ -38,6 +38,17 @@
         android:textColor="#bfffffff">
     </TextView>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/fav_edit_recyclerview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fav_edit_back"
+        android:layout_marginLeft="30px"
+        android:layout_marginTop="30px"
+        android:layout_marginRight="30px">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
 
 
 </RelativeLayout>

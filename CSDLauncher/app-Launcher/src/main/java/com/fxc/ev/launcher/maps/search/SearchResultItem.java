@@ -11,6 +11,7 @@ public class SearchResultItem {
     private String  openingHours;
     private List<String> phoneNums;
     private Location location;
+    private String searchType;
 
     public String getName() {
         return name;
@@ -58,5 +59,13 @@ public class SearchResultItem {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public String getSearchType() {
+        return searchType;
+    }
+
+    public void setSearchType(String searchType) {
+        this.searchType = searchType;
     }
 }

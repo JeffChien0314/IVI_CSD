@@ -24,8 +24,7 @@
         android:layout_height="90px"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:layout_marginRight="24px"
-        android:src="@drawable/icon_search_item_nav" />
+        android:layout_marginRight="24px" />
 
     <LinearLayout
         android:layout_width="204px"
