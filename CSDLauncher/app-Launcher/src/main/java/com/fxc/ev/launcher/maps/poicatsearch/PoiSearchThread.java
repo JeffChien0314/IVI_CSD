@@ -26,40 +26,59 @@ import java.util.List;
 
 public class PoiSearchThread extends Thread {
     private final String TAG = PoiSearchThread.class.getSimpleName();
-    private String query;
+    private FtsResultsListener myFtsResultsListener;
+    private PoiSuggestionsListener myPoiSuggestionsListener;
+    private Input input;
     private Context context;
-    private com.tomtom.navkit2.place.Coordinate coordinate;
     private Bundle bundle;
-    private Map map;
-    private Layer layer;
-    private List<Marker> waypointMarkers;
 
-    public PoiSearchThread(Context context, String query, Coordinate coordinate, Map map,List<Marker> waypointMarkers) {
+    public PoiSearchThread(Context context, FtsResultsListener myFtsResultsListener, PoiSuggestionsListener myPoiSuggestionsListener,Input input) {
         this.context = context;
-        this.query = query;
-        this.coordinate = coordinate;
-        this.map = map;
-        this.waypointMarkers = waypointMarkers;
-        layer = map.addLayer();
         bundle = new BundleConfig(context).createBundleConfiguration();
+        this.myFtsResultsListener = myFtsResultsListener;
+        this.myPoiSuggestionsListener = myPoiSuggestionsListener;
+        this.input = input;
     }
 
     @Override
     public void run() {
         Search search = new Search(context, bundle);
-        search.query(getInput(query, coordinate), new MyFtsResultsListener(), new MyPoiSuggestionsListener());
+        search.query(input, myFtsResultsListener, myPoiSuggestionsListener);
     }
 
-    private Input getInput(String query, Coordinate coordinate) {
-        FilterByGeoRadius filter = new FilterByGeoRadius(coordinate, Constants.RADIUS_IN_METERS);
+    /*private Input getInput(String query, Coordinate coordinate) {
+        double scale = map.getCamera().getProperties().getScale();
+        int numberLimit = getNumberOfCategory(scale,index);
+        FilterByGeoRadius filter = new FilterByGeoRadius(coordinate, (int) scale);
         Input.Builder builder = new Input.Builder();
         builder.setSearchString(query)
                 .setLanguage("zh-TW")
-                .setLimit(Constants.LIMIT)
+                .setLimit(numberLimit)
                 .setExecutionMode(ExecutionMode.kOnline)
                 .setFilterByGeoRadius(filter);
         Input input = builder.build();
         return input;
+    }
+
+    //Jerry@20220324 add:get category number
+    private int getNumberOfCategory(double scale,int index){
+        int number = 0;
+        if(Constants.TWO_KM >= scale){
+            number = Constants.SCALE_TYPE_1KM_2KM[index];
+        }else if(scale > Constants.TWO_KM && scale <= Constants.FOUR_KM){
+            number = Constants.SCALE_TYPE_2KM_4KM[index];
+        }else if(scale > Constants.FOUR_KM && scale <= Constants.EIGHT_KM){
+            number = Constants.SCALE_TYPE_4KM_8KM[index];
+        }else if(scale > Constants.EIGHT_KM && scale <= Constants.TEN_KM){
+            number = Constants.SCALE_TYPE_8KM_10KM[index];
+        }else if(scale > Constants.TEN_KM && scale <= Constants.FIFTEEN_KM){
+            number = Constants.SCALE_TYPE_10KM_15KM[index];
+        }else if(scale > Constants.FIFTEEN_KM && scale <= Constants.TWENTY_FIVW_KM){
+            number = Constants.SCALE_TYPE_15KM_25KM[index];
+        }else if(scale > Constants.TWENTY_FIVW_KM && scale <= Constants.THIRTY_FIVE_KM){
+            number = Constants.SCALE_TYPE_25KM_35KM[index];
+        }
+        return number;
     }
 
     private class MyFtsResultsListener implements FtsResultsListener {
@@ -74,12 +93,11 @@ public class PoiSearchThread extends Thread {
                 double longitude = ftsResult.getLocation().coordinate().longitude();
                 com.tomtom.navkit.map.Coordinate coordinate = new com.tomtom.navkit.map.Coordinate(latitude, longitude);
                 new WaypointMarker(layer, context).addWaypointMarker(coordinate,context.getString(R.string.shop_poi_search_position_marker_path),
-                        ftsResult.getPoiName(),waypointMarkers);
-
-                /*PoiCategorySet poiCategorySet = ftsResult.toPlace().poi().categories();
+                        ftsResult.getPoiName());
+                *//*PoiCategorySet poiCategorySet = ftsResult.toPlace().poi().categories();
                 for (PoiCategory poiCategory : poiCategorySet) {
                     Log.i("Jerry", "*FtsResults**poiCategory:" + poiCategory.id());
-                }*/
+                }*//*
                 //Log.i(TAG, "*****************************************");
             }
         }
@@ -91,5 +109,5 @@ public class PoiSearchThread extends Thread {
         public void onPoiSuggestionResults(@NonNull PoiSuggestionResults poiSuggestionResults) {
             
         }
-    }
+    }*/
 }

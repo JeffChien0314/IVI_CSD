@@ -71,6 +71,7 @@ import com.tomtom.navkit.map.MapLongClickEvent;
 import com.tomtom.navkit.map.MapLongClickListener;
 import com.tomtom.navkit.map.Marker;
 import com.tomtom.navkit.map.MarkerBuilder;
+import com.tomtom.navkit.map.MarkerLabelBuilder;
 import com.tomtom.navkit.map.camera.Camera;
 import com.tomtom.navkit.map.camera.CameraListener;
 import com.tomtom.navkit.map.extension.positioning.PositioningExtension;
@@ -102,6 +103,15 @@ import com.tomtom.navkit2.navigation.TripUpdateListener;
 import com.tomtom.navkit2.navigation.common.Preference;
 import com.tomtom.navkit2.place.Coordinate;
 import com.tomtom.navkit2.place.Location;
+import com.tomtom.navkit2.search.ExecutionMode;
+import com.tomtom.navkit2.search.FilterByGeoRadius;
+import com.tomtom.navkit2.search.FtsResult;
+import com.tomtom.navkit2.search.FtsResultVector;
+import com.tomtom.navkit2.search.FtsResults;
+import com.tomtom.navkit2.search.FtsResultsListener;
+import com.tomtom.navkit2.search.Input;
+import com.tomtom.navkit2.search.PoiSuggestionResults;
+import com.tomtom.navkit2.search.PoiSuggestionsListener;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -202,6 +212,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     boolean isNavigationTTSMute = false;//Jerry@20220321 add
     private TripPlan tripPlan;
     private RouteStopVector waypoints;
+    private List<Marker> poiCatMarkers;//Jerry@20220324 add
 
 	//Jerry@20220317 add for stop navigation
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -444,6 +455,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
         markerLayer = map.addLayer();
         waypointMarkers = new ArrayList<>();
+        poiCatMarkers = new ArrayList<>();//Jerry@20220324 add
         searchMarkerBuilder = new MarkerBuilder(); //metis@0309 add
 
         tripPlan = new TripPlan();
@@ -603,7 +615,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 Toast.makeText(getApplicationContext(), getString(R.string.navigation_experience_deviated_from_route, metersFromStart), Toast.LENGTH_LONG).show();
             }
         });
-		
+
 		//metis@0309 显示搜索页面 -->
         favHomeBtn = findViewById(R.id.favorites_home);
         favOfficeBtn = findViewById(R.id.favorites_office);
@@ -720,7 +732,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
     }
-	
+
 	private void setMapWidgetVisibility(int visibility) {
         searchButton.setVisibility(visibility);
         favHomeBtn.setVisibility(visibility);
@@ -742,20 +754,25 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private class MyCameraListener extends CameraListener {
         @Override
         public void onCameraPropertiesChange(Camera camera) {
-            //mLatitude = camera.getProperties().getLookAt().getLatitude();
-            //mLongitude =camera.getProperties().getLookAt().getLongitude();
-
             //super.onCameraPropertiesChange(camera);
         }
 
         @Override
         public void onCameraPropertiesSteady(Camera camera) {
             //super.onCameraPropertiesSteady(camera);
+            removeAllPoiMarkers();
+            double scale = camera.getProperties().getScale();
+            if(scale > Constants.THIRTY_FIVE_KM){
+                return;
+            }
             mLatitude = camera.getProperties().getLookAt().getLatitude();
             mLongitude = camera.getProperties().getLookAt().getLongitude();
             Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
-            for (String category : Constants.ALL_CATEGORY) {
-                PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, category, coordinate, map, waypointMarkers);
+            for (int index = 0; index < Constants.ALL_CATEGORY.length;index++) {
+                MyFtsResultsListener myFtsResultsListener = new MyFtsResultsListener();
+                MyPoiSuggestionsListener myPoiSuggestionsListener = new MyPoiSuggestionsListener();
+                Input input = getInput(Constants.ALL_CATEGORY[index], coordinate,scale,index);
+                PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, myFtsResultsListener, myPoiSuggestionsListener, input);
                 thread.start();
             }
         }
@@ -763,10 +780,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         @Override
         public void onCameraPropertiesSignificantChange(Camera camera) {
             //super.onCameraPropertiesSignificantChange(camera);
-            mLatitude = camera.getProperties().getLookAt().getLatitude();
-            mLongitude = camera.getProperties().getLookAt().getLongitude();
-            Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
-
         }
     }
 
@@ -1046,5 +1059,108 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         if (trip != null) {
             trip.startPreview(Constants.SPEED_MULTIPLIER);
         }
+    }
+
+    //Jerry@20220324 add:getInput
+    private Input getInput(String query, Coordinate coordinate,double scale, int index) {
+        int numberLimit = getNumberOfCategory(scale,index);
+        FilterByGeoRadius filter = new FilterByGeoRadius(coordinate, (int) scale);
+        Input.Builder builder = new Input.Builder();
+        builder.setSearchString(query)
+                .setLanguage("zh-TW")
+                .setLimit(numberLimit)
+                .setExecutionMode(ExecutionMode.kOnline)
+                .setFilterByGeoRadius(filter);
+        Input input = builder.build();
+        return input;
+    }
+
+    //Jerry@20220324 add:get category number
+    private int getNumberOfCategory(double scale,int index){
+        int number = 0;
+        if(Constants.TWO_KM >= scale){
+            number = Constants.SCALE_TYPE_1KM_2KM[index];
+        }else if(scale > Constants.TWO_KM && scale <= Constants.FOUR_KM){
+            number = Constants.SCALE_TYPE_2KM_4KM[index];
+        }else if(scale > Constants.FOUR_KM && scale <= Constants.EIGHT_KM){
+            number = Constants.SCALE_TYPE_4KM_8KM[index];
+        }else if(scale > Constants.EIGHT_KM && scale <= Constants.TEN_KM){
+            number = Constants.SCALE_TYPE_8KM_10KM[index];
+        }else if(scale > Constants.TEN_KM && scale <= Constants.FIFTEEN_KM){
+            number = Constants.SCALE_TYPE_10KM_15KM[index];
+        }else if(scale > Constants.FIFTEEN_KM && scale <= Constants.TWENTY_FIVW_KM){
+            number = Constants.SCALE_TYPE_15KM_25KM[index];
+        }else if(scale > Constants.TWENTY_FIVW_KM && scale <= Constants.THIRTY_FIVE_KM){
+            number = Constants.SCALE_TYPE_25KM_35KM[index];
+        }
+        return number;
+    }
+
+    //Jerry@20220324 add:FtsResultsListener
+    private class MyFtsResultsListener implements FtsResultsListener {
+
+        @Override
+        public void onFtsResults(@NonNull FtsResults ftsResults) {
+            FtsResultVector resultVector = ftsResults.getResults();
+            for (FtsResult ftsResult : resultVector) {
+                Log.i(TAG, "*FtsResults**Place:" + ftsResult.toPlace().toString());
+
+                double latitude = ftsResult.getLocation().coordinate().latitude();
+                double longitude = ftsResult.getLocation().coordinate().longitude();
+                com.tomtom.navkit.map.Coordinate coordinate = new com.tomtom.navkit.map.Coordinate(latitude, longitude);
+                addPoiCatMarker(coordinate,getString(R.string.shop_poi_search_position_marker_path),
+                        ftsResult.getPoiName());
+                /*PoiCategorySet poiCategorySet = ftsResult.toPlace().poi().categories();
+                for (PoiCategory poiCategory : poiCategorySet) {
+                    Log.i("Jerry", "*FtsResults**poiCategory:" + poiCategory.id());
+                }*/
+                //Log.i(TAG, "*****************************************");
+            }
+        }
+    }
+
+    //Jerry@20220324 add:PoiSuggestionsListener
+    private class MyPoiSuggestionsListener implements PoiSuggestionsListener {
+
+        @Override
+        public void onPoiSuggestionResults(@NonNull PoiSuggestionResults poiSuggestionResults) {
+
+        }
+    }
+
+    //Jerry@20220324 add:addPoiCatMarker
+    public void addPoiCatMarker(com.tomtom.navkit.map.Coordinate waypoint, String url, String poiName) {
+        final MarkerBuilder markerBuilder = new MarkerBuilder();
+        MarkerLabelBuilder markerLabelBuilder = null;
+        markerBuilder
+                .setCoordinate(waypoint)
+                .setPinUri(url)
+                .setIconUri(url);
+        try {
+            markerLabelBuilder = markerBuilder.addLabel();
+            markerLabelBuilder
+                    .setFontUri(this.getString(R.string.font_style))
+                    .setTextAnchoring(MarkerLabelBuilder.TextAnchoring.kLeft)
+                    .setTextSize(20)
+                    .setWrapText(false)
+                    //.setMaximumNumberOfLines(1)
+                    .setOffset(15, 5)
+                    .setText(poiName)
+                    .setTextColor(new com.tomtom.navkit.map.Color(255, 0, 0));
+
+        } catch (MarkerBuilder.AlreadyHasLabel alreadyHasLabel) {
+            alreadyHasLabel.printStackTrace();
+        }
+        Marker marker = markerLayer.addMarker(markerBuilder);
+        poiCatMarkers.add(marker);
+    }
+
+    //Jerry@20220324 add:removeAllPoiMarkers
+    public void removeAllPoiMarkers() {
+        if(poiCatMarkers.isEmpty()) return;
+        for (Marker poiCatMarker : poiCatMarkers) {
+            markerLayer.removeMarker(poiCatMarker);
+        }
+        poiCatMarkers.clear();
     }
 }

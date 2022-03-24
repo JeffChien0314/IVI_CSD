@@ -10,6 +10,7 @@ import com.tomtom.navkit.map.Marker;
 import com.tomtom.navkit.map.MarkerBuilder;
 import com.tomtom.navkit.map.MarkerLabelBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WaypointMarker {
@@ -17,14 +18,14 @@ public class WaypointMarker {
     private Context context;
 
     private Marker destinationMarker;
-    private List<Marker> waypointMarkers;
+    public List<Marker> waypointMarkers = new ArrayList<>();
 
     public WaypointMarker(Layer markerLayer, Context context) {
         this.markerLayer = markerLayer;
         this.context = context;
     }
 
-    public void addWaypointMarker(com.tomtom.navkit.map.Coordinate waypoint, String url, String poiName,List<Marker> waypointMarkers) {
+    public void addWaypointMarker(com.tomtom.navkit.map.Coordinate waypoint, String url, String poiName) {
         final MarkerBuilder markerBuilder = new MarkerBuilder();
         MarkerLabelBuilder markerLabelBuilder = null;
         markerBuilder
@@ -48,7 +49,6 @@ public class WaypointMarker {
         }
         Marker marker = markerLayer.addMarker(markerBuilder);
         waypointMarkers.add(marker);
-        //return waypointMarkers;
     }
 
     public Marker addWaypointMarker(com.tomtom.navkit.map.Coordinate waypoint) {
@@ -68,7 +68,7 @@ public class WaypointMarker {
         }
     }
 
-    public void removeAllMarkers(List<Marker> waypointMarkers) {
+    public void removeAllMarkers() {
         for (Marker waypointMarker : waypointMarkers) {
             markerLayer.removeMarker(waypointMarker);
         }
