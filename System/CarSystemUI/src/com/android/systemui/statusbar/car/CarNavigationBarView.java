@@ -19,13 +19,22 @@ package com.android.systemui.statusbar.car;
 import android.content.Context;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.ImageView;
 
 import com.android.systemui.Dependency;
 import com.android.systemui.R;
 import com.android.systemui.statusbar.phone.StatusBarIconController;
+import static android.content.Context.WINDOW_SERVICE;
+import android.car.userlib.CarUserManagerHelper;
+import android.os.UserManager;
+import android.content.pm.UserInfo;
+import android.app.ActivityManager;
+import android.os.RemoteException;
 
 /**
  * A custom navigation bar for the automotive use case.
@@ -42,10 +51,13 @@ class CarNavigationBarView extends LinearLayout {
     // used to wire in open/close gestures for notifications
     private OnTouchListener mStatusBarWindowTouchListener;
 
+    private CarUserManagerHelper mCarUserManagerHelper;
+
 
     public CarNavigationBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
         mContext = context;
+        mCarUserManagerHelper=new CarUserManagerHelper(mContext);
     }
 
     @Override
@@ -68,6 +80,30 @@ class CarNavigationBarView extends LinearLayout {
             Dependency.get(StatusBarIconController.class).addIconGroup(mDarkIconManager);
         }
         // needs to be clickable so that it will receive ACTION_MOVE events
+
+        View mUserInfo = findViewById(R.id.user_info);
+        if(mUserInfo!=null){
+         //int userId= mCarUserManagerHelper.getCurrentProcessUserId();
+         //UserManager userManager= (UserManager)mContext.getSystemService(Context.USER_SERVICE);
+         //UserInfo userInfo=userManager.getUserInfo(userId);
+         UserInfo userInfo=null;
+         try{
+         userInfo=ActivityManager.getService().getCurrentUser();
+         }catch(RemoteException re){
+         
+         }
+         if(userInfo!=null){
+         ((TextView)findViewById(R.id.user_name)).setText(userInfo.name);
+         Drawable icon = userInfo.iconPath != null ? Drawable.createFromPath(userInfo.iconPath):null;
+         if(icon!=null){
+           ((ImageView)findViewById(R.id.user_icon)).setImageDrawable(icon);
+         }else{
+           ((ImageView)findViewById(R.id.user_icon)).setImageDrawable(mContext.getDrawable(R.drawable.ic_menu_cc_am)); 
+         }
+
+       }     
+         
+      }
         setClickable(true);
     }
 
