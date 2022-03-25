@@ -13,6 +13,7 @@
 -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fav_edit_item_layout"
     android:layout_width="450px"
     android:layout_height="150px"
     android:layout_gravity="center"

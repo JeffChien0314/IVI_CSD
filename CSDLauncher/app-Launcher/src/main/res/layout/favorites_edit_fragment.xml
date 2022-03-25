@@ -33,9 +33,7 @@
         android:layout_alignParentRight="true"
         android:layout_marginTop="40px"
         android:layout_marginRight="43px"
-        android:text="Edit"
-        android:textSize="28px"
-        android:textColor="#bfffffff">
+        android:textSize="28px">
     </TextView>
 
     <androidx.recyclerview.widget.RecyclerView
