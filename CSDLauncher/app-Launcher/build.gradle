@@ -64,7 +64,7 @@ android {
             minifyEnabled false
             multiDexEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            android.applicationVariants.all { variant ->
+            /*android.applicationVariants.all { variant ->
                 variant.outputs.all { output ->
                     def outputFile = output.outputFile
                     if (outputFile != null && outputFile.name.endsWith('.apk')) {
@@ -72,7 +72,7 @@ android {
                         outputFileName = fileName
                     }
                 }
-            }
+            }*/
         }
         debug {
             debuggable true
@@ -119,6 +119,7 @@ dependencies {
     implementation "com.mikepenz:materialdrawer:6.0.9"
 
     implementation "androidx.multidex:multidex:2.0.1"
+    implementation 'com.google.code.gson:gson:2.8.2'
 
     implementation platform(navKit2BomDependencyDetails)
     implementation(group: "$navKit2SdkGroup", name: "analytics-proxy")
