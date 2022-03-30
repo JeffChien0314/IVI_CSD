@@ -118,6 +118,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
@@ -769,7 +770,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             mLongitude = camera.getProperties().getLookAt().getLongitude();
             Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
             for (int index = 0; index < Constants.ALL_CATEGORY.length;index++) {
-                MyFtsResultsListener myFtsResultsListener = new MyFtsResultsListener();
+                MyFtsResultsListener myFtsResultsListener = new MyFtsResultsListener(Constants.ALL_CATEGORY[index]);
                 MyPoiSuggestionsListener myPoiSuggestionsListener = new MyPoiSuggestionsListener();
                 Input input = getInput(Constants.ALL_CATEGORY[index], coordinate,scale,index);
                 PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, myFtsResultsListener, myPoiSuggestionsListener, input);
@@ -1098,6 +1099,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     //Jerry@20220324 add:FtsResultsListener
     private class MyFtsResultsListener implements FtsResultsListener {
+        String category;
+
+        public MyFtsResultsListener(String category) {
+            this.category = category;
+        }
 
         @Override
         public void onFtsResults(@NonNull FtsResults ftsResults) {
@@ -1108,8 +1114,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 double latitude = ftsResult.getLocation().coordinate().latitude();
                 double longitude = ftsResult.getLocation().coordinate().longitude();
                 com.tomtom.navkit.map.Coordinate coordinate = new com.tomtom.navkit.map.Coordinate(latitude, longitude);
-                addPoiCatMarker(coordinate,getString(R.string.shop_poi_search_position_marker_path),
-                        ftsResult.getPoiName());
+                addPoiCatMarker(coordinate, ftsResult.getPoiName(), category);
                 /*PoiCategorySet poiCategorySet = ftsResult.toPlace().poi().categories();
                 for (PoiCategory poiCategory : poiCategorySet) {
                     Log.i("Jerry", "*FtsResults**poiCategory:" + poiCategory.id());
@@ -1129,7 +1134,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220324 add:addPoiCatMarker
-    public void addPoiCatMarker(com.tomtom.navkit.map.Coordinate waypoint, String url, String poiName) {
+    public void addPoiCatMarker(com.tomtom.navkit.map.Coordinate waypoint, String poiName, String category) {
+        java.util.Map<String, Object> mapObject = getCategoryAttribute(category);
+        String url = (String) mapObject.get("url");
+        com.tomtom.navkit.map.Color outlineColor = (com.tomtom.navkit.map.Color) mapObject.get("outline-color");
+        com.tomtom.navkit.map.Color textColor = (com.tomtom.navkit.map.Color) mapObject.get("text-color");
         final MarkerBuilder markerBuilder = new MarkerBuilder();
         MarkerLabelBuilder markerLabelBuilder = null;
         markerBuilder
@@ -1141,18 +1150,73 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             markerLabelBuilder
                     .setFontUri(this.getString(R.string.font_style))
                     .setTextAnchoring(MarkerLabelBuilder.TextAnchoring.kLeft)
-                    .setTextSize(20)
+                    .setTextSize(22)
                     .setWrapText(false)
                     //.setMaximumNumberOfLines(1)
+                    .setOutlineColor(outlineColor)
+                    .setOutlineWidth(1)
                     .setOffset(15, 5)
                     .setText(poiName)
-                    .setTextColor(new com.tomtom.navkit.map.Color(255, 0, 0));
+                    .setTextColor(textColor);
 
         } catch (MarkerBuilder.AlreadyHasLabel alreadyHasLabel) {
             alreadyHasLabel.printStackTrace();
         }
         Marker marker = markerLayer.addMarker(markerBuilder);
         poiCatMarkers.add(marker);
+    }
+
+    //Jerry@20220330 add:getCategoryAttribute
+    private java.util.Map<String, Object> getCategoryAttribute(String category) {
+        java.util.Map<String, Object> mapObject = new HashMap<>();
+        mapObject.put("outline-color",new com.tomtom.navkit.map.Color(0x1E1E1E));
+        switch (category) {
+            case Constants.PARKING:
+                mapObject.put("url", getString(R.string.parking_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x54B4F7));
+                break;
+            case Constants.CHARGING_STATION:
+                mapObject.put("url", getString(R.string.charging_station_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x5BC579));
+                break;
+            case Constants.SUPERMARKET:
+                mapObject.put("url", getString(R.string.supermarket_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xEEAD43));
+                break;
+            case Constants.CAFE:
+                mapObject.put("url", getString(R.string.cafe_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xDA82BB));
+                break;
+            case Constants.RESTAURANT:
+                mapObject.put("url", getString(R.string.restaurant_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xEF8082));
+                break;
+            case Constants.HOTEL:
+                mapObject.put("url", getString(R.string.hotel_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xE98F50));
+                break;
+            case Constants.ATM:
+                mapObject.put("url", getString(R.string.atm_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x969696));
+                break;
+            case Constants.GAS_STATION:
+                mapObject.put("url", getString(R.string.gas_station_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x9A86F7));
+                break;
+            case Constants.HOSPITAL:
+                mapObject.put("url", getString(R.string.hospital_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xEC5B57));
+                break;
+            case Constants.SCHOOL:
+                mapObject.put("url", getString(R.string.school_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xB28B74));
+                break;
+            default:
+                mapObject.put("url", getString(R.string.unknown_poi_search_position_marker_path));
+                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xFFFFFF));
+                break;
+        }
+        return mapObject;
     }
 
     //Jerry@20220324 add:removeAllPoiMarkers

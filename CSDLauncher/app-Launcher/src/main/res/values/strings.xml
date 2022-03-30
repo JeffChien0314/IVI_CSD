@@ -112,10 +112,17 @@
 
     <!--Jerry@0308 add !-->
     <string name="poi_search_position_marker_path">asset:icons@/route-markers/ic_poi_position.png</string>
-    <string name="shop_poi_search_position_marker_path">asset:icons@/route-markers/shop.png</string>
-    <string name="shop2_poi_search_position_marker_path">asset:icons@/route-markers/shop2.png</string>
-    <string name="depot_poi_search_position_marker_path">asset:icons@/route-markers/depot.png</string>
-    <string name="gas_station_poi_search_position_marker_path">asset:icons@/route-markers/gas_station.png</string>
+    <string name="atm_poi_search_position_marker_path">asset:icons@/route-markers/poi_atm.png</string>
+    <string name="cafe_poi_search_position_marker_path">asset:icons@/route-markers/poi_cafe.png</string>
+    <string name="charging_station_poi_search_position_marker_path">asset:icons@/route-markers/poi_charging_station.png</string>
+    <string name="gas_station_poi_search_position_marker_path">asset:icons@/route-markers/poi_gas_station.png</string>
+    <string name="hospital_poi_search_position_marker_path">asset:icons@/route-markers/poi_hospital.png</string>
+    <string name="hotel_poi_search_position_marker_path">asset:icons@/route-markers/poi_hotel.png</string>
+    <string name="parking_poi_search_position_marker_path">asset:icons@/route-markers/poi_parking.png</string>
+    <string name="restaurant_poi_search_position_marker_path">asset:icons@/route-markers/poi_restaurant.png</string>
+    <string name="school_poi_search_position_marker_path">asset:icons@/route-markers/poi_school.png</string>
+    <string name="supermarket_poi_search_position_marker_path">asset:icons@/route-markers/poi_supermarket.png</string>
+    <string name="unknown_poi_search_position_marker_path">asset:icons@/route-markers/poi_unknown.png</string>
     <string name="font_style">asset://simkai.ttf</string>
     <string name="nip_instruction_end_route">End Route</string>
     <string name="nip_instruction_remaining"> ・ %d hr %d min ・ </string>

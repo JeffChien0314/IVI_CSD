@@ -10,8 +10,19 @@ public class Constants {
     public static final String STOP_NAVIGATION = "stop navigation";
     public static final String TTS_CONTROL_TOGGLE = "navigation_tts_control";
 
-    public static String[] ALL_CATEGORY = {"Parking","Charging station","Supermarket","Cafe","Restaurant","Hotel"
-            ,"ATM","Gas station","Hospital","School"};
+    public static final String PARKING = "Parking";
+    public static final String CHARGING_STATION = "Charging station";
+    public static final String SUPERMARKET = "Supermarket";
+    public static final String CAFE = "Cafe";
+    public static final String RESTAURANT = "Restaurant";
+    public static final String HOTEL = "Hotel";
+    public static final String ATM = "ATM";
+    public static final String GAS_STATION = "Gas station";
+    public static final String HOSPITAL = "Hospital";
+    public static final String SCHOOL = "School";
+
+    public static String[] ALL_CATEGORY = {PARKING,CHARGING_STATION,SUPERMARKET,CAFE,RESTAURANT,HOTEL,
+            ATM,GAS_STATION,HOSPITAL,SCHOOL};
 
     public static int[] SCALE_TYPE_1KM_2KM = {4,4,3,3,3,3,2,2,1,1};
     public static int[] SCALE_TYPE_2KM_4KM = {4,4,3,2,2,2,2,1,1,1};
