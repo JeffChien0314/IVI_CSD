@@ -11,12 +11,11 @@ not the licensee, you are not authorized to use this software in any manner and 
 immediately return or destroy it.
 -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="rectangle">
-    <solid android:color="#1AFFFFFF" />
+    android:shape="oval">
+    <size android:height="90px"
+        android:width="90px"></size>
 
-    <corners
-        android:bottomLeftRadius="12px"
-        android:bottomRightRadius="12px"
-        android:topLeftRadius="12px"
-        android:topRightRadius="12px" />
+    <solid android:color="#00FFFFFF" />
+    <stroke android:color="@color/white"
+        android:width="3px" />
 </shape>

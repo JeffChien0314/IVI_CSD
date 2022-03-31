@@ -1,5 +1,6 @@
 package com.fxc.ev.launcher.maps.search;
 
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,7 +57,29 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
         holder.initHolder(favEditItem);
     }
 
+    @Override
+    public void onBindViewHolder(@NonNull FavoritesItemViewHolder holder, int position, @NonNull List<Object> payloads) {
+        if (payloads.isEmpty()) {
+            onBindViewHolder(holder, position);
+        } else {
+            FavoritesEditFragment.EditItemStatus editItemStatus = (FavoritesEditFragment.EditItemStatus) payloads.get(0);
+            FavEditItem favEditItem = mFavEditItemList.get(position);
 
+            holder.name.setText(favEditItem.getName());
+            holder.icon.setImageResource(favEditItem.getImage());
+            holder.icon_layout.setBackgroundResource(favEditItem.getBackground());
+
+            if (TextUtils.isEmpty(favEditItem.getAddress())) {
+                holder.address.setVisibility(View.GONE);
+            } else {
+                holder.address.setVisibility(View.VISIBLE);
+                holder.address.setText(favEditItem.getAddress());
+            }
+
+            holder.setEditBtnVisibility(editItemStatus.visibility);
+            holder.itemView.setFocusable(editItemStatus.isFocus);
+        }
+    }
     public void setItemClickListener(OnItemClickListener itemClickListener) {
         mItemClickListener = itemClickListener;
     }
@@ -89,7 +112,13 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
             icon.setImageResource(favEditItem.getImage());
             icon_layout.setBackgroundResource(favEditItem.getBackground());
             name.setText(favEditItem.getName());
-            address.setText(favEditItem.getAddress());
+
+            if (TextUtils.isEmpty(favEditItem.getAddress())) {
+                address.setVisibility(View.GONE);
+            } else {
+                address.setVisibility(View.VISIBLE);
+                address.setText(favEditItem.getAddress());
+            }
 
             setEditBtnVisibility(View.GONE);
             edit.setOnClickListener(new View.OnClickListener() {

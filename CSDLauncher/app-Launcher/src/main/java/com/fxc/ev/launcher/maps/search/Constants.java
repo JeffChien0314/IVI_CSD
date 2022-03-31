@@ -8,6 +8,7 @@ public class Constants {
     public static final String FROM_SEARCH_PAGE = "from_search";
     public static final String FROM_FAV_EDIT_PAGE = "from_fav_edit_page";
     public static final String FROM_MAIN_PAGE = "from_main_page";
+    public static final String ADD_FAVORITE = "Add a Favorite";
     public static final int homeDisableIcon = R.drawable.icon_home_disable;
     public static final int homeEnableIcon = R.drawable.icon_home_normal;
     public static final int officeDisableIcon = R.drawable.icon_office_disable;

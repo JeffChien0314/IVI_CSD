@@ -80,7 +80,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SearchFragment extends Fragment {
-    public static final String TAG = "metis.SearchFragment";
+    public static final String TAG = "SearchFragment";
     private View rootView;
     private EditText searchEditText;
     private ImageView clearAllImageView;
@@ -238,8 +238,7 @@ public class SearchFragment extends Fragment {
                     launcherActivity.setCurrentFragment(routePreviewFragment);
                     routePreviewFragment.setData(searchResultItem);
                 } else if (searchResultItem.getSearchType().equals(TYPE_FAVORITE)) {
-                    updateItemData(clickIndex, mFavEditItemList, favItemEnableBg, textEnableColor,
-                            searchResultItem.getLocation(), searchResultItem.getAddress());
+                    updateItemData(clickIndex, mFavEditItemList, favItemEnableBg, textEnableColor, searchResultItem);
                     SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
 
                     if (mSourceType.equals(FROM_SEARCH_PAGE)) {
@@ -344,7 +343,7 @@ public class SearchFragment extends Fragment {
                 public void onClick(View v) {
                     //Log.v(TAG, "被点击啦！");
                     //clickIndex = (int) v.getTag();
-                    Log.v(TAG, "被点击啦!, clickIndex: " + clickIndex);
+                    //Log.v(TAG, "被点击啦!, clickIndex: " + clickIndex);
                     if (favEditItem.getLocation() == null) {
                         go2Search(FROM_SEARCH_PAGE, (int) v.getTag());
                     } else {
@@ -361,7 +360,7 @@ public class SearchFragment extends Fragment {
 
             int textLength = (int) favName.getPaint().measureText(favName.getText().toString());
             int layoutWith = 72 + textLength;
-            Log.v(TAG, "textLength:" + textLength + ",layoutWith: " + layoutWith);
+            //Log.v(TAG, "textLength:" + textLength + ",layoutWith: " + layoutWith);
 
             if (maxWith < layoutWith) {
                 parentLayout.addView(rowLinearLayout);
@@ -460,17 +459,20 @@ public class SearchFragment extends Fragment {
         return bundle;
     }
 
-    private <T> List<T> updateItemData(int updateIndex, List<T> list, int background, int textColor, Location location, String address) {
+    private <T> List<T> updateItemData(int updateIndex, List<T> list, int background, int textColor, SearchResultItem searchResultItem) {
         FavEditItem favEditItem = (FavEditItem) list.get(updateIndex);
         if (favEditItem.getName().equals("Home")) {
             favEditItem.setImage(homeEnableIcon);
         } else if (favEditItem.getName().equals("Office")) {
             favEditItem.setImage(officeEnableIcon);
+        } else if (favEditItem.getName().equals(Constants.ADD_FAVORITE)) {
+            favEditItem.setImage(R.drawable.icon_pin_normal);
+            favEditItem.setName(searchResultItem.getName());
         }
         favEditItem.setBackground(background);
         favEditItem.setTextColor(textColor);
-        favEditItem.setLocation(location);
-        favEditItem.setAddress(address);
+        favEditItem.setLocation(searchResultItem.getLocation());
+        favEditItem.setAddress(searchResultItem.getAddress());
 
         return list;
     }
@@ -491,6 +493,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        hideSoftInput();
         search.close();
         mSearchType = TYPE_SEARCH;//reset mSearchType value to search
     }
