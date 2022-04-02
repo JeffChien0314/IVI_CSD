@@ -41,4 +41,7 @@ public class Constants {
     public static final double FIFTEEN_KM = 15000;
     public static final double TWENTY_FIVW_KM = 25000;
     public static final double THIRTY_FIVE_KM = 35000;
+
+    public static final String MOVE_RIGHT = "move_right";
+    public static final String MOVE_LEFT = "move_left";
 }

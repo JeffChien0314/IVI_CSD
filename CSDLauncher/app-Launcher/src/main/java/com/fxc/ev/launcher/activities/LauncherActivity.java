@@ -74,6 +74,7 @@ import com.tomtom.navkit.map.MapLongClickListener;
 import com.tomtom.navkit.map.Marker;
 import com.tomtom.navkit.map.MarkerBuilder;
 import com.tomtom.navkit.map.MarkerLabelBuilder;
+import com.tomtom.navkit.map.Point;
 import com.tomtom.navkit.map.camera.Camera;
 import com.tomtom.navkit.map.camera.CameraListener;
 import com.tomtom.navkit.map.extension.positioning.PositioningExtension;
@@ -217,6 +218,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private TripPlan tripPlan;
     private RouteStopVector waypoints;
     private List<Marker> poiCatMarkers;//Jerry@20220324 add
+    private boolean isFragmentShow = false;//Jerry@20220401 add
+    private boolean isAlreadyTranslation = false;//Jerry@20220401 add
 
     //Jerry@20220317 add for stop navigation
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -476,6 +479,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             @Override
             public void onMapClick(MapClickEvent e) {
                 Log.v("metis", "onMapClick");
+				if(isFragmentShow) return;//Jerry@20220401 add:Search fragment show,can't click
                 com.tomtom.navkit.map.Coordinate waypoint = e.getClickCoordinates().getCoordinate();
 
                 addWaypointMarker(waypoint);
@@ -491,6 +495,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             @Override
             public void onMapLongClick(MapLongClickEvent e) {
                 Log.v("metis", "onMapLongClick");
+                if(isFragmentShow) return;//Jerry@20220401 add:Search fragment show,can't click
                 // Use the existence of marker to check we don't attempt multiple route plans
                 // concurrently
                 if (destinationMarker == null) {
@@ -634,6 +639,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             @Override
             public void onClick(View v) {
                 setCurrentFragment(new SearchFragment());
+                //Jerry@20220401 add:Search fragment show,can't click
+                isFragmentShow = true;
+                if(!isAlreadyTranslation) {
+                    setMapViewMove(Constants.MOVE_RIGHT);
+                    isAlreadyTranslation = true;
+                }
             }
         });
         //metis@0309 显示搜索页面 <--
@@ -960,7 +971,13 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         Log.v(TAG, "getBackStackEntryCount:" + fragmentManager.getBackStackEntryCount());
         if (fragmentManager.getBackStackEntryCount() != 0) {
             fragmentManager.popBackStack();
-            if (fragmentManager.getBackStackEntryCount() == 1) setMapWidgetVisibility(View.VISIBLE);
+            if (fragmentManager.getBackStackEntryCount() == 1) {
+                setMapWidgetVisibility(View.VISIBLE);
+                //Jerry@20220401 add:Search fragment show,can't click
+                isFragmentShow = false;
+                setMapViewMove(Constants.MOVE_LEFT);
+                isAlreadyTranslation = false;
+            }
         } else {
             super.onBackPressed();
         }
@@ -1058,6 +1075,10 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 && !isDisappearance && fragmentManager.getBackStackEntryCount() == 1) {
             fragmentManager.popBackStack();
             setMapWidgetVisibility(View.VISIBLE);
+            //Jerry@20220401 add:Search fragment show,can't click
+            isFragmentShow = false;
+            setMapViewMove(Constants.MOVE_LEFT);
+            isAlreadyTranslation = false;
         }
     }
 
@@ -1069,6 +1090,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
             if (!touchEventInView(searchContainer, x, y)) {
                 finishFragment(); //点击非搜索页区域时关闭搜索页
+
             } else {
 
             }
@@ -1286,5 +1308,24 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             markerLayer.removeMarker(poiCatMarker);
         }
         poiCatMarkers.clear();
+    }
+
+    //Jerry@20220402 add:setMapView move
+    private void setMapViewMove(String moveDirection){
+        int moveOffset = map.getViewport().getBottomRight().getX() / 2;
+        switch (moveDirection){
+            case Constants.MOVE_RIGHT:
+                Point rightBegin = new Point(0, 0);
+                map.getInteraction().panBegin(rightBegin);
+                Point rightEnd = new Point(moveOffset, 0);
+                map.getInteraction().panEnd(rightEnd);
+                break;
+            case Constants.MOVE_LEFT:
+                Point leftBegin = new Point(0, 0);
+                map.getInteraction().panBegin(leftBegin);
+                Point leftEnd = new Point(-moveOffset, 0);
+                map.getInteraction().panEnd(leftEnd);
+                break;
+        }
     }
 }
