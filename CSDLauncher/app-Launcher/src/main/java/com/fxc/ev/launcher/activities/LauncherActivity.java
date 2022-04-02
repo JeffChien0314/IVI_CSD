@@ -37,9 +37,11 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -178,6 +180,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private MarkerBuilder searchMarkerBuilder;
     private List<Marker> searchMarkerList = new ArrayList<>();
     private FragmentManager fragmentManager;
+    private boolean isDisappearance = false;
     //metis@0309 add <--
     //private NetworkDrawer networkDrawer;
 
@@ -201,7 +204,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private Button searchButton; //metis@ add
     private Button favHomeBtn; //metis@0314 add
     private Button favOfficeBtn; //metis@0314 add
-
+    private FrameLayout searchContainer;
 
     private boolean fullVoiceGuidanceMode = true;
     private boolean navigationServiceBound = false;
@@ -215,12 +218,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private RouteStopVector waypoints;
     private List<Marker> poiCatMarkers;//Jerry@20220324 add
 
-	//Jerry@20220317 add for stop navigation
+    //Jerry@20220317 add for stop navigation
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            Log.d("Jerry", "intent.getAction():"+intent.getAction());
-            if(Constants.STOP_NAVIGATION.equals(intent.getAction())){
+            Log.d("Jerry", "intent.getAction():" + intent.getAction());
+            if (Constants.STOP_NAVIGATION.equals(intent.getAction())) {
                 if (tripRenderer != null) {
                     getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
                     tripRenderer.stop();
@@ -236,8 +239,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     navigation.deleteTrip(trip);
                     trip = null;
                 }
-            }else if(Constants.TTS_CONTROL_TOGGLE.equals(intent.getAction())){//Jerry@20220321 add
-                isNavigationTTSMute = intent.getBooleanExtra(Constants.TTS_CONTROL_TOGGLE,false);
+            } else if (Constants.TTS_CONTROL_TOGGLE.equals(intent.getAction())) {//Jerry@20220321 add
+                isNavigationTTSMute = intent.getBooleanExtra(Constants.TTS_CONTROL_TOGGLE, false);
             }
         }
     };
@@ -275,9 +278,13 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     public void setCurrentFragment(Fragment currentFragment) {
         setMapWidgetVisibility(View.GONE);
         FragmentTransaction fTransaction = fragmentManager.beginTransaction();
-        fTransaction.replace(R.id.search_container, currentFragment, currentFragment.getTag());
+        fTransaction.replace(R.id.search_container, currentFragment, "");
         fTransaction.addToBackStack(null);
         fTransaction.commitAllowingStateLoss();
+    }
+
+    public void setDisappearance(boolean isDisappearance) {
+        this.isDisappearance = isDisappearance;
     }
 
     @Override
@@ -444,11 +451,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     private void initMap() {
         //Jerry@20220317 add for stopping navigation-->
-        isNavigationTTSMute = (boolean) SharedPreferenceUtils.get(LauncherActivity.this,Constants.TTS_CONTROL_TOGGLE,Constants.TTS_CONTROL_TOGGLE,false);
+        isNavigationTTSMute = (boolean) SharedPreferenceUtils.get(LauncherActivity.this, Constants.TTS_CONTROL_TOGGLE, Constants.TTS_CONTROL_TOGGLE, false);
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(Constants.STOP_NAVIGATION);
         intentFilter.addAction(Constants.TTS_CONTROL_TOGGLE);
-        registerReceiver(broadcastReceiver,intentFilter);
+        registerReceiver(broadcastReceiver, intentFilter);
         //<--Jerry@20220317 add for stopping navigation
         // Limit power consumption with a 20 FPS cap
         getMapHolder().getSurfaceAdapter().setFrameRateCap(20l);
@@ -476,6 +483,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 RouteStop wp = RouteStop.from(new Coordinate(waypoint.getLatitude(), waypoint.getLongitude()));
                 waypoints.add(wp);
                 tripPlan.setWaypoints(waypoints);
+
             }
         });
 
@@ -562,11 +570,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         });
 
         //Jerry@20220321 add:tts control-->
-        StockTextToSpeechEngine engine = new StockTextToSpeechEngine(LauncherActivity.this){
+        StockTextToSpeechEngine engine = new StockTextToSpeechEngine(LauncherActivity.this) {
 
             @Override
             public void onAudioPrepare(AudioMessage message, MessageKind kind, String id) {
-                if(isNavigationTTSMute) {
+                if (isNavigationTTSMute) {
                     message.setMessage("");
                 }
                 super.onAudioPrepare(message, kind, id);
@@ -591,7 +599,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 if (!instructions.isEmpty()) {
                     getNextInstructionPanelView().update(distanceToInstructionInMeters, instructions);
                     visibility = View.VISIBLE;
-                    if(View.VISIBLE == searchButton.getVisibility()){//Jerry@20220314
+                    if (View.VISIBLE == searchButton.getVisibility()) {//Jerry@20220314
                         setMapWidgetVisibility2(View.GONE);
                     }
                 }
@@ -617,25 +625,22 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
 
-		//metis@0309 显示搜索页面 -->
+        //metis@0309 显示搜索页面 -->
         favHomeBtn = findViewById(R.id.favorites_home);
         favOfficeBtn = findViewById(R.id.favorites_office);
+        searchContainer = findViewById(R.id.search_container);
         searchButton = findViewById(R.id.search_btn);
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setCurrentFragment(new SearchFragment());
-                /*FragmentTransaction fTransaction = fragmentManager.beginTransaction();
-                fTransaction.replace(R.id.search_container, new SearchFragment(), "SearchFragment");
-                fTransaction.addToBackStack(null);
-                fTransaction.commitAllowingStateLoss();*/
             }
         });
         //metis@0309 显示搜索页面 <--
     }
 
     //Jerry@20220322 add
-    public void startNavigation(com.tomtom.navkit.map.Coordinate destination){
+    public void startNavigation(com.tomtom.navkit.map.Coordinate destination) {
         MarkerBuilder markerBuilder = new MarkerBuilder();
         markerBuilder.setCoordinate(destination)
                 // Equivalent for Michi default route markers configuration
@@ -706,7 +711,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 getCameraStackController().addTripToOverviewCamera(tripRenderer);
                 if (trip.routeList().size() <= 1) {
                     navigation.startNavigation(trip);
-                    if(Constants.IS_DEMO){//Jerry@20220314 add
+                    if (Constants.IS_DEMO) {//Jerry@20220314 add
                         startDemo();
                     }
                 } else {
@@ -716,7 +721,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                         public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
                             trip.setPreferredRoute(route);
                             navigation.startNavigation(trip);
-                            if(Constants.IS_DEMO){//Jerry@20220314 add
+                            if (Constants.IS_DEMO) {//Jerry@20220314 add
                                 startDemo();
                             }
                         }
@@ -734,7 +739,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         });
     }
 
-	private void setMapWidgetVisibility(int visibility) {
+    private void setMapWidgetVisibility(int visibility) {
         searchButton.setVisibility(visibility);
         favHomeBtn.setVisibility(visibility);
         favOfficeBtn.setVisibility(visibility);
@@ -763,16 +768,16 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             //super.onCameraPropertiesSteady(camera);
             removeAllPoiMarkers();
             double scale = camera.getProperties().getScale();
-            if(scale > Constants.THIRTY_FIVE_KM){
+            if (scale > Constants.THIRTY_FIVE_KM) {
                 return;
             }
             mLatitude = camera.getProperties().getLookAt().getLatitude();
             mLongitude = camera.getProperties().getLookAt().getLongitude();
             Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
-            for (int index = 0; index < Constants.ALL_CATEGORY.length;index++) {
+            for (int index = 0; index < Constants.ALL_CATEGORY.length; index++) {
                 MyFtsResultsListener myFtsResultsListener = new MyFtsResultsListener(Constants.ALL_CATEGORY[index]);
                 MyPoiSuggestionsListener myPoiSuggestionsListener = new MyPoiSuggestionsListener();
-                Input input = getInput(Constants.ALL_CATEGORY[index], coordinate,scale,index);
+                Input input = getInput(Constants.ALL_CATEGORY[index], coordinate, scale, index);
                 PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, myFtsResultsListener, myPoiSuggestionsListener, input);
                 thread.start();
             }
@@ -857,7 +862,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         String trafficDelayText = trafficDelayInMins > 0 ? "\u26a0 +" + trafficDelayInMins + "min" : "";
 
         //Jerry@20220317 add:get navigation remaining time
-        int remainingTimeInSeconds = progress.remainingTimeInSeconds()+progress.remainingTrafficDelayInSeconds();
+        int remainingTimeInSeconds = progress.remainingTimeInSeconds() + progress.remainingTrafficDelayInSeconds();
 
         String completeText = etaAndDistanceText + trafficDelayText;
         SpannableString completeSpannable = new SpannableString(completeText);
@@ -871,7 +876,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         //Jerry@20220317 modify-->
         //getEtaTextView().setText(completeSpannable);//Jerry@20220314 mark:invisible
         //getEtaTextView().setVisibility(View.VISIBLE);//Jerry@20220314 mark:invisible
-        getNextInstructionPanelView().updateTripOutlineView(fd.distance.concat(" "+fd.unit), remainingTimeInSeconds, eta.getTime());
+        getNextInstructionPanelView().updateTripOutlineView(fd.distance.concat(" " + fd.unit), remainingTimeInSeconds, eta.getTime());
         //<--Jerry@20220317 modify
     }
 
@@ -957,7 +962,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             fragmentManager.popBackStack();
             if (fragmentManager.getBackStackEntryCount() == 1) setMapWidgetVisibility(View.VISIBLE);
         } else {
-        super.onBackPressed();
+            super.onBackPressed();
         }
         initWidgets(); //刷新widget list
     }
@@ -1020,7 +1025,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         }
 
         //Jerry@20220317 add
-        if(broadcastReceiver!=null){
+        if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
         }
 
@@ -1036,16 +1041,71 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     @Override
     public void onMarkerChange(List<Location> locations) {
-            removeSearchMarkers();
-            for (Location location : locations) {
-                com.tomtom.navkit.map.Coordinate coordinate = toMapCoordinate(location.coordinate());
-                searchMarkerBuilder.setCoordinate(coordinate)
-                        // Equivalent for Michi default route markers configuration
-                        .setPinUri(getString(R.string.search_marker_pin_path));
-                searchMarkerList.add(markerLayer.addMarker(searchMarkerBuilder));
+        removeSearchMarkers();
+        for (Location location : locations) {
+            com.tomtom.navkit.map.Coordinate coordinate = toMapCoordinate(location.coordinate());
+            searchMarkerBuilder.setCoordinate(coordinate)
+                    // Equivalent for Michi default route markers configuration
+                    .setPinUri(getString(R.string.search_marker_pin_path));
+            searchMarkerList.add(markerLayer.addMarker(searchMarkerBuilder));
+        }
+    }
+
+    //metis@0401 解决点击非搜索页区域搜索页不消失问题 -->
+    private void finishFragment() {
+        Fragment curFragment = fragmentManager.findFragmentById(R.id.search_container);
+        if (curFragment != null && curFragment instanceof SearchFragment
+                && !isDisappearance && fragmentManager.getBackStackEntryCount() == 1) {
+            fragmentManager.popBackStack();
+            setMapWidgetVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent event) {
+        for (int i = 0; i < event.getPointerCount(); i++) {
+            float x = event.getX(i);
+            float y = event.getY(i);
+
+            if (!touchEventInView(searchContainer, x, y)) {
+                finishFragment(); //点击非搜索页区域时关闭搜索页
+            } else {
+
             }
 
+        }
+        return super.dispatchTouchEvent(event);
     }
+
+    /**
+     * 该方法检测一个点击事件是否落入在一个View内，换句话说，检测这个点击事件是否发生在该View上。
+     *
+     * @param view
+     * @param x
+     * @param y
+     * @return
+     */
+    private boolean touchEventInView(View view, float x, float y) {
+        if (view == null) {
+            return false;
+        }
+
+        int[] location = new int[2];
+        view.getLocationOnScreen(location);
+
+        int left = location[0];
+        int top = location[1];
+
+        int right = left + view.getMeasuredWidth();
+        int bottom = top + view.getMeasuredHeight();
+
+        if (y >= top && y <= bottom && x >= left && x <= right) {
+            return true;
+        }
+
+        return false;
+    }
+    //metis@0401 解决点击非搜索页区域搜索页不消失问题 <--
 
     //Jerry@20220314 add
     private void stopPreview() {
@@ -1063,8 +1123,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220324 add:getInput
-    private Input getInput(String query, Coordinate coordinate,double scale, int index) {
-        int numberLimit = getNumberOfCategory(scale,index);
+    private Input getInput(String query, Coordinate coordinate, double scale, int index) {
+        int numberLimit = getNumberOfCategory(scale, index);
         FilterByGeoRadius filter = new FilterByGeoRadius(coordinate, (int) scale);
         Input.Builder builder = new Input.Builder();
         builder.setSearchString(query)
@@ -1077,21 +1137,21 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220324 add:get category number
-    private int getNumberOfCategory(double scale,int index){
+    private int getNumberOfCategory(double scale, int index) {
         int number = 0;
-        if(Constants.TWO_KM >= scale){
+        if (Constants.TWO_KM >= scale) {
             number = Constants.SCALE_TYPE_1KM_2KM[index];
-        }else if(scale > Constants.TWO_KM && scale <= Constants.FOUR_KM){
+        } else if (scale > Constants.TWO_KM && scale <= Constants.FOUR_KM) {
             number = Constants.SCALE_TYPE_2KM_4KM[index];
-        }else if(scale > Constants.FOUR_KM && scale <= Constants.EIGHT_KM){
+        } else if (scale > Constants.FOUR_KM && scale <= Constants.EIGHT_KM) {
             number = Constants.SCALE_TYPE_4KM_8KM[index];
-        }else if(scale > Constants.EIGHT_KM && scale <= Constants.TEN_KM){
+        } else if (scale > Constants.EIGHT_KM && scale <= Constants.TEN_KM) {
             number = Constants.SCALE_TYPE_8KM_10KM[index];
-        }else if(scale > Constants.TEN_KM && scale <= Constants.FIFTEEN_KM){
+        } else if (scale > Constants.TEN_KM && scale <= Constants.FIFTEEN_KM) {
             number = Constants.SCALE_TYPE_10KM_15KM[index];
-        }else if(scale > Constants.FIFTEEN_KM && scale <= Constants.TWENTY_FIVW_KM){
+        } else if (scale > Constants.FIFTEEN_KM && scale <= Constants.TWENTY_FIVW_KM) {
             number = Constants.SCALE_TYPE_15KM_25KM[index];
-        }else if(scale > Constants.TWENTY_FIVW_KM && scale <= Constants.THIRTY_FIVE_KM){
+        } else if (scale > Constants.TWENTY_FIVW_KM && scale <= Constants.THIRTY_FIVE_KM) {
             number = Constants.SCALE_TYPE_25KM_35KM[index];
         }
         return number;
@@ -1169,51 +1229,51 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     //Jerry@20220330 add:getCategoryAttribute
     private java.util.Map<String, Object> getCategoryAttribute(String category) {
         java.util.Map<String, Object> mapObject = new HashMap<>();
-        mapObject.put("outline-color",new com.tomtom.navkit.map.Color(0x1E1E1E));
+        mapObject.put("outline-color", new com.tomtom.navkit.map.Color(0x1E1E1E));
         switch (category) {
             case Constants.PARKING:
                 mapObject.put("url", getString(R.string.parking_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x54B4F7));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0x54B4F7));
                 break;
             case Constants.CHARGING_STATION:
                 mapObject.put("url", getString(R.string.charging_station_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x5BC579));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0x5BC579));
                 break;
             case Constants.SUPERMARKET:
                 mapObject.put("url", getString(R.string.supermarket_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xEEAD43));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0xEEAD43));
                 break;
             case Constants.CAFE:
                 mapObject.put("url", getString(R.string.cafe_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xDA82BB));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0xDA82BB));
                 break;
             case Constants.RESTAURANT:
                 mapObject.put("url", getString(R.string.restaurant_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xEF8082));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0xEF8082));
                 break;
             case Constants.HOTEL:
                 mapObject.put("url", getString(R.string.hotel_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xE98F50));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0xE98F50));
                 break;
             case Constants.ATM:
                 mapObject.put("url", getString(R.string.atm_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x969696));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0x969696));
                 break;
             case Constants.GAS_STATION:
                 mapObject.put("url", getString(R.string.gas_station_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0x9A86F7));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0x9A86F7));
                 break;
             case Constants.HOSPITAL:
                 mapObject.put("url", getString(R.string.hospital_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xEC5B57));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0xEC5B57));
                 break;
             case Constants.SCHOOL:
                 mapObject.put("url", getString(R.string.school_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xB28B74));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0xB28B74));
                 break;
             default:
                 mapObject.put("url", getString(R.string.unknown_poi_search_position_marker_path));
-                mapObject.put("text-color",new com.tomtom.navkit.map.Color(0xFFFFFF));
+                mapObject.put("text-color", new com.tomtom.navkit.map.Color(0xFFFFFF));
                 break;
         }
         return mapObject;
@@ -1221,7 +1281,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     //Jerry@20220324 add:removeAllPoiMarkers
     public void removeAllPoiMarkers() {
-        if(poiCatMarkers.isEmpty()) return;
+        if (poiCatMarkers.isEmpty()) return;
         for (Marker poiCatMarker : poiCatMarkers) {
             markerLayer.removeMarker(poiCatMarker);
         }

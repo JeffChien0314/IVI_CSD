@@ -66,8 +66,18 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
             FavEditItem favEditItem = mFavEditItemList.get(position);
 
             holder.name.setText(favEditItem.getName());
-            holder.icon.setImageResource(favEditItem.getImage());
-            holder.icon_layout.setBackgroundResource(favEditItem.getBackground());
+
+            if (favEditItem.getName().equals(Constants.ADD_FAVORITE)) {
+                holder.icon.setImageResource(R.drawable.icon_add_normal);
+            } else {
+                holder.icon.setImageResource(favEditItem.getImage());
+            }
+
+            if (favEditItem.getLocation() == null) {
+                holder.icon_layout.setBackgroundResource(R.drawable.fav_item_icon_disable_bg);
+            } else {
+                holder.icon_layout.setBackgroundResource(favEditItem.getBackground());
+            }
 
             if (TextUtils.isEmpty(favEditItem.getAddress())) {
                 holder.address.setVisibility(View.GONE);
@@ -80,6 +90,7 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
             holder.itemView.setFocusable(editItemStatus.isFocus);
         }
     }
+
     public void setItemClickListener(OnItemClickListener itemClickListener) {
         mItemClickListener = itemClickListener;
     }
@@ -110,8 +121,27 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
 
         public void initHolder(FavEditItem favEditItem) {
             icon.setImageResource(favEditItem.getImage());
-            icon_layout.setBackgroundResource(favEditItem.getBackground());
             name.setText(favEditItem.getName());
+
+            /*if (favEditItem.getName().equals(Constants.ADD_FAVORITE)) {
+                icon.setImageResource(R.drawable.icon_add_normal);
+            } else {
+                icon.setImageResource(favEditItem.getImage());
+            }*/
+
+            if (favEditItem.getLocation() == null) {
+                if (favEditItem.getName().equals(Constants.ADD_FAVORITE)) {
+                    icon.setImageResource(R.drawable.icon_add_normal);
+                } else if (favEditItem.getName().equals("Home")) {
+                    icon.setImageResource(R.drawable.icon_home_normal);
+                } else if (favEditItem.getName().equals("Office")) {
+                    icon.setImageResource(R.drawable.icon_office_normal);
+                }
+                icon_layout.setBackgroundResource(R.drawable.fav_item_icon_disable_bg);
+            } else {
+                icon.setImageResource(favEditItem.getImage());
+                icon_layout.setBackgroundResource(favEditItem.getBackground());
+            }
 
             if (TextUtils.isEmpty(favEditItem.getAddress())) {
                 address.setVisibility(View.GONE);

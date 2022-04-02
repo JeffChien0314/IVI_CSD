@@ -43,7 +43,7 @@
             android:layout_marginRight="15px"
             android:scaleType="fitXY"
             android:src="@drawable/icon_clear_all"
-            android:visibility="visible"></ImageView>
+            android:visibility="gone"></ImageView>
 
     </LinearLayout>
 

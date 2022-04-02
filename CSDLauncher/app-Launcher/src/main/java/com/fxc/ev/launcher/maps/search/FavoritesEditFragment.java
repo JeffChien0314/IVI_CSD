@@ -1,5 +1,8 @@
 package com.fxc.ev.launcher.maps.search;
 
+import android.app.Activity;
+
+import android.app.Instrumentation;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -8,16 +11,16 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -33,8 +36,6 @@ import com.fxc.ev.launcher.activities.LauncherActivity;
 import com.fxc.ev.launcher.utils.SpUtils;
 import com.fxc.ev.launcher.utils.SpaceItemDecoration;
 
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class FavoritesEditFragment extends Fragment {
@@ -72,6 +73,7 @@ public class FavoritesEditFragment extends Fragment {
         launcherActivity = (LauncherActivity) getActivity();
         favoritesEditFragment = this;
         mFavEditItemList = SpUtils.getDataList(launcherActivity, "favorites_edit_item_list", "favorites", FavEditItem.class);
+        mInputMethodManager = (InputMethodManager) launcherActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
         initView();
         return mRootView;
     }
@@ -97,6 +99,7 @@ public class FavoritesEditFragment extends Fragment {
                             if (favEditItem.getLocation() == null) {
                                 SearchFragment searchFragment = new SearchFragment();
                                 launcherActivity.setCurrentFragment(searchFragment);
+
                                 new Handler().post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -216,7 +219,6 @@ public class FavoritesEditFragment extends Fragment {
 
         dialogEditText.setText(favEditItem.getName());
         dialogEditText.requestFocus();
-        showSoftInput();
         dialogEditText.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -273,6 +275,7 @@ public class FavoritesEditFragment extends Fragment {
                 dialogDoneBtn.setBackgroundResource(R.drawable.transparent);
                 dialogCancelBtn.setBackgroundResource(R.drawable.dialog_btn_select_bg);
                 mDialog.dismiss();
+                hideSoftInput();
             }
         });
 
@@ -281,8 +284,9 @@ public class FavoritesEditFragment extends Fragment {
             public void onClick(View v) {
                 if (mFavEditItemList.size() == 1) {
                     favEditItem.setName(Constants.ADD_FAVORITE);
-                    favEditItem.setImage(R.drawable.icon_add_normal);
+                    favEditItem.setImage(R.drawable.icon_add_disable);
                     favEditItem.setBackground(R.drawable.fav_item_btn_disable_bg);
+                    favEditItem.setTextColor(Constants.textDisableColor);
                     favEditItem.setLocation(null);
                     favEditItem.setAddress("");
                     favoritesEditAdapter.notifyItemChanged(position, new EditItemStatus(View.INVISIBLE, true));
@@ -295,6 +299,7 @@ public class FavoritesEditFragment extends Fragment {
                     favoritesEditAdapter.notifyItemRangeChanged(position, favoritesEditAdapter.getItemCount(), new EditItemStatus(View.VISIBLE, false));
                 }
                 mDialog.dismiss();
+                hideSoftInput();
                 SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
             }
         });
@@ -412,9 +417,8 @@ public class FavoritesEditFragment extends Fragment {
     }
 
     private void showSoftInput() {
-        mInputMethodManager = (InputMethodManager) launcherActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
         if (mInputMethodManager != null) {
-            mInputMethodManager.showSoftInput(dialogEditText, 0);
+            mInputMethodManager.showSoftInput(dialogEditText, InputMethodManager.SHOW_IMPLICIT);
         }
     }
 
