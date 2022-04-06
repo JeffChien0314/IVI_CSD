@@ -1215,7 +1215,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 }*/
                 //Log.i(TAG, "*****************************************");
             }
-            oldFtsResultVector = resultVector;
         }
     }
 
