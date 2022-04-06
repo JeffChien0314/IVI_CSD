@@ -219,6 +219,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private RouteStopVector waypoints;
     private List<Marker> poiCatMarkers;//Jerry@20220324 add
     private boolean isFragmentShow = false;//Jerry@20220401 add
+    private boolean isFragmentHide = false;//Jerry@20220406 add:click map not add marker
     private boolean isAlreadyTranslation = false;//Jerry@20220401 add
 
     //Jerry@20220317 add for stop navigation
@@ -479,7 +480,10 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             @Override
             public void onMapClick(MapClickEvent e) {
                 Log.v("metis", "onMapClick");
-				if(isFragmentShow) return;//Jerry@20220401 add:Search fragment show,can't click
+				if(isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
+                    isFragmentHide = false;
+				    return;
+                }
                 com.tomtom.navkit.map.Coordinate waypoint = e.getClickCoordinates().getCoordinate();
 
                 addWaypointMarker(waypoint);
@@ -495,7 +499,10 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             @Override
             public void onMapLongClick(MapLongClickEvent e) {
                 Log.v("metis", "onMapLongClick");
-                if(isFragmentShow) return;//Jerry@20220401 add:Search fragment show,can't click
+                if(isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
+                    isFragmentHide = false;
+                    return;
+                }
                 // Use the existence of marker to check we don't attempt multiple route plans
                 // concurrently
                 if (destinationMarker == null) {
@@ -641,6 +648,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 setCurrentFragment(new SearchFragment());
                 //Jerry@20220401 add:Search fragment show,can't click
                 isFragmentShow = true;
+                isFragmentHide = false;
                 if(!isAlreadyTranslation) {
                     setMapViewMove(Constants.MOVE_RIGHT);
                     isAlreadyTranslation = true;
@@ -975,6 +983,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 setMapWidgetVisibility(View.VISIBLE);
                 //Jerry@20220401 add:Search fragment show,can't click
                 isFragmentShow = false;
+                isFragmentHide = false;
                 setMapViewMove(Constants.MOVE_LEFT);
                 isAlreadyTranslation = false;
             }
@@ -1077,6 +1086,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             setMapWidgetVisibility(View.VISIBLE);
             //Jerry@20220401 add:Search fragment show,can't click
             isFragmentShow = false;
+            isFragmentHide = true;
             setMapViewMove(Constants.MOVE_LEFT);
             isAlreadyTranslation = false;
         }
