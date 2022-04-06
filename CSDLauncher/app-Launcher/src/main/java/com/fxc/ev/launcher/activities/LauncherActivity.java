@@ -218,6 +218,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private TripPlan tripPlan;
     private RouteStopVector waypoints;
     private List<Marker> poiCatMarkers;//Jerry@20220324 add
+    private List<MarkerClass> poiMarkerClassList;//Jerry@20220406 add
     private boolean isFragmentShow = false;//Jerry@20220401 add
     private boolean isFragmentHide = false;//Jerry@20220406 add:click map not add marker
     private boolean isAlreadyTranslation = false;//Jerry@20220401 add
@@ -467,7 +468,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
         markerLayer = map.addLayer();
         waypointMarkers = new ArrayList<>();
-        poiCatMarkers = new ArrayList<>();//Jerry@20220324 add
+        //poiCatMarkers = new ArrayList<>();//Jerry@20220324 add
+        poiMarkerClassList = new ArrayList<>();//Jerry@202200406 add
         searchMarkerBuilder = new MarkerBuilder(); //metis@0309 add
 
         tripPlan = new TripPlan();
@@ -480,9 +482,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             @Override
             public void onMapClick(MapClickEvent e) {
                 Log.v("metis", "onMapClick");
-				if(isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
+                if (isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
                     isFragmentHide = false;
-				    return;
+                    return;
                 }
                 com.tomtom.navkit.map.Coordinate waypoint = e.getClickCoordinates().getCoordinate();
 
@@ -499,7 +501,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             @Override
             public void onMapLongClick(MapLongClickEvent e) {
                 Log.v("metis", "onMapLongClick");
-                if(isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
+                if (isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
                     isFragmentHide = false;
                     return;
                 }
@@ -649,7 +651,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 //Jerry@20220401 add:Search fragment show,can't click
                 isFragmentShow = true;
                 isFragmentHide = false;
-                if(!isAlreadyTranslation) {
+                if (!isAlreadyTranslation) {
                     setMapViewMove(Constants.MOVE_RIGHT);
                     isAlreadyTranslation = true;
                 }
@@ -785,9 +787,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         @Override
         public void onCameraPropertiesSteady(Camera camera) {
             //super.onCameraPropertiesSteady(camera);
-            removeAllPoiMarkers();
             double scale = camera.getProperties().getScale();
             if (scale > Constants.THIRTY_FIVE_KM) {
+                removeAllPoiMarkers(null);
                 return;
             }
             mLatitude = camera.getProperties().getLookAt().getLatitude();
@@ -1213,6 +1215,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 }*/
                 //Log.i(TAG, "*****************************************");
             }
+            oldFtsResultVector = resultVector;
         }
     }
 
@@ -1227,6 +1230,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     //Jerry@20220324 add:addPoiCatMarker
     public void addPoiCatMarker(com.tomtom.navkit.map.Coordinate waypoint, String poiName, String category) {
+        for (MarkerClass markerClass : poiMarkerClassList) {
+            if (waypoint.getLatitude() == markerClass.getWaypoint().getLatitude() &&
+                    waypoint.getLongitude() == markerClass.getWaypoint().getLongitude()) {
+                return;
+            }
+        }
         java.util.Map<String, Object> mapObject = getCategoryAttribute(category);
         String url = (String) mapObject.get("url");
         com.tomtom.navkit.map.Color outlineColor = (com.tomtom.navkit.map.Color) mapObject.get("outline-color");
@@ -1255,7 +1264,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             alreadyHasLabel.printStackTrace();
         }
         Marker marker = markerLayer.addMarker(markerBuilder);
-        poiCatMarkers.add(marker);
+        //poiCatMarkers.add(marker);
+        poiMarkerClassList.add(new MarkerClass(waypoint, marker));
     }
 
     //Jerry@20220330 add:getCategoryAttribute
@@ -1312,18 +1322,27 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220324 add:removeAllPoiMarkers
-    public void removeAllPoiMarkers() {
-        if (poiCatMarkers.isEmpty()) return;
+    public void removeAllPoiMarkers(com.tomtom.navkit.map.Coordinate waypoint) {
+        /*if (poiCatMarkers.isEmpty()) return;
         for (Marker poiCatMarker : poiCatMarkers) {
             markerLayer.removeMarker(poiCatMarker);
         }
-        poiCatMarkers.clear();
+        poiCatMarkers.clear();*/
+
+        if (poiMarkerClassList.isEmpty()) return;
+        if (waypoint == null) {
+            for (MarkerClass markerClass : poiMarkerClassList) {
+                markerLayer.removeMarker(markerClass.getMarker());
+            }
+            poiMarkerClassList.clear();
+            return;
+        }
     }
 
     //Jerry@20220402 add:setMapView move
-    private void setMapViewMove(String moveDirection){
+    private void setMapViewMove(String moveDirection) {
         int moveOffset = map.getViewport().getBottomRight().getX() / 2;
-        switch (moveDirection){
+        switch (moveDirection) {
             case Constants.MOVE_RIGHT:
                 Point rightBegin = new Point(0, 0);
                 map.getInteraction().panBegin(rightBegin);
@@ -1336,6 +1355,25 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 Point leftEnd = new Point(-moveOffset, 0);
                 map.getInteraction().panEnd(leftEnd);
                 break;
+        }
+    }
+
+    //Jerry@20220406 add:MarkerClass
+    private class MarkerClass {
+        private com.tomtom.navkit.map.Coordinate waypoint = null;
+        private Marker marker = null;
+
+        public MarkerClass(com.tomtom.navkit.map.Coordinate waypoint, Marker marker) {
+            this.waypoint = waypoint;
+            this.marker = marker;
+        }
+
+        public com.tomtom.navkit.map.Coordinate getWaypoint() {
+            return waypoint;
+        }
+
+        public Marker getMarker() {
+            return marker;
         }
     }
 }
