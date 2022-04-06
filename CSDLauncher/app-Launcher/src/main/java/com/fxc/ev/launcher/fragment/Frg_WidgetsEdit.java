@@ -170,11 +170,20 @@ public class Frg_WidgetsEdit extends Fragment {
                 }
             }
         }
-        if (mIncludedWidgetLabelList.size() == 2) {
+        if (mIncludedWidgetLabelList.size() == 0) {
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
+        } else if (mIncludedWidgetLabelList.size() == 1) {
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
+        } else if (mIncludedWidgetLabelList.size() == 2) {
             mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
             mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
         } else if (mIncludedWidgetLabelList.size() == 3) {
-
+            mIncludedWidgetAdapter.add(new PakageMod(null, null, null, null));
         }
         mDraggableGridViewIncluded.setAdapter(mIncludedWidgetAdapter);
 
