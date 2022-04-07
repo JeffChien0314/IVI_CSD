@@ -61,6 +61,7 @@ import static com.fxc.ev.launcher.maps.search.Constants.gasStationBg;
 import static com.fxc.ev.launcher.maps.search.Constants.gasStationIcon;
 import static com.fxc.ev.launcher.maps.search.Constants.homeDisableIcon;
 import static com.fxc.ev.launcher.maps.search.Constants.homeEnableIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.hospitalBg;
 import static com.fxc.ev.launcher.maps.search.Constants.hospitalIcon;
 import static com.fxc.ev.launcher.maps.search.Constants.hotelBg;
 import static com.fxc.ev.launcher.maps.search.Constants.hotelIcon;
@@ -72,6 +73,7 @@ import static com.fxc.ev.launcher.maps.search.Constants.parkingBg;
 import static com.fxc.ev.launcher.maps.search.Constants.parkingIcon;
 import static com.fxc.ev.launcher.maps.search.Constants.restaurantBg;
 import static com.fxc.ev.launcher.maps.search.Constants.restaurantIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.schoolBg;
 import static com.fxc.ev.launcher.maps.search.Constants.schoolIcon;
 import static com.fxc.ev.launcher.maps.search.Constants.textDisableColor;
 import static com.fxc.ev.launcher.maps.search.Constants.textEnableColor;
@@ -248,7 +250,7 @@ public class SearchFragment extends Fragment {
 
                     if (mSourceType.equals(FROM_SEARCH_PAGE)) {
                         favItemParentLayout.removeAllViews();
-                        initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5));
+                        initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5), "favorite");
                         searchResultRecyclerView.setVisibility(View.GONE);
                         favMainLayout.setVisibility(View.VISIBLE);
                         hideSoftInput();
@@ -300,17 +302,17 @@ public class SearchFragment extends Fragment {
             mInterestEditItemList.add(new FavEditItem("Hotel", hotelIcon, hotelBg, textEnableColor, null, null));
             mInterestEditItemList.add(new FavEditItem("ATM", atmIcon, atmBg, textEnableColor, null, null));
             mInterestEditItemList.add(new FavEditItem("Gas Station", gasStationIcon, gasStationBg, textEnableColor, null, null));
-            //mInterestEditItemList.add(new FavEditItem("School", schoolIcon, atmBg, textEnableColor, null, null));
-            //mInterestEditItemList.add(new FavEditItem("Hospital", hospitalIcon, gasStationBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("School", schoolIcon, schoolBg, textEnableColor, null, null));
+            mInterestEditItemList.add(new FavEditItem("Hospital", hospitalIcon, hospitalBg, textEnableColor, null, null));
 
             SpUtils.setDataList(launcherActivity, "interest_edit_list", "interest", mInterestEditItemList);
         }
 
-        initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5));
-        initAutoLinearLayout(interestItemParentLayout, SpUtils.clipList(mInterestEditItemList, 5));
+        initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5), "favorite");
+        initAutoLinearLayout(interestItemParentLayout, SpUtils.clipList(mInterestEditItemList, 5), "interest");
     }
 
-    private <T> void initAutoLinearLayout(LinearLayout parentLayout, List<T> dataList) {
+    private <T> void initAutoLinearLayout(LinearLayout parentLayout, List<T> dataList, String itemType) {
         boolean isNewLayout = false;
         int maxWith = 450;
         int elseWith = maxWith; //剩下的宽度
@@ -347,7 +349,11 @@ public class SearchFragment extends Fragment {
                 @Override
                 public void onClick(View v) {
                     if (favEditItem.getLocation() == null) {
-                        go2Search(FROM_SEARCH_PAGE, (int) v.getTag());
+                        if (itemType.equals("favorite")) {
+                            go2SearchFromFavorites(FROM_SEARCH_PAGE, (int) v.getTag());
+                        } else if (itemType.equals("interest")) {
+                            go2SearchFromInterest(favName.getText().toString());
+                        }
                     } else {
                         SearchResultItem searchResultItem = new SearchResultItem();
                         searchResultItem.setLocation(favEditItem.getLocation());
@@ -392,12 +398,16 @@ public class SearchFragment extends Fragment {
         parentLayout.addView(rowLinearLayout);
     }
 
-    public void go2Search(String sourceType, int position) {
+    public void go2SearchFromFavorites(String sourceType, int position) {
         searchEditText.requestFocus();
         mSearchType = TYPE_FAVORITE;
         mSourceType = sourceType;
         clickIndex = position;
         showSoftInput();
+    }
+
+    public void go2SearchFromInterest(String searchContent) {
+        searchEditText.setText(searchContent);
     }
 
     private void search(String searchContent) {
@@ -493,7 +503,7 @@ public class SearchFragment extends Fragment {
     @Override
     public void onStop() {
         super.onStop();
-        Log.v(TAG,"onStop");
+        Log.v(TAG, "onStop");
         hideSoftInput();
         launcherActivity.setDisappearance(false);
         searchResultItemArrayList.clear();

@@ -36,6 +36,8 @@ public class Constants {
     public static final int hotelBg = R.drawable.interest_hotel_bg;
     public static final int atmBg = R.drawable.interest_atm_bg;
     public static final int gasStationBg = R.drawable.interest_gas_station_bg;
+    public static final int schoolBg = R.drawable.interest_school_bg;
+    public static final int hospitalBg = R.drawable.interest_hospital_bg;
 
     public static final int textDisableColor = R.color.fav_text_disable_color;
     public static final int textEnableColor = R.color.fav_text_enable_color;

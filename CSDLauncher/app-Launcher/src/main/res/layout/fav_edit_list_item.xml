@@ -65,7 +65,8 @@
             android:singleLine="true"
             android:textColor="#80ffffff"
             android:textSize="22px"
-            tools:text="@string/hello" />
+            tools:text="@string/hello"
+            android:visibility="gone"/>
 
     </LinearLayout>
 
@@ -76,7 +77,8 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="24px"
         android:layout_toRightOf="@+id/text_layout"
-        android:src="@drawable/icon_edit_normal" />
+        android:src="@drawable/icon_edit_normal"
+        android:visibility="invisible"/>
 
     <ImageView
         android:id="@+id/icon_move"
@@ -86,7 +88,8 @@
         android:layout_toRightOf="@+id/icon_edit"
         android:layout_marginLeft="18px"
         android:layout_marginRight="30px"
-        android:src="@drawable/icon_move_normal" />
+        android:src="@drawable/icon_move_normal"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
 

@@ -103,7 +103,7 @@ public class FavoritesEditFragment extends Fragment {
                                 new Handler().post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        searchFragment.go2Search(Constants.FROM_FAV_EDIT_PAGE, position);
+                                        searchFragment.go2SearchFromFavorites(Constants.FROM_FAV_EDIT_PAGE, position);
                                     }
                                 });
                             } else {
@@ -425,16 +425,6 @@ public class FavoritesEditFragment extends Fragment {
     private void hideSoftInput() {
         if (mInputMethodManager != null && mInputMethodManager.isActive()) {
             mInputMethodManager.hideSoftInputFromWindow(launcherActivity.getWindow().getDecorView().getWindowToken(), 0);
-        }
-    }
-
-    class EditItemStatus {
-        public int visibility;
-        public boolean isFocus;
-
-        public EditItemStatus(int visibility, boolean isFocus) {
-            this.visibility = visibility;
-            this.isFocus = isFocus;
         }
     }
 
