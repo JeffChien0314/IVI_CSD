@@ -61,8 +61,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_edit_layout"
-        android:layout_marginLeft="30px"
         android:layout_marginTop="30px"
+        android:layout_marginLeft="30px"
         android:layout_marginRight="30px"
         android:visibility="gone">
 
@@ -159,13 +159,13 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/recents_layout"
+            android:id="@+id/recent_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30px">
 
             <TextView
-                android:id="@+id/recents_title"
+                android:id="@+id/recent_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Recents"
@@ -175,22 +175,22 @@
             </TextView>
 
             <TextView
-                android:id="@+id/recents_clear"
+                android:id="@+id/recent_clear"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/recents_title"
+                android:layout_alignBaseline="@+id/recent_title"
                 android:layout_alignParentRight="true"
-                android:text="More"
-                android:textColor="#80ffffff"
+                android:text="Delete All"
+                android:textColor="#F63E1F"
                 android:textSize="22px">
 
             </TextView>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recents_recyclerview"
-                android:layout_width="match_parent"
-                android:layout_height="100px"
-                android:layout_below="@id/recents_title"
+                android:id="@+id/recent_recyclerview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/recent_title"
                 android:layout_marginTop="30px">
 
             </androidx.recyclerview.widget.RecyclerView>
