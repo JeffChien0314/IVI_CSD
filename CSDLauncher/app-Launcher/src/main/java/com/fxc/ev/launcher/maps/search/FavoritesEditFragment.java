@@ -65,6 +65,11 @@ public class FavoritesEditFragment extends Fragment {
     private InputMethodManager mInputMethodManager;
     private int fromPosition = 0;
     private boolean isFirstMove = true;
+    private SearchFragment mSearchFragment;
+
+    public FavoritesEditFragment(SearchFragment searchFragment) {
+        this.mSearchFragment = searchFragment;
+    }
 
     @Nullable
     @Override
@@ -79,7 +84,6 @@ public class FavoritesEditFragment extends Fragment {
     }
 
     private void initView() {
-
         favEditRecyclerView = mRootView.findViewById(R.id.fav_edit_recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
@@ -88,7 +92,6 @@ public class FavoritesEditFragment extends Fragment {
 
         favoritesEditAdapter = new FavoritesEditAdapter(launcherActivity, mFavEditItemList);
         favEditRecyclerView.setAdapter(favoritesEditAdapter);
-
         favoritesEditAdapter.setItemClickListener(new FavoritesEditAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View v, FavoritesEditAdapter.ViewName viewName, FavEditItem favEditItem, int position) {
@@ -97,32 +100,31 @@ public class FavoritesEditFragment extends Fragment {
                         Log.v(TAG, "isFocusable:" + v.isFocusable());
                         if (v.isFocusable()) {
                             if (favEditItem.getLocation() == null) {
-                                SearchFragment searchFragment = new SearchFragment();
-                                launcherActivity.setCurrentFragment(searchFragment);
-
+                                launcherActivity.setCurrentFragment(mSearchFragment);
                                 new Handler().post(new Runnable() {
                                     @Override
                                     public void run() {
-                                        searchFragment.go2SearchFromFavorites(Constants.FROM_FAV_EDIT_PAGE, position);
+                                        mSearchFragment.go2SearchFromFavorites(Constants.FROM_FAV_EDIT_PAGE, position);
                                     }
                                 });
                             } else {
                                 SearchResultItem searchResultItem = new SearchResultItem();
                                 searchResultItem.setLocation(favEditItem.getLocation());
                                 searchResultItem.setName(favEditItem.getName());
+                                searchResultItem.setAddress(favEditItem.getAddress());
+                                searchResultItem.setSearchType(Constants.TYPE_FAVORITE);
 
                                 RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
                                 launcherActivity.setCurrentFragment(routePreviewFragment);
                                 routePreviewFragment.setData(searchResultItem);
+
+                                mSearchFragment.saveData2Recent(searchResultItem, favEditItem);
                             }
                         }
                         break;
                     case EDIT:
                         Log.v(TAG, "edit 被点击啦: " + v.findViewById(R.id.icon_edit).isFocusable());
                         showDialog(favEditItem, position);
-                        break;
-                    case MOVE:
-                        Log.v(TAG, "move 被点击啦: " + v.findViewById(R.id.icon_move).isFocusable());
                         break;
                 }
             }

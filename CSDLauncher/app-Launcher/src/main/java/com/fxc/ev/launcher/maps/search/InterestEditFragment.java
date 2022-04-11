@@ -38,6 +38,11 @@ public class InterestEditFragment extends Fragment {
     private ItemTouchHelper mItemTouchHelper;
     private int fromPosition = 0;
     private boolean isFirstMove = true;
+    private SearchFragment mSearchFragment;
+
+    public InterestEditFragment(SearchFragment searchFragment) {
+        this.mSearchFragment = searchFragment;
+    }
 
     @Nullable
     @Override
@@ -52,14 +57,13 @@ public class InterestEditFragment extends Fragment {
     }
 
     private void initView() {
-
         interestEditRecyclerView = mRootView.findViewById(R.id.interest_edit_recyclerview);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
         interestEditRecyclerView.addItemDecoration(spaceItemDecoration);
         interestEditRecyclerView.setLayoutManager(linearLayoutManager);
 
-        interestEditAdapter = new InterestEditAdapter(launcherActivity,interestEditRecyclerView, mInterestItemList);
+        interestEditAdapter = new InterestEditAdapter(launcherActivity, mInterestItemList);
         interestEditRecyclerView.setAdapter(interestEditAdapter);
 
         interestEditAdapter.setItemClickListener(new InterestEditAdapter.OnItemClickListener() {
@@ -69,23 +73,15 @@ public class InterestEditFragment extends Fragment {
                     case ITEM:
                         Log.v(TAG, "isFocusable:" + v.isFocusable());
                         if (v.isFocusable()) {
-                            SearchFragment searchFragment = new SearchFragment();
-                            launcherActivity.setCurrentFragment(searchFragment);
+                            launcherActivity.setCurrentFragment(mSearchFragment);
 
                             new Handler().post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    searchFragment.go2SearchFromInterest(favEditItem.getName());
+                                    mSearchFragment.go2SearchFromInterest(favEditItem);
                                 }
                             });
                         }
-                        break;
-                    case EDIT:
-                        Log.v(TAG, "edit 被点击啦: " + v.findViewById(R.id.icon_edit).isFocusable());
-                        //showDialog(favEditItem, position);
-                        break;
-                    case MOVE:
-                        Log.v(TAG, "move 被点击啦: " + v.findViewById(R.id.icon_move).isFocusable());
                         break;
                 }
             }
@@ -143,27 +139,12 @@ public class InterestEditFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (interestBtnEdit.getText().equals("Edit")) {
-                    /*for (int i = 0; i < mInterestItemList.size(); i++) {
-                        InterestEditAdapter.FavoritesItemViewHolder viewHolder = (InterestEditAdapter.FavoritesItemViewHolder) interestEditRecyclerView.findViewHolderForAdapterPosition(i);
-                        viewHolder.itemView.findViewById(R.id.icon_move).setVisibility(View.VISIBLE);
-
-                        viewHolder.itemView.setFocusable(false);
-                        //interestEditAdapter.notifyItemRangeChanged(0, interestEditAdapter.getItemCount(), new EditItemStatus(View.VISIBLE, false));
-                    }*/
-                    Log.v(TAG, "getItemCount1: " + interestEditAdapter.getItemCount());
                     interestEditAdapter.notifyItemRangeChanged(0, interestEditAdapter.getItemCount(), new EditItemStatus(View.VISIBLE, false));
 
                     mItemTouchHelper.attachToRecyclerView(interestEditRecyclerView);
                     interestBtnEdit.setText("Done");
                     interestBtnEdit.setTextColor(Color.parseColor("#418eff"));
                 } else if (interestBtnEdit.getText().equals("Done")) {
-                    /*for (int i = 0; i < mInterestItemList.size(); i++) {
-                        InterestEditAdapter.FavoritesItemViewHolder viewHolder = (InterestEditAdapter.FavoritesItemViewHolder) interestEditRecyclerView.findViewHolderForAdapterPosition(i);
-                        viewHolder.itemView.findViewById(R.id.icon_move).setVisibility(View.INVISIBLE);
-
-                        viewHolder.itemView.setFocusable(true);
-                    }*/
-                    Log.v(TAG, "getItemCount2: " + interestEditAdapter.getItemCount());
                     interestEditAdapter.notifyItemRangeChanged(0, interestEditAdapter.getItemCount(), new EditItemStatus(View.INVISIBLE, true));
 
                     mItemTouchHelper.attachToRecyclerView(null);

@@ -1,5 +1,7 @@
 package com.fxc.ev.launcher.maps.search;
 
+import static com.fxc.ev.launcher.maps.search.Constants.TYPE_FAVORITE;
+
 import android.content.Context;
 
 import android.text.TextUtils;
@@ -71,10 +73,10 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 holder.distance.setVisibility(View.GONE);
             }
 
-            if (searchResultItem.getSearchType().equals("search")) {
-                holder.icon.setImageResource(R.drawable.icon_search_item_nav);
-            } else {
+            if (searchResultItem.getSearchType().equals(TYPE_FAVORITE)) {
                 holder.icon.setImageResource(0);
+            } else {
+                holder.icon.setImageResource(R.drawable.icon_search_item_nav);
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {

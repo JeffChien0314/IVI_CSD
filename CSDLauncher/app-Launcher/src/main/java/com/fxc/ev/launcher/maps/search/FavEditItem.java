@@ -11,6 +11,11 @@ public class FavEditItem implements Serializable {
     private int textColor;
     private Location location;
     private String address;
+    private int distance;
+
+    public FavEditItem(){
+
+    }
 
     public FavEditItem(String name, int image, int background, int textColor, Location location, String address) {
         this.name = name;
@@ -67,5 +72,13 @@ public class FavEditItem implements Serializable {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    public void setDistance(int distance) {
+        this.distance = distance;
     }
 }

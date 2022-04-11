@@ -5,6 +5,7 @@ import com.fxc.ev.launcher.R;
 public class Constants {
     public static final String TYPE_SEARCH = "search";
     public static final String TYPE_FAVORITE = "favorite";
+    public static final String TYPE_INTEREST = "interest";
     public static final String FROM_SEARCH_PAGE = "from_search";
     public static final String FROM_FAV_EDIT_PAGE = "from_fav_edit_page";
     public static final String FROM_MAIN_PAGE = "from_main_page";
@@ -24,6 +25,7 @@ public class Constants {
     public static final int gasStationIcon = R.drawable.icon_gas_staion_normal;
     public static final int schoolIcon = R.drawable.icon_school_normal;
     public static final int hospitalIcon = R.drawable.icon_hospital_normal;
+    public static final int locationIcon = R.drawable.icon_location_normal;
 
     public static final int favItemDisableBg = R.drawable.fav_item_btn_disable_bg;
     public static final int favItemEnableBg = R.drawable.fav_item_btn_enable_bg;

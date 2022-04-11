@@ -44,7 +44,6 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
     @NonNull
     @Override
     public FavoritesItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        Log.v(TAG, "onCreateViewHolder");
         View view = LayoutInflater.from(mLauncherActivity).inflate(R.layout.fav_edit_list_item, parent, false);
         favoritesItemViewHolder = new FavoritesItemViewHolder(view);
         return favoritesItemViewHolder;
@@ -52,7 +51,6 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
 
     @Override
     public void onBindViewHolder(@NonNull FavoritesItemViewHolder holder, int position) {
-        Log.v(TAG, "onBindViewHolder");
         FavEditItem favEditItem = mFavEditItemList.get(position);
         holder.initHolder(favEditItem);
     }
@@ -122,12 +120,6 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
         public void initHolder(FavEditItem favEditItem) {
             icon.setImageResource(favEditItem.getImage());
             name.setText(favEditItem.getName());
-
-            /*if (favEditItem.getName().equals(Constants.ADD_FAVORITE)) {
-                icon.setImageResource(R.drawable.icon_add_normal);
-            } else {
-                icon.setImageResource(favEditItem.getImage());
-            }*/
 
             if (favEditItem.getLocation() == null) {
                 if (favEditItem.getName().equals(Constants.ADD_FAVORITE)) {
