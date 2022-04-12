@@ -295,8 +295,9 @@ public class InteractiveMapActivity extends BaseActivity {
         } else if (haveRecenterButton) {
             recenterButton.setVisibility(recenterButtonVisibilityEnd);
         }
-
-        if (haveNextInstructionContainerView) {
+		
+		//Jerry@20220412 mark:Drag maps without disappearing
+        /*if (haveNextInstructionContainerView) {
             nextInstructionPanelView.animate()
                     .setDuration(INTERACTIONMODE_ANIMATION_DURATION)
                     .translationY(nextInstructionTranslationY);
@@ -306,7 +307,7 @@ public class InteractiveMapActivity extends BaseActivity {
             etaTextView.animate()
                     .setDuration(INTERACTIONMODE_ANIMATION_DURATION)
                     .translationY(etaTranslationY);
-        }
+        }*/
     }
 
     @Override
