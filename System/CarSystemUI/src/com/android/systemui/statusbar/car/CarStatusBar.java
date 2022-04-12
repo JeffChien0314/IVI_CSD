@@ -78,6 +78,8 @@ import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 
+import androidx.recyclerview.widget.LinearLayoutManager;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.Map;
@@ -133,6 +135,7 @@ public class CarStatusBar extends StatusBar implements
     // The container for the notifications.
     private CarNotificationView mNotificationView;
     private RecyclerView mNotificationList;
+    private NotificationsAdapter mNotificationsAdapter;
     // The handler bar view at the bottom of notification shade.
     private View mHandleBar;
     // The controller for the notification view.
@@ -502,6 +505,10 @@ public class CarStatusBar extends StatusBar implements
         });
 
         mNotificationList = mNotificationView.findViewById(R.id.notifications);
+        mNotificationsAdapter = new NotificationsAdapter(mContext,mNotificationClickHandlerFactory); //self-defined NotificationList
+        mNotificationList.setLayoutManager(new LinearLayoutManager(mContext));
+        mNotificationList.setAdapter(mNotificationsAdapter);
+
         mNotificationList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {

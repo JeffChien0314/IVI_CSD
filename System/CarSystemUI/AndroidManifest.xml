@@ -21,4 +21,8 @@
         coreApp="true">
     <!-- This permission is required to monitor car power state. -->
     <uses-permission android:name="android.car.permission.CAR_POWER" />
+    <uses-permission android:name="android.permission.REAL_GET_TASKS" />
+    <uses-permission android:name="android.permission.GET_DETAILED_TASKS" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+
 </manifest>
