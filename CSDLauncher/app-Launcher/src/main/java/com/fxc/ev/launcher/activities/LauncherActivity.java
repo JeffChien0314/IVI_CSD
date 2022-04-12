@@ -1249,13 +1249,14 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             markerLabelBuilder = markerBuilder.addLabel();
             markerLabelBuilder
                     .setFontUri(this.getString(R.string.font_style))
-                    .setTextAnchoring(MarkerLabelBuilder.TextAnchoring.kLeft)
+                    .setTextAnchoring(MarkerLabelBuilder.TextAnchoring.kCenter)
                     .setTextSize(22)
                     .setWrapText(false)
                     //.setMaximumNumberOfLines(1)
+                    //.setLineLengthLimits(4,4)
                     .setOutlineColor(outlineColor)
                     .setOutlineWidth(1)
-                    .setOffset(15, 5)
+                    .setOffset(0, -20)
                     .setText(poiName)
                     .setTextColor(textColor);
 
