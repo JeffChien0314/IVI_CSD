@@ -10,6 +10,10 @@
  */
 package com.fxc.ev.launcher.activities;
 
+import static com.fxc.ev.launcher.utils.ApplicationPreferences.getKeystore;
+import static com.fxc.ev.launcher.utils.ApplicationPreferences.getKeystorePassword;
+import static com.fxc.ev.launcher.utils.ApplicationPreferences.getMapUpdateServerApiKey;
+import static com.fxc.ev.launcher.utils.ApplicationPreferences.getNdsMapRootFolder;
 import static com.tomtom.navkit2.guidance.VoiceGuidanceModeListener.VoiceGuidanceMode.COMPACT;
 import static com.tomtom.navkit2.guidance.VoiceGuidanceModeListener.VoiceGuidanceMode.COMPREHENSIVE;
 
@@ -31,6 +35,7 @@ import android.graphics.Color;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -55,10 +60,12 @@ import com.fxc.ev.launcher.maps.poicatsearch.Constants;
 import com.fxc.ev.launcher.maps.poicatsearch.PoiSearchThread;
 import com.fxc.ev.launcher.maps.route.RoutePlanningPreferencesActivity;
 import com.fxc.ev.launcher.maps.search.SearchFragment;
+import com.fxc.ev.launcher.utils.ApplicationPreferences;
 import com.fxc.ev.launcher.utils.CameraStackController;
 import com.fxc.ev.launcher.utils.CameraStackController.CameraType;
 import com.fxc.ev.launcher.utils.DistanceConversions;
 import com.fxc.ev.launcher.utils.EtaFormatter;
+import com.fxc.ev.launcher.utils.NetWorkUtil;
 import com.fxc.ev.launcher.utils.PermissionsManager;
 import com.fxc.ev.launcher.utils.SharedPreferenceUtils;
 import com.fxc.ev.launcher.utils.Toaster;
@@ -78,6 +85,10 @@ import com.tomtom.navkit.map.Point;
 import com.tomtom.navkit.map.camera.Camera;
 import com.tomtom.navkit.map.camera.CameraListener;
 import com.tomtom.navkit.map.extension.positioning.PositioningExtension;
+import com.tomtom.navkit2.MapUpdate;
+import com.tomtom.navkit2.MapUpdateService;
+import com.tomtom.navkit2.NavigationTileService;
+import com.tomtom.navkit2.SearchOnboardService;
 import com.tomtom.navkit2.TrafficRenderer;
 import com.tomtom.navkit2.TripRenderer;
 import com.tomtom.navkit2.drivingassistance.DrivingContextApi;
@@ -88,6 +99,8 @@ import com.tomtom.navkit2.guidance.Instruction;
 import com.tomtom.navkit2.guidance.NextInstructionListener;
 import com.tomtom.navkit2.guidance.StockTextToSpeechEngine;
 import com.tomtom.navkit2.mapdisplay.trip.TripRendererClickListener;
+import com.tomtom.navkit2.mapmanagement.ErrorCode;
+import com.tomtom.navkit2.mapmanagement.MapUpdateListener;
 import com.tomtom.navkit2.navigation.Navigation;
 import com.tomtom.navkit2.navigation.NavigationService;
 import com.tomtom.navkit2.navigation.Route;
@@ -104,6 +117,7 @@ import com.tomtom.navkit2.navigation.TripPlanError;
 import com.tomtom.navkit2.navigation.TripPlanResult;
 import com.tomtom.navkit2.navigation.TripUpdateListener;
 import com.tomtom.navkit2.navigation.common.Preference;
+import com.tomtom.navkit2.onboardmapservice.OnboardMapService;
 import com.tomtom.navkit2.place.Coordinate;
 import com.tomtom.navkit2.place.Location;
 import com.tomtom.navkit2.search.ExecutionMode;
@@ -116,6 +130,7 @@ import com.tomtom.navkit2.search.Input;
 import com.tomtom.navkit2.search.PoiSuggestionResults;
 import com.tomtom.navkit2.search.PoiSuggestionsListener;
 
+import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -158,6 +173,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private static final double DESTINATION_ICON_ANCHOR_Y = 0.41;
     private static final double WAYPOINT_ICON_ANCHOR_X = 0.5;
     private static final double WAYPOINT_ICON_ANCHOR_Y = 0.55;
+
+    // onboard tile service URI
+    private static final String TILE_SERVICE_URI = "mem://tile-service";
 
     // route planning settings
     private static final String PREFER_ROUTE_PLANNING_ALTERNATIVES = "pref_route_planning_alternatives";
@@ -249,6 +267,88 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         }
     };
+
+    //Jerry@20220412 add for onboard map->
+    private static final String NDS_MAP_UPDATES_RELATIVE_PATH = "map" + File.separator + "updates";
+    private MapUpdate mapUpdate;
+    private File mapUpdateStoragePath;
+    private MapUpdateService mapUpdateService;
+    private boolean mapUpdateServiceConnected;
+
+    private final MapUpdateListener mapUpdateListener = new MapUpdateListener() {
+        @Override
+        public void onMapUpdated() {
+            Log.d(TAG, "onMapUpdated() called");
+            setMapUpdatesEnabled(true);
+            startUpdate();
+        }
+
+        @Override
+        public void onMapUpdateFailure(@NonNull ErrorCode errorCode) {
+            Log.e(TAG, "onMapUpdateFailure() called, code: " + errorCode);
+        }
+    };
+
+    private final ServiceConnection mapUpdateServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            mapUpdateService = ((MapUpdateService.Binder) binder).getService();
+            mapUpdateServiceConnected = true;
+            Log.d(TAG, MapUpdateService.class.getCanonicalName() + " is connected.");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mapUpdateServiceConnected = false;
+            Log.d(TAG, MapUpdateService.class.getCanonicalName() + " is disconnected.");
+        }
+    };
+
+    private boolean tileServiceBound = false;
+    private ServiceConnection tileServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.d(TAG, "onServiceConnected(OnboardTileService)");
+            tileServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected(OnboardTileService)");
+            tileServiceBound = false;
+        }
+    };
+
+    private boolean onboardMapServiceBound = false;
+    private final ServiceConnection onboardMapConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.d(TAG, "onServiceConnected(OnboardMap)");
+            onboardMapServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected(OnboardMap)");
+            onboardMapServiceBound = false;
+        }
+    };
+
+    private boolean searchOnBoardServiceBound = false;
+    private ServiceConnection searchOnBoardServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.d(TAG, "onServiceConnected(SearchOnBoardService)");
+            searchOnBoardServiceBound = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected(SearchOnBoardService)");
+            searchOnBoardServiceBound = false;
+        }
+    };
+    //<-Jerry@20220412 add for onboard map
 
     private ServiceConnection navigationConnection = new ServiceConnection() {
         @Override
@@ -629,6 +729,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         // Services
         if (permissionsManager.acquirePermissions()) {
             setupNavigationServices();
+            setupOnboardMapServices();//Jerry@20220412
+            setupSearchOnboardServices();//Jerry@20220412
         }
 
         navigation.addRouteDeviatedListener(new RouteDeviatedListener() {
@@ -658,6 +760,14 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
         //metis@0309 显示搜索页面 <--
+
+        //Jerry@20220411 add:for map update
+        mapUpdateStoragePath = new File(getExternalFilesDir(null), NDS_MAP_UPDATES_RELATIVE_PATH);
+        initializeMapUpdate();
+
+        if (!launchMapUpdateService(getMapUpdateServiceConfiguration())) {
+            //finish();
+        }
     }
 
     //Jerry@20220322 add
@@ -948,6 +1058,19 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     private void setupNavigationServices() {
+        //Jerry@20220408 add for onboard map->
+        // onboard map settings
+        Log.d(TAG, "Onboard Map Path:" + onboardMapPath);
+        Log.d(TAG, "Onboard Keystore Path:" + onboardKeystorePath);
+        // connect to the tile service
+        final Bundle tileServiceBundle = makeTileServiceBundle();
+        final Intent tileServiceIntent = new Intent(this, NavigationTileService.class);
+        tileServiceIntent.putExtra(NavigationTileService.CONFIGURATION, tileServiceBundle);
+        if (!bindService(tileServiceIntent, tileServiceConnection, Context.BIND_AUTO_CREATE)) {
+            Log.e(TAG, "Couldn't bind onboard tile service");
+            //finish();
+        }
+        //<-Jerry@20220408 add for onboard map
         // connect to the navigation service which provides trip planning and driving assistance
         final Bundle serviceBundle = makeNavigationServiceBundle();
         final Intent intent = new Intent(this, NavigationService.class);
@@ -955,7 +1078,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         intent.putExtra(NavigationService.CONFIGURATION, serviceBundle);
         if (!bindService(intent, navigationConnection, Context.BIND_AUTO_CREATE)) {
             Log.e(TAG, "Couldn't bind navigation service");
-            finish();
+            //finish();
         }
     }
 
@@ -963,7 +1086,108 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         Bundle bundle = new Bundle();
         bundle.putString(NavigationService.ROUTING_API_AUTH_TOKEN_KEY, BuildConfig.API_KEY);
         bundle.putString(NavigationService.NAVIGATION_AUTH_TOKEN_KEY, BuildConfig.API_KEY);
+        //Jerry@20220408 add for onboard map->
+        bundle.putString(NavigationService.NAVIGATION_ONBOARD_TILE_SERVICE_URI, TILE_SERVICE_URI);
+        setupOnboardmapServiceParameters(bundle);
+        //Jerry@20220408 add for onboard map->
+        return bundle;
+    }
 
+    //Jerry@20220408 add for onboard map
+    private void setupOnboardmapServiceParameters(Bundle bundle) {
+        // NIE configuration
+        bundle.putString(NavigationService.GUIDANCE_MODE_KEY, "onboard-v2");
+        // Map access provider configuration
+        bundle.putString(NavigationService.ONBOARD_MAP_PATH_KEY, onboardMapPath);
+
+        final File keystore = getKeystore(this);
+        if (keystore.exists()) {
+            bundle.putString(NavigationService.ONBOARD_MAP_KEYSTORE_PATH_KEY, keystore.getPath());
+            bundle.putString(NavigationService.ONBOARD_MAP_KEYSTORE_PASSWORD_KEY, getKeystorePassword());
+        }
+        // Traffic engine configuration
+        bundle.putString(NavigationService.PERSEUS_AUTHENTICATION_TOKEN_KEY, BuildConfig.API_KEY);
+        bundle.putString(
+                NavigationService.PERSEUS_CERTIFICATE_BUNDLE_PATH_KEY,
+                OnboardMapService.getPerseusCertificate(getApplicationContext()));
+        bundle.putString(NavigationService.MAPACCESSSYNC_SERVICE_URI_KEY, "");
+    }
+
+    //Jerry@20220408 add for onboard map
+    private Bundle makeTileServiceBundle() {
+        final Bundle bundle = new Bundle();
+        bundle.putString(NavigationTileService.NAVIGATION_MAP_PATH, onboardMapPath);
+        final File keystore = getKeystore(this);
+        if (keystore.exists()) {
+            bundle.putString(NavigationTileService.NAVIGATION_KEYSTORE_PATH, keystore.getPath());
+            bundle.putString(NavigationTileService.NAVIGATION_KEYSTORE_PASSWORD, getKeystorePassword());
+        }
+        bundle.putString(NavigationTileService.THREAD_COUNT, "1");
+        bundle.putString(NavigationTileService.MAPACCESSSYNC_SERVICE_URI, "");
+        bundle.putString(NavigationTileService.SERVICE_URI, TILE_SERVICE_URI);
+        bundle.putString(NavigationTileService.LOG_LEVEL, "info");
+        return bundle;
+    }
+
+    //Jerry@20220408 add for onboard map
+    private void setupOnboardMapServices() {
+        // connect to the navigation service which provides trip planning and driving assistance
+        final Bundle serviceBundle = makeOnboardMapServiceBundle();
+        final Intent intent = new Intent(this, OnboardMapService.class);
+        intent.putExtra(OnboardMapService.CONFIGURATION, serviceBundle);
+        if (!bindService(intent, onboardMapConnection, Context.BIND_AUTO_CREATE)) {
+            Log.e(TAG, "Couldn't bind OnboardMapService service");
+            //finish();
+        }
+    }
+
+    //Jerry@20220408 add for onboard map
+    private Bundle makeOnboardMapServiceBundle() {
+        return new Bundle();
+    }
+
+    //Jerry@20220412 add for onboard map
+    private void setupSearchOnboardServices() {
+        final Bundle serviceBundle = makeSearchOnboardServiceBundle();
+        final Intent intent = new Intent(this, SearchOnboardService.class);
+        intent.putExtra(SearchOnboardService.CONFIGURATION, serviceBundle);
+        if (!bindService(intent, searchOnBoardServiceConnection, Context.BIND_AUTO_CREATE)) {
+            Log.e(TAG, "Couldn't bind SearchOnboardService service");
+            //finish();
+        }
+    }
+
+    //Jerry@20220412 add for onboard map
+    private Bundle makeSearchOnboardServiceBundle() {
+        final Bundle bundle = new Bundle();
+        String storageLocation;
+        if (Constants.IS_STORAGE_DOWNLOAD) {
+            storageLocation = Environment.getExternalStoragePublicDirectory(Constants.NDS_MAP_STORAGE_PATH).getAbsolutePath();
+        } else {
+            storageLocation = getExternalFilesDir(null).getAbsolutePath();
+        }
+        String onboardMapPath =
+                storageLocation + File.separator + ApplicationPreferences.NDS_MAP_ROOT_RELATIVE_PATH;
+        String onboardKeystorePath =
+                storageLocation + File.separator + ApplicationPreferences.NDS_MAP_KEYSTORE_RELATIVE_PATH;
+        bundle.putString(SearchOnboardService.MAP_PATH_KEY, onboardMapPath);
+        bundle.putString(SearchOnboardService.MAP_KEYSTORE_PATH_KEY, onboardKeystorePath);
+        final File keystore = getKeystore(this);
+        if (keystore.exists()) {
+            bundle.putString(SearchOnboardService.MAP_KEYSTORE_PATH_KEY, keystore.getPath());
+            bundle.putString(SearchOnboardService.MAP_KEYSTORE_PASSWORD_KEY, getKeystorePassword());
+        } else {
+            bundle.putString(SearchOnboardService.MAP_KEYSTORE_PATH_KEY, "");
+            bundle.putString(SearchOnboardService.MAP_KEYSTORE_PASSWORD_KEY, "");
+        }
+
+        // Traffic engine configuration
+        bundle.putString(NavigationService.PERSEUS_AUTHENTICATION_TOKEN_KEY, BuildConfig.API_KEY);
+        bundle.putString(
+                NavigationService.PERSEUS_CERTIFICATE_BUNDLE_PATH_KEY,
+                OnboardMapService.getPerseusCertificate(getApplicationContext()));
+        bundle.putString(NavigationService.MAPACCESSSYNC_SERVICE_URI_KEY, "");
+        bundle.putString(NavigationService.INITIAL_LANGUAGE_KEY,"zh-TW");
         return bundle;
     }
 
@@ -1011,6 +1235,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     @Override
     protected void onDestroy() {
+        releaseMapUpdate();
+        unbindMapUpdateService();
         stopPreview();
         if (tripRenderer != null) {
             getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
@@ -1046,6 +1272,27 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
         if (navigationServiceBound) {
             unbindService(navigationConnection);
+            navigationServiceBound = false;
+        }
+
+        if (tileServiceBound) {
+            unbindService(tileServiceConnection);
+            tileServiceBound = false;
+        }
+
+        if (onboardMapServiceBound) {
+            unbindService(onboardMapConnection);
+            onboardMapServiceBound = false;
+        }
+
+        if (mapUpdateServiceConnected) {
+            unbindService(mapUpdateServiceConnection);
+            mapUpdateServiceConnected = false;
+        }
+
+        if (searchOnBoardServiceBound) {
+            unbindService(searchOnBoardServiceConnection);
+            searchOnBoardServiceBound = false;
         }
 
         if (myCameraListener != null) {
@@ -1055,6 +1302,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         //Jerry@20220317 add
         if (broadcastReceiver != null) {
             unregisterReceiver(broadcastReceiver);
+            broadcastReceiver = null;
         }
 
         super.onDestroy();
@@ -1164,8 +1412,13 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         builder.setSearchString(query)
                 .setLanguage("zh-TW")
                 .setLimit(numberLimit)
-                .setExecutionMode(ExecutionMode.kOnline)
+                //.setExecutionMode(ExecutionMode.kOnline)
                 .setFilterByGeoRadius(filter);
+        if(NetWorkUtil.isConnect(this)){//Jerry@20220413 add:for POI query
+            builder.setExecutionMode(ExecutionMode.kOnline);
+        }else{
+            builder.setExecutionMode(ExecutionMode.kOnboard);
+        }
         Input input = builder.build();
         return input;
     }
@@ -1339,6 +1592,29 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         }
     }
 
+    //Jerry@20220418 add:for map update
+    private void startUpdate() {
+        try {
+            unbindMapUpdateService();
+
+            final Bundle bundle = getMapUpdateServiceConfiguration();
+            bundle.putBoolean(MapUpdateService.IQMAPS_ALLREGIONS_ENABLE, true);
+
+            //bundle.putInt(MapUpdateService.IQMAPS_REGIONSALONGROUTE_RADIUS, 300);
+            //bundle.putBoolean(MapUpdateService.IQMAPS_REGIONSALONGROUTE_ENABLE, true);
+
+            if (!launchMapUpdateService(bundle)) {
+                //finish();
+            }
+
+            Log.d(TAG, "Check logcat to see map update progress");
+
+        } catch (final IllegalArgumentException e) {
+            Log.d(TAG, "Invalid params set");
+
+        }
+    }
+
     //Jerry@20220402 add:setMapView move
     private void setMapViewMove(String moveDirection) {
         int moveOffset = map.getViewport().getBottomRight().getX() / 2;
@@ -1356,6 +1632,82 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 map.getInteraction().panEnd(leftEnd);
                 break;
         }
+    }
+
+    //Jerry@20220418 add:for map update
+    private void unbindMapUpdateService() {
+        if (mapUpdateServiceConnected) {
+            unbindService(mapUpdateServiceConnection);
+            mapUpdateServiceConnected = false;
+        }
+    }
+
+    //Jerry@20220418 add:for map update
+    private void releaseMapUpdate() {
+        mapUpdate.removeMapUpdateListener(mapUpdateListener);
+    }
+
+    //Jerry@20220418 add:for map update
+    private void initializeMapUpdate() {
+        mapUpdate = new MapUpdate(getApplicationContext(), new Bundle());
+        mapUpdate.addMapUpdateListener(mapUpdateListener);
+    }
+
+    //Jerry@20220418 add:for map update
+    private void setMapUpdatesEnabled(boolean enabled) {
+        mapUpdateService.setUpdatesEnabled(enabled);
+    }
+
+    //Jerry@20220418 add:for map update
+    private Bundle getMapUpdateServiceConfiguration() {
+        final Bundle bundle = new Bundle();
+        bundle.putString(MapUpdateService.MAP_PATH, getNdsMapRootFolder(getApplicationContext()));
+        final File keystore = getKeystore(getApplicationContext());
+        if (keystore.exists()) {
+            bundle.putString(MapUpdateService.MAP_KEYSTORE_PATH, keystore.getPath());
+            bundle.putString(MapUpdateService.MAP_KEYSTORE_PASSWORD, getKeystorePassword());
+        }
+        bundle.putString(MapUpdateService.UPDATE_STORAGE_PATH, String.valueOf(mapUpdateStoragePath));
+        bundle.putString(MapUpdateService.MAP_MATCHER_SERVICE_URI, "mem://resultprovider");
+        bundle.putString(MapUpdateService.UPDATE_SERVER_API_KEY, getMapUpdateServerApiKey());
+        bundle.putString(MapUpdateService.UPDATE_SERVER_URI, BuildConfig.MAP_UPDATE_SERVER_URI);
+        bundle.putBoolean(MapUpdateService.UPDATES_ENABLED, true);
+        return bundle;
+    }
+
+    //Jerry@20220418 add:for map update
+    private boolean launchMapUpdateService(final Bundle bundle) {
+        if (!ApplicationPreferences.isOnboardMapAvailable(this)) {
+            Log.d(TAG, "Onboard map not found");
+            return false;
+        }
+        if (!ensureDirectoryExists(mapUpdateStoragePath)) {
+            Log.d(TAG, "Map update download folder could not be created");
+            return false;
+        }
+        final Intent intent = new Intent(this, MapUpdateService.class);
+        intent.putExtra(MapUpdateService.CONFIGURATION, bundle);
+        Log.d(TAG, "bind to map update service");
+        if (!bindService(intent, mapUpdateServiceConnection, Context.BIND_AUTO_CREATE)) {
+            Log.e(TAG, "Could not bind to map update service");
+            return false;
+        }
+        mapUpdateServiceConnected = true;
+        return true;
+    }
+
+    //Jerry@20220418 add:for map update
+    public boolean ensureDirectoryExists(File path) {
+        boolean result = true;
+        try {
+            if (!path.exists()) {
+                result = path.mkdirs();
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "Error creating directory '" + path.toString() + "': " + e.toString());
+            return false;
+        }
+        return result;
     }
 
     //Jerry@20220406 add:MarkerClass
