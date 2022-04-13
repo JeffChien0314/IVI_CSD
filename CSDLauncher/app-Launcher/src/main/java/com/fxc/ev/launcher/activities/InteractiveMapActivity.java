@@ -18,6 +18,7 @@ import android.content.ServiceConnection;
 import android.content.res.AssetManager;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -28,6 +29,8 @@ import android.widget.TextView;
 
 import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
+import com.fxc.ev.launcher.maps.poicatsearch.Constants;
+import com.fxc.ev.launcher.utils.ApplicationPreferences;
 import com.fxc.ev.launcher.utils.CameraStackController;
 import com.fxc.ev.launcher.utils.view.NextInstructionPanelView;
 import com.fxc.ev.launcher.utils.view.SpeedBubbleView;
@@ -41,6 +44,7 @@ import com.tomtom.navkit.map.camera.CameraUpdate;
 import com.tomtom.navkit.map.sdk.MapView;
 import com.tomtom.navkit2.mapdisplay.MapDisplayService;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -68,6 +72,8 @@ public class InteractiveMapActivity extends BaseActivity {
     private CameraStackController cameraStackController;
     private static final Camera.Interpolation ZOOM_INTERPOLATION = Camera.Interpolation.kLinear;
     private static final long ZOOM_DURATION = 250l;
+    public String onboardMapPath;//Jerry@20220408 add for onboard map
+    public String onboardKeystorePath;//Jerry@20220408 add for onboard map
 
     private InteractiveMode interactiveMode = InteractiveMode.DISABLED;
     private CameraType oldCameraType;
@@ -227,6 +233,19 @@ public class InteractiveMapActivity extends BaseActivity {
     private Bundle makeMapDisplayServiceBundle() {
         final Bundle bundle = new Bundle();
         bundle.putString(MapDisplayService.AUTH_TOKEN_KEY, BuildConfig.API_KEY);
+        //Jerry@20220408 add for onboard map->
+        // ONBOARD
+        String storageLocation;
+        if (Constants.IS_STORAGE_DOWNLOAD) {
+            storageLocation = Environment.getExternalStoragePublicDirectory(Constants.NDS_MAP_STORAGE_PATH).getAbsolutePath();
+        }else{
+            storageLocation = getExternalFilesDir(null).getAbsolutePath();
+        }
+        onboardMapPath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_ROOT_RELATIVE_PATH;
+        onboardKeystorePath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_KEYSTORE_RELATIVE_PATH;
+        bundle.putString(MapDisplayService.ONBOARD_MAP_PATH_KEY, onboardMapPath);
+        bundle.putString(MapDisplayService.ONBOARD_MAP_KEYSTORE_PATH_KEY, onboardKeystorePath);
+        //<-Jerry@20220408 add for onboard map
         return bundle;
     }
 
@@ -295,8 +314,8 @@ public class InteractiveMapActivity extends BaseActivity {
         } else if (haveRecenterButton) {
             recenterButton.setVisibility(recenterButtonVisibilityEnd);
         }
-		
-		//Jerry@20220412 mark:Drag maps without disappearing
+
+        //Jerry@20220412 mark:Drag maps without disappearing
         /*if (haveNextInstructionContainerView) {
             nextInstructionPanelView.animate()
                     .setDuration(INTERACTIONMODE_ANIMATION_DURATION)

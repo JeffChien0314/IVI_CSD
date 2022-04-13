@@ -1,7 +1,10 @@
 package com.fxc.ev.launcher.maps.poicatsearch;
 
+import android.os.Environment;
+
 public class Constants {
     public static boolean IS_DEMO = true;
+    public static boolean IS_STORAGE_DOWNLOAD = true;
     public static int RADIUS_IN_METERS= 10000;
     public static int LIMIT = 3;
 
@@ -44,4 +47,6 @@ public class Constants {
 
     public static final String MOVE_RIGHT = "move_right";
     public static final String MOVE_LEFT = "move_left";
+
+    public static final String NDS_MAP_STORAGE_PATH = Environment.DIRECTORY_DOWNLOADS;
 }
