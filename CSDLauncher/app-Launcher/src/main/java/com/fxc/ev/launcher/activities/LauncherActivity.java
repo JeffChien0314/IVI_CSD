@@ -1592,6 +1592,29 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         }
     }
 
+    //Jerry@20220418 add:for map update
+    private void startUpdate() {
+        try {
+            unbindMapUpdateService();
+
+            final Bundle bundle = getMapUpdateServiceConfiguration();
+            bundle.putBoolean(MapUpdateService.IQMAPS_ALLREGIONS_ENABLE, true);
+
+            //bundle.putInt(MapUpdateService.IQMAPS_REGIONSALONGROUTE_RADIUS, 300);
+            //bundle.putBoolean(MapUpdateService.IQMAPS_REGIONSALONGROUTE_ENABLE, true);
+
+            if (!launchMapUpdateService(bundle)) {
+                //finish();
+            }
+
+            Log.d(TAG, "Check logcat to see map update progress");
+
+        } catch (final IllegalArgumentException e) {
+            Log.d(TAG, "Invalid params set");
+
+        }
+    }
+
     //Jerry@20220402 add:setMapView move
     private void setMapViewMove(String moveDirection) {
         int moveOffset = map.getViewport().getBottomRight().getX() / 2;
@@ -1703,25 +1726,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
         public Marker getMarker() {
             return marker;
-        }
-    }
-	
-    //Jerry@20220402 add:setMapView move
-    private void setMapViewMove(String moveDirection) {
-        int moveOffset = map.getViewport().getBottomRight().getX() / 2;
-        switch (moveDirection) {
-            case Constants.MOVE_RIGHT:
-                Point rightBegin = new Point(0, 0);
-                map.getInteraction().panBegin(rightBegin);
-                Point rightEnd = new Point(moveOffset, 0);
-                map.getInteraction().panEnd(rightEnd);
-                break;
-            case Constants.MOVE_LEFT:
-                Point leftBegin = new Point(0, 0);
-                map.getInteraction().panBegin(leftBegin);
-                Point leftEnd = new Point(-moveOffset, 0);
-                map.getInteraction().panEnd(leftEnd);
-                break;
         }
     }
 }
