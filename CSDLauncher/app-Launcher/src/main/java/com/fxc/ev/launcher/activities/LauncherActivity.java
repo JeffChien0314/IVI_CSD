@@ -716,8 +716,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     if (View.VISIBLE == searchButton.getVisibility()) {//Jerry@20220314
                         setMapWidgetVisibility2(View.GONE);
                     }
+                    if(View.VISIBLE != getNextInstructionPanelView().getVisibility()){//Jerry@20220414 add:nlp not disappeared
+                        getNextInstructionPanelView().setVisibility(visibility);
+                    }
                 }
-                getNextInstructionPanelView().setVisibility(visibility);
+                //getNextInstructionPanelView().setVisibility(visibility);//Jerry@20220414 mark
             }
 
             @Override
@@ -829,7 +832,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
                     @Override
                     public void onTripArrival(Trip trip) {
-                        setMapWidgetVisibility2(View.VISIBLE);//Jerry@20220314
+                        //setMapWidgetVisibility2(View.VISIBLE);//Jerry@20220314
                         Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
                     }
                 };
