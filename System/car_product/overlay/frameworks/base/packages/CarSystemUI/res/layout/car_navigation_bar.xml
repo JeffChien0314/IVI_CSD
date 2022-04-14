@@ -37,8 +37,8 @@
             android:layout_height="60px"
             systemui:icon="@drawable/icon_temperature_arrow_up_normal"
             systemui:intent="intent:#Intent;action=com.fxc.ev.temperature.left;launchFlags=0x10000000;end"
-systemui:packages="com.android.car.carlauncher"            
-systemui:selectedIcon="@drawable/icon_temperature_arrow_up_pressed"
+            systemui:packages="com.android.car.carlauncher"            
+            systemui:selectedIcon="@drawable/icon_temperature_arrow_up_pressed"
             systemui:useMoreIcon="false"/>
 
 
@@ -50,7 +50,8 @@ systemui:selectedIcon="@drawable/icon_temperature_arrow_up_pressed"
             android:layout_marginBottom="37px"
             android:text="22.0°"
             android:textColor="#ffffff"
-            android:textSize="38px" />
+            android:textSize="38px"
+            android:clickable="true" />
 
         <com.android.systemui.statusbar.car.CarFacetButton
             android:id="@+id/temperature_down"
@@ -89,7 +90,8 @@ systemui:selectedIcon="@drawable/icon_temperature_arrow_up_pressed"
             android:layout_height="60px"
             android:layout_marginTop="30px"
             systemui:icon="@drawable/icon_fan_normal"
-            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:intent="intent:#Intent;action=com.fxc.ev.air.left;launchFlags=0x10000000;end"
+            systemui:packages="com.android.car.carlauncher"
             systemui:selectedIcon="@drawable/icon_fan_pressed"
             systemui:useMoreIcon="false"/>
 
@@ -204,7 +206,8 @@ systemui:packages="com.android.car.carlauncher"
             android:layout_height="60px"
             android:layout_marginTop="30px"
             systemui:icon="@drawable/icon_volume_normal"
-            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:intent="intent:#Intent;action=com.fxc.ev.volume;launchFlags=0x10000000;end"
+            systemui:packages="com.android.car.carlauncher"
             systemui:selectedIcon="@drawable/icon_volume_pressed"
             systemui:useMoreIcon="false"/>
 
@@ -248,9 +251,10 @@ systemui:packages="com.android.car.carlauncher"
             android:layout_height="60px"
             android:layout_marginTop="30px"
             systemui:icon="@drawable/icon_fan_normal"
-            systemui:intent="intent:#Intent;action=android.intent.action.MAIN;category=android.intent.category.HOME;launchFlags=0x14000000;end"
+            systemui:intent="intent:#Intent;action=com.fxc.ev.air.right;launchFlags=0x10000000;end"
+            systemui:packages="com.android.car.carlauncher"
             systemui:selectedIcon="@drawable/icon_fan_pressed"
-           systemui:useMoreIcon="false"/>
+            systemui:useMoreIcon="false"/>
 
         <TextView
             android:id="@+id/air_2_value"
@@ -300,7 +304,8 @@ systemui:packages="com.android.car.carlauncher"
             android:layout_marginBottom="37px"
             android:text="22.0°"
             android:textColor="#ffffff"
-            android:textSize="38px" />
+            android:textSize="38px"
+            android:clickable="true" />
 
         <com.android.systemui.statusbar.car.CarFacetButton
             android:id="@+id/temperature_down_2"

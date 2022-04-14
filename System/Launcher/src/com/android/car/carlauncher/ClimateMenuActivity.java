@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2018 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.android.car.carlauncher;
 
 
@@ -21,6 +5,8 @@ import android.app.Activity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
+import android.view.MotionEvent;
 import android.annotation.Nullable;
 import android.view.View;
 import android.widget.ImageView;
@@ -102,6 +88,7 @@ public final class ClimateMenuActivity extends Activity {
     private TextView airLeftText;
     private TextView airRightText;
     private TextView temperatureRightText;
+    private CountDownTimer countDownTimer;
     //seekbar related <--
 
 
@@ -169,10 +156,10 @@ public final class ClimateMenuActivity extends Activity {
         airRightText = findViewById(R.id.air_right_text);
         temperatureRightText = findViewById(R.id.temperature_right_text);
 
-        temperatureLeftText.setText(temperatureSeekBarLeft.getProgress() + "°");
+        temperatureLeftText.setText((temperatureSeekBarLeft.getProgress() + 16) + "°");
         airLeftText.setText(airSeekBarLeft.getProgress() + "");
         airRightText.setText(airSeekBarRight.getProgress() + "");
-        temperatureRightText.setText(temperatureSeekBarRight.getProgress() + "°");
+        temperatureRightText.setText((temperatureSeekBarRight.getProgress()+16) + "°");
     }
 
     private void handleIntent(Intent intent) {
@@ -184,8 +171,64 @@ public final class ClimateMenuActivity extends Activity {
                 loadCurrentClimateControl();
             } else if (action != null && action.equals("com.fxc.ev.temperature.left")) {
                 seekBarLayout.setVisibility(View.VISIBLE);
+                temperatureSeekBarLeft.setVisibility(View.VISIBLE);
+                temperatureLeftText.setVisibility(View.VISIBLE);
+                airSeekBarLeft.setVisibility(View.GONE);
+                airLeftText.setVisibility(View.GONE);
+                volumeSeekBar.setVisibility(View.GONE);
+                airSeekBarRight.setVisibility(View.GONE);
+                airRightText.setVisibility(View.GONE);
+                temperatureSeekBarRight.setVisibility(View.GONE);
+                temperatureRightText.setVisibility(View.GONE);
                 climateMenuLayout.setVisibility(View.GONE);
-
+            } else if (action != null && action.equals("com.fxc.ev.air.left")) {
+                seekBarLayout.setVisibility(View.VISIBLE);
+                temperatureSeekBarLeft.setVisibility(View.GONE);
+                temperatureLeftText.setVisibility(View.GONE);
+                airSeekBarLeft.setVisibility(View.VISIBLE);
+                airLeftText.setVisibility(View.VISIBLE);
+                volumeSeekBar.setVisibility(View.GONE);
+                airSeekBarRight.setVisibility(View.GONE);
+                airRightText.setVisibility(View.GONE);
+                temperatureSeekBarRight.setVisibility(View.GONE);
+                temperatureRightText.setVisibility(View.GONE);
+                climateMenuLayout.setVisibility(View.GONE);
+            } else if (action != null && action.equals("com.fxc.ev.volume")) {
+                seekBarLayout.setVisibility(View.VISIBLE);
+                temperatureSeekBarLeft.setVisibility(View.GONE);
+                temperatureLeftText.setVisibility(View.GONE);
+                airSeekBarLeft.setVisibility(View.GONE);
+                airLeftText.setVisibility(View.GONE);
+                volumeSeekBar.setVisibility(View.VISIBLE);
+                airSeekBarRight.setVisibility(View.GONE);
+                airRightText.setVisibility(View.GONE);
+                temperatureSeekBarRight.setVisibility(View.GONE);
+                temperatureRightText.setVisibility(View.GONE);
+                climateMenuLayout.setVisibility(View.GONE);
+            } else if (action != null && action.equals("com.fxc.ev.air.right")) {
+                seekBarLayout.setVisibility(View.VISIBLE);
+                temperatureSeekBarLeft.setVisibility(View.GONE);
+                temperatureLeftText.setVisibility(View.GONE);
+                airSeekBarLeft.setVisibility(View.GONE);
+                airLeftText.setVisibility(View.GONE);
+                volumeSeekBar.setVisibility(View.GONE);
+                airSeekBarRight.setVisibility(View.VISIBLE);
+                airRightText.setVisibility(View.VISIBLE);
+                temperatureSeekBarRight.setVisibility(View.GONE);
+                temperatureRightText.setVisibility(View.GONE);
+                climateMenuLayout.setVisibility(View.GONE);
+            } else if (action != null && action.equals("com.fxc.ev.temperature.right")) {
+                seekBarLayout.setVisibility(View.VISIBLE);
+                temperatureSeekBarLeft.setVisibility(View.GONE);
+                temperatureLeftText.setVisibility(View.GONE);
+                airSeekBarLeft.setVisibility(View.GONE);
+                airLeftText.setVisibility(View.GONE);
+                volumeSeekBar.setVisibility(View.GONE);
+                airSeekBarRight.setVisibility(View.GONE);
+                airRightText.setVisibility(View.GONE);
+                temperatureSeekBarRight.setVisibility(View.VISIBLE);
+                temperatureRightText.setVisibility(View.VISIBLE);
+                climateMenuLayout.setVisibility(View.GONE);
             }
         }
     }
@@ -211,6 +254,13 @@ public final class ClimateMenuActivity extends Activity {
 
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        if (seekBarLayout.getVisibility() == View.VISIBLE && event.getAction() == MotionEvent.ACTION_DOWN) {
+            finish();
+        }
+        return super.onTouchEvent(event);
+    }
 
     private void addListener() {
 
@@ -422,7 +472,7 @@ public final class ClimateMenuActivity extends Activity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                temperatureLeftText.setText(temperatureSeekBarLeft.getProgress() + "°");
+                temperatureLeftText.setText((temperatureSeekBarLeft.getProgress()+16) + "°");
             }
 
             @Override
@@ -433,6 +483,36 @@ public final class ClimateMenuActivity extends Activity {
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
                 //开始拖动
+            }
+
+        });
+
+       temperatureSeekBarLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                            countDownTimer = null;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        countDownTimer = new CountDownTimer(5000, 5000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                finish();
+                            }
+                        }.start();
+
+                        break;
+
+                }
+                return false;
             }
 
         });
@@ -441,7 +521,7 @@ public final class ClimateMenuActivity extends Activity {
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                temperatureRightText.setText(temperatureSeekBarRight.getProgress() + "°");
+                temperatureRightText.setText((temperatureSeekBarRight.getProgress() + 16) + "°");
             }
 
             @Override
@@ -456,6 +536,165 @@ public final class ClimateMenuActivity extends Activity {
 
         });
 
+       temperatureSeekBarRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                            countDownTimer = null;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        countDownTimer = new CountDownTimer(5000, 5000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                finish();
+                            }
+                        }.start();
+
+                        break;
+
+                }
+                return false;
+            }
+
+        });
+
+      
+       airSeekBarLeft.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                airLeftText.setText(airSeekBarLeft.getProgress() + "");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //拖动停止
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //开始拖动
+            }
+
+        });
+
+       airSeekBarLeft.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                            countDownTimer = null;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        countDownTimer = new CountDownTimer(5000, 5000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                finish();
+                            }
+                        }.start();
+
+                        break;
+
+                }
+                return false;
+            }
+
+        });
+
+       airSeekBarRight.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                airRightText.setText(airSeekBarRight.getProgress() + "");
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //拖动停止
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                //开始拖动
+            }
+
+        });
+
+       airSeekBarRight.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                            countDownTimer = null;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        countDownTimer = new CountDownTimer(5000, 5000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                finish();
+                            }
+                        }.start();
+
+                        break;
+
+                }
+                return false;
+            }
+
+        });
+
+       
+       volumeSeekBar.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        if (countDownTimer != null) {
+                            countDownTimer.cancel();
+                            countDownTimer = null;
+                        }
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        countDownTimer = new CountDownTimer(5000, 5000) {
+                            @Override
+                            public void onTick(long millisUntilFinished) {
+                            }
+
+                            @Override
+                            public void onFinish() {
+                                finish();
+                            }
+                        }.start();
+
+                        break;
+
+                }
+                return false;
+            }
+
+        });
 
 
 

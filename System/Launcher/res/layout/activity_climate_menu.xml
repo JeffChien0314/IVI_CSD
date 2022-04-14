@@ -13,16 +13,17 @@
 
         <com.android.car.carlauncher.VerticalSeekBar
             android:id="@+id/temperature_seekbar_left"
-            style="@style/VerticalSeekbarStyle"
             android:layout_width="60px"
             android:layout_height="750px"
             android:layout_marginBottom="28px"
             android:layout_marginStart="48px"
             android:background="#15284A"
-            android:max="32"
-            android:min="0"
-            android:progress="20"
+            android:max="16"
+            android:maxHeight="12px"
+            android:maxWidth="690px"
+            android:progress="4"
             android:progressDrawable="@drawable/temperature_seekbar_bg"
+            android:thumb="@drawable/select_seekbar_thumb"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -44,8 +45,10 @@
             android:layout_marginBottom="28px"
             android:layout_marginStart="186px"
             android:background="#15284A"
+            android:max="6"
             android:maxHeight="12px"
             android:maxWidth="690px"
+            android:progress="2"
             android:progressDrawable="@drawable/air_seekbar_bg"
             android:thumb="@null"
             android:thumbOffset="0dp"
@@ -88,17 +91,19 @@
 
         <com.android.car.carlauncher.VerticalSeekBar
             android:id="@+id/volume_seekbar"
-            style="@style/VerticalSeekbarStyle"
             android:layout_width="60px"
             android:layout_height="750px"
             android:layout_marginBottom="28px"
             android:layout_marginEnd="324px"
             android:background="#15284A"
             android:max="30"
+            android:maxHeight="12px"
+            android:maxWidth="690px"
             android:progress="0"
             android:progressDrawable="@drawable/volume_seekbar_bg"
+            android:thumb="@drawable/select_seekbar_thumb"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"/>
 
         <com.android.car.carlauncher.IndicatorVerticalSeekBar
             android:id="@+id/air_seekbar_right"
@@ -107,8 +112,10 @@
             android:layout_marginBottom="28px"
             android:layout_marginEnd="186px"
             android:background="#15284A"
+            android:max="6"
             android:maxHeight="12px"
             android:maxWidth="690px"
+            android:progress="2"
             android:progressDrawable="@drawable/air_seekbar_bg"
             android:thumb="@null"
             android:thumbOffset="0dp"
@@ -129,16 +136,17 @@
 
         <com.android.car.carlauncher.VerticalSeekBar
             android:id="@+id/temperature_seekbar_right"
-            style="@style/VerticalSeekbarStyle"
             android:layout_width="60px"
             android:layout_height="750px"
             android:layout_marginBottom="28px"
             android:layout_marginEnd="48px"
             android:background="#15284A"
-            android:max="32"
-            android:min="0"
-            android:progress="20"
+            android:max="16"
+            android:maxHeight="12px"
+            android:maxWidth="690px"
+            android:progress="4"
             android:progressDrawable="@drawable/temperature_seekbar_bg"
+            android:thumb="@drawable/select_seekbar_thumb"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -170,6 +178,7 @@
             android:layout_width="60px"
             android:layout_height="60px"
             android:layout_marginTop="24px"
+            android:scaleType="fitCenter"
             android:src="@drawable/icon_arrow_down_normal"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

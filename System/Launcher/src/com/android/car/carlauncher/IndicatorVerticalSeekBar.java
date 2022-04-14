@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
-import android.util.Log;
 
 
 /**
@@ -29,7 +28,7 @@ public class IndicatorVerticalSeekBar extends VerticalSeekBar {
         try {
             mIndicatorCount = typedArray.getInt(R.styleable.IndicatorVerticalSeekBar_indicator_count, 12);
             mColor = typedArray.getInt(R.styleable.IndicatorVerticalSeekBar_indicator_color, /*Color.GRAY*/Color.parseColor("#15284A"));
-            mWidth=typedArray.getDimension(R.styleable.IndicatorVerticalSeekBar_indicator_width,6);
+            mWidth = typedArray.getDimension(R.styleable.IndicatorVerticalSeekBar_indicator_width, 6);
         } finally {
             typedArray.recycle();
         }
@@ -55,15 +54,13 @@ public class IndicatorVerticalSeekBar extends VerticalSeekBar {
         linePaint.setStyle(Paint.Style.FILL);
         linePaint.setAlpha(255);
 
-        Log.i("Tuma0318", "onDraw: "+getMinimumHeight());
-        float mTickDiliver = /*getMeasuredHeight()*/690 / mIndicatorCount;
+        float mTickDiliver = (getMeasuredHeight() - getPaddingStart() - getPaddingEnd()) / mIndicatorCount;
         // 画刻度线
-        for (int i = 1; i< mIndicatorCount; i++) {
-            stopX = getPaddingLeft()+(i*mTickDiliver);
+        for (int i = 1; i < mIndicatorCount; i++) {
+            //stopX = getPaddingLeft()+(i*mTickDiliver);
+            stopX = getPaddingStart() + (i * mTickDiliver);
             startX = stopX;
-
-            c.drawLine(startX,getMeasuredHeight(),stopX,0,linePaint);
-
+            c.drawLine(startX, getMeasuredHeight(), stopX, 0, linePaint);
         }
 
     }
