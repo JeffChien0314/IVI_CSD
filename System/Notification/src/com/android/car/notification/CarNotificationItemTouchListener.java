@@ -254,7 +254,7 @@ public class CarNotificationItemTouchListener extends RecyclerView.SimpleOnItemT
                     // If a group notification is expanded, we desire a behavior that swiping on the
                     // header would swipe the entire group away; while swiping on the child
                     // notifications would swipe individual child notification away.
-                    if (mAdapter.isExpanded(mViewHolder.getStatusBarNotification().getGroupKey())) {
+                    if (mViewHolder.getStatusBarNotification()!=null&&mAdapter.isExpanded(mViewHolder.getStatusBarNotification().getGroupKey())) {
                         float itemTop = mViewHolder.itemView.getY();
                         boolean isTouchingGroupHeader =
                                 (currY > itemTop) && (currY < itemTop + mGroupHeaderHeight);

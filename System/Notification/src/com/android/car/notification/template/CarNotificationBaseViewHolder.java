@@ -81,7 +81,7 @@ public abstract class CarNotificationBaseViewHolder extends RecyclerView.ViewHol
      **/
     private boolean mInitializedColors;
 
-    CarNotificationBaseViewHolder(
+    public CarNotificationBaseViewHolder(
             View itemView, NotificationClickHandlerFactory clickHandlerFactory) {
         super(itemView);
         mContext = itemView.getContext();
