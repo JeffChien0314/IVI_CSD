@@ -27,6 +27,7 @@ import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.activities.LauncherActivity;
 import com.fxc.ev.launcher.utils.ApplicationPreferences;
+import com.fxc.ev.launcher.utils.NetWorkUtil;
 import com.fxc.ev.launcher.utils.SpUtils;
 import com.fxc.ev.launcher.utils.SpaceItemDecoration;
 import com.tomtom.navkit2.PoiDetailsOnboardService;
@@ -34,6 +35,7 @@ import com.tomtom.navkit2.SearchOnboardService;
 import com.tomtom.navkit2.drivingassistance.Position;
 import com.tomtom.navkit2.place.Coordinate;
 import com.tomtom.navkit2.place.Location;
+import com.tomtom.navkit2.search.ExecutionMode;
 import com.tomtom.navkit2.search.FilterByGeoRadius;
 import com.tomtom.navkit2.search.FtsResult;
 import com.tomtom.navkit2.search.FtsResultVector;
@@ -507,13 +509,21 @@ public class SearchFragment extends Fragment {
     }
 
     private Input createInputConfiguration(String searchText, Coordinate coordinate) {
-        Input input = new Input.Builder()
+        Input.Builder builder = new Input.Builder()
                 .setLanguage("zh-TW")
                 .setSearchString(searchText)
                 .setFilterByGeoRadius(new FilterByGeoRadius(coordinate, 50 * 1000))
                 .setFuzzyLevel(5)
-                .setLimit(20)
-                .build();
+                .setLimit(20);
+                //.build();
+        //Jerry@20220414 add:for POI query by network connecting status->
+        if (NetWorkUtil.isConnect(getContext())) {//Jerry@20220414 add:for POI query when no network connect
+            builder.setExecutionMode(ExecutionMode.kOnline);
+        } else {
+            builder.setExecutionMode(ExecutionMode.kOnboard);
+        }
+        Input input = builder.build();
+        //<-Jerry@20220414 add:for POI query by network connecting status
         return input;
     }
 
