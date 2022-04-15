@@ -36,6 +36,8 @@ import com.fxc.ev.launcher.utils.view.NextInstructionPanelView;
 import com.fxc.ev.launcher.utils.view.SpeedBubbleView;
 import com.fxc.ev.launcher.utils.CameraStackController.CameraType;
 import com.fxc.ev.launcher.utils.view.ZoomBarView;
+import com.tomtom.navkit.map.Event;
+import com.tomtom.navkit.map.EventManager;
 import com.tomtom.navkit.map.Map;
 import com.tomtom.navkit.map.MapHolder;
 import com.tomtom.navkit.map.Margins;
@@ -74,6 +76,7 @@ public class InteractiveMapActivity extends BaseActivity {
     private static final long ZOOM_DURATION = 250l;
     public String onboardMapPath;//Jerry@20220408 add for onboard map
     public String onboardKeystorePath;//Jerry@20220408 add for onboard map
+    public boolean isMapAlreadyInit = false;//Jerry@20220415 add for map initialization
 
     private InteractiveMode interactiveMode = InteractiveMode.DISABLED;
     private CameraType oldCameraType;
@@ -228,6 +231,28 @@ public class InteractiveMapActivity extends BaseActivity {
                 }
             }
         });
+
+        //Jerry@20220415 add for map init completion listener->
+        EventManager eventManager = getMapHolder().getEventManager();
+        try {
+            eventManager.registerListener(new MyEventListener());
+        } catch (EventManager.ListenerAlreadyRegistered listenerAlreadyRegistered) {
+            Log.i(TAG, "*EventManager.ListenerAlreadyRegistered*:");
+            listenerAlreadyRegistered.printStackTrace();
+        }
+        //<-Jerry@20220415 add:Map init completion listener
+    }
+
+    //Jerry@20220415 add for map init completion listener
+    private class MyEventListener extends EventManager.EventListener {
+        @Override
+        public void onEvent(Event event) {
+            //super.onEvent(event);
+            Log.i(TAG, "*MyEventListener*event.getType()**:" + event.getType().name());
+            if (!isMapAlreadyInit) {
+                isMapAlreadyInit = true;
+            }
+        }
     }
 
     private Bundle makeMapDisplayServiceBundle() {

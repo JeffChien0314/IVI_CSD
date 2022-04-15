@@ -49,4 +49,8 @@ public class Constants {
     public static final String MOVE_LEFT = "move_left";
 
     public static final String NDS_MAP_STORAGE_PATH = Environment.DIRECTORY_DOWNLOADS;
+
+    public static final int POI_SEARCH_MESSAGE = 0x001;
+    public static final int POI_SEARCH_DELAY_MESSAGE = 0x002;
+    public static final int POI_SEARCH_DELAY_MILLIS = 1000;
 }

@@ -36,7 +36,9 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Message;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
@@ -70,6 +72,8 @@ import com.fxc.ev.launcher.utils.PermissionsManager;
 import com.fxc.ev.launcher.utils.SharedPreferenceUtils;
 import com.fxc.ev.launcher.utils.Toaster;
 import com.tomtom.navkit.map.ClickCoordinates;
+import com.tomtom.navkit.map.Event;
+import com.tomtom.navkit.map.EventManager;
 import com.tomtom.navkit.map.InvalidExtensionId;
 import com.tomtom.navkit.map.Layer;
 import com.tomtom.navkit.map.Map;
@@ -240,6 +244,30 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private boolean isFragmentShow = false;//Jerry@20220401 add
     private boolean isFragmentHide = false;//Jerry@20220406 add:click map not add marker
     private boolean isAlreadyTranslation = false;//Jerry@20220401 add
+    //private boolean isMapAlreadyInit = false;
+    private boolean isMessageSend = false;
+
+    private Coordinate poiSearchCoordinate;//Jerry@20220415 add
+    private double poiSearchScale;//Jerry@20220415 add
+
+    //Jerry@20220415 add:handle poi search
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            switch (msg.what){
+                case Constants.POI_SEARCH_MESSAGE:
+                    handler.sendEmptyMessageDelayed(Constants.POI_SEARCH_DELAY_MESSAGE,Constants.POI_SEARCH_DELAY_MILLIS);
+                    break;
+                case Constants.POI_SEARCH_DELAY_MESSAGE:
+                    if(isMapAlreadyInit){
+                        poiSearch(poiSearchCoordinate,poiSearchScale);
+                    }else{
+                        handler.sendEmptyMessage(Constants.POI_SEARCH_MESSAGE);
+                    }
+                    break;
+            }
+        }
+    };
 
     //Jerry@20220317 add for stop navigation
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -716,7 +744,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     if (View.VISIBLE == searchButton.getVisibility()) {//Jerry@20220314
                         setMapWidgetVisibility2(View.GONE);
                     }
-                    if(View.VISIBLE != getNextInstructionPanelView().getVisibility()){//Jerry@20220414 add:nlp not disappeared
+                    if (View.VISIBLE != getNextInstructionPanelView().getVisibility()) {//Jerry@20220414 add:nlp not disappeared
                         getNextInstructionPanelView().setVisibility(visibility);
                     }
                 }
@@ -771,6 +799,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         if (!launchMapUpdateService(getMapUpdateServiceConfiguration())) {
             //finish();
         }
+
     }
 
     //Jerry@20220322 add
@@ -908,18 +937,31 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             mLatitude = camera.getProperties().getLookAt().getLatitude();
             mLongitude = camera.getProperties().getLookAt().getLongitude();
             Coordinate coordinate = new Coordinate(mLatitude, mLongitude);
-            for (int index = 0; index < Constants.ALL_CATEGORY.length; index++) {
-                MyFtsResultsListener myFtsResultsListener = new MyFtsResultsListener(Constants.ALL_CATEGORY[index]);
-                MyPoiSuggestionsListener myPoiSuggestionsListener = new MyPoiSuggestionsListener();
-                Input input = getInput(Constants.ALL_CATEGORY[index], coordinate, scale, index);
-                PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, myFtsResultsListener, myPoiSuggestionsListener, input);
-                thread.start();
+            poiSearchCoordinate = coordinate;
+            poiSearchScale = scale;
+            if (!isMapAlreadyInit && !isMessageSend) {
+                isMessageSend = true;
+                handler.sendEmptyMessage(Constants.POI_SEARCH_MESSAGE);
+                return;
             }
+
+            if(isMapAlreadyInit) poiSearch(coordinate,scale);
         }
 
         @Override
         public void onCameraPropertiesSignificantChange(Camera camera) {
             //super.onCameraPropertiesSignificantChange(camera);
+        }
+    }
+
+    //Jerry@0308 add poi category search method
+    private void poiSearch(Coordinate coordinate,double scale){
+        for (int index = 0; index < Constants.ALL_CATEGORY.length; index++) {
+            MyFtsResultsListener myFtsResultsListener = new MyFtsResultsListener(Constants.ALL_CATEGORY[index]);
+            MyPoiSuggestionsListener myPoiSuggestionsListener = new MyPoiSuggestionsListener();
+            Input input = getInput(Constants.ALL_CATEGORY[index], coordinate, scale, index);
+            PoiSearchThread thread = new PoiSearchThread(LauncherActivity.this, myFtsResultsListener, myPoiSuggestionsListener, input);
+            thread.start();
         }
     }
 
@@ -1190,7 +1232,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 NavigationService.PERSEUS_CERTIFICATE_BUNDLE_PATH_KEY,
                 OnboardMapService.getPerseusCertificate(getApplicationContext()));
         bundle.putString(NavigationService.MAPACCESSSYNC_SERVICE_URI_KEY, "");
-        bundle.putString(NavigationService.INITIAL_LANGUAGE_KEY,"zh-TW");
+        bundle.putString(NavigationService.INITIAL_LANGUAGE_KEY, "zh-TW");
         return bundle;
     }
 
@@ -1308,6 +1350,10 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             broadcastReceiver = null;
         }
 
+        if (isMapAlreadyInit) {
+            isMapAlreadyInit = false;
+        }
+
         super.onDestroy();
     }
 
@@ -1417,9 +1463,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 .setLimit(numberLimit)
                 //.setExecutionMode(ExecutionMode.kOnline)
                 .setFilterByGeoRadius(filter);
-        if(NetWorkUtil.isConnect(this)){//Jerry@20220413 add:for POI query
+        if (NetWorkUtil.isConnect(this)) {//Jerry@20220413 add:for POI query
             builder.setExecutionMode(ExecutionMode.kOnline);
-        }else{
+        } else {
             builder.setExecutionMode(ExecutionMode.kOnboard);
         }
         Input input = builder.build();
@@ -1459,7 +1505,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         public void onFtsResults(@NonNull FtsResults ftsResults) {
             FtsResultVector resultVector = ftsResults.getResults();
             for (FtsResult ftsResult : resultVector) {
-                Log.i(TAG, "*FtsResults**Place:" + ftsResult.toPlace().toString());
+                //Log.i(TAG, "*FtsResults**Place:" + ftsResult.toPlace().toString());
 
                 double latitude = ftsResult.getLocation().coordinate().latitude();
                 double longitude = ftsResult.getLocation().coordinate().longitude();
