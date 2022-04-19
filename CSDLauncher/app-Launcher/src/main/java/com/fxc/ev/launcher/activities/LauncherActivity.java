@@ -1195,13 +1195,15 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         // onboard map settings
         Log.d(TAG, "Onboard Map Path:" + onboardMapPath);
         Log.d(TAG, "Onboard Keystore Path:" + onboardKeystorePath);
-        // connect to the tile service
-        final Bundle tileServiceBundle = makeTileServiceBundle();
-        final Intent tileServiceIntent = new Intent(this, NavigationTileService.class);
-        tileServiceIntent.putExtra(NavigationTileService.CONFIGURATION, tileServiceBundle);
-        if (!bindService(tileServiceIntent, tileServiceConnection, Context.BIND_AUTO_CREATE)) {
-            Log.e(TAG, "Couldn't bind onboard tile service");
-            //finish();
+        if(ApplicationPreferences.isOnboardMapAvailable(this)) {
+            // connect to the tile service
+            final Bundle tileServiceBundle = makeTileServiceBundle();
+            final Intent tileServiceIntent = new Intent(this, NavigationTileService.class);
+            tileServiceIntent.putExtra(NavigationTileService.CONFIGURATION, tileServiceBundle);
+            if (!bindService(tileServiceIntent, tileServiceConnection, Context.BIND_AUTO_CREATE)) {
+                Log.e(TAG, "Couldn't bind onboard tile service");
+                //finish();
+            }
         }
         //<-Jerry@20220408 add for onboard map
         // connect to the navigation service which provides trip planning and driving assistance
@@ -1220,8 +1222,10 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         bundle.putString(NavigationService.ROUTING_API_AUTH_TOKEN_KEY, BuildConfig.API_KEY);
         bundle.putString(NavigationService.NAVIGATION_AUTH_TOKEN_KEY, BuildConfig.API_KEY);
         //Jerry@20220408 add for onboard map->
-        bundle.putString(NavigationService.NAVIGATION_ONBOARD_TILE_SERVICE_URI, TILE_SERVICE_URI);
-        setupOnboardmapServiceParameters(bundle);
+        if(ApplicationPreferences.isOnboardMapAvailable(this)) {
+            bundle.putString(NavigationService.NAVIGATION_ONBOARD_TILE_SERVICE_URI, TILE_SERVICE_URI);
+            setupOnboardmapServiceParameters(bundle);
+        }
         //Jerry@20220408 add for onboard map->
         return bundle;
     }
