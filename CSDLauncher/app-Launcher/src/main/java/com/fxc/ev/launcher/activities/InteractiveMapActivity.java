@@ -32,6 +32,7 @@ import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.maps.poicatsearch.Constants;
 import com.fxc.ev.launcher.utils.ApplicationPreferences;
 import com.fxc.ev.launcher.utils.CameraStackController;
+import com.fxc.ev.launcher.utils.NetWorkUtil;
 import com.fxc.ev.launcher.utils.view.NextInstructionPanelView;
 import com.fxc.ev.launcher.utils.view.SpeedBubbleView;
 import com.fxc.ev.launcher.utils.CameraStackController.CameraType;
@@ -268,8 +269,10 @@ public class InteractiveMapActivity extends BaseActivity {
         }
         onboardMapPath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_ROOT_RELATIVE_PATH;
         onboardKeystorePath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_KEYSTORE_RELATIVE_PATH;
-        bundle.putString(MapDisplayService.ONBOARD_MAP_PATH_KEY, onboardMapPath);
-        bundle.putString(MapDisplayService.ONBOARD_MAP_KEYSTORE_PATH_KEY, onboardKeystorePath);
+        if(!NetWorkUtil.isConnect(this)) {
+            bundle.putString(MapDisplayService.ONBOARD_MAP_PATH_KEY, onboardMapPath);
+            bundle.putString(MapDisplayService.ONBOARD_MAP_KEYSTORE_PATH_KEY, onboardKeystorePath);
+        }
         //<-Jerry@20220408 add for onboard map
         return bundle;
     }
