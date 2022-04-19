@@ -1,5 +1,6 @@
 package com.fxc.ev.launcher.maps.search;
 
+import com.tomtom.navkit2.place.Coordinate;
 import com.tomtom.navkit2.place.Location;
 
 import java.util.List;
@@ -10,7 +11,7 @@ public class SearchResultItem {
     private String address;
     private String  openingHours;
     private List<String> phoneNums;
-    private Location location;
+    private Coordinate coordinate;
     private String searchType;
 
     public String getName() {
@@ -53,12 +54,12 @@ public class SearchResultItem {
         this.phoneNums = phoneNums;
     }
 
-    public Location getLocation() {
-        return location;
+    public Coordinate getCoordinate() {
+        return coordinate;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setCoordinate(Coordinate coordinate) {
+        this.coordinate = coordinate;
     }
 
     public String getSearchType() {

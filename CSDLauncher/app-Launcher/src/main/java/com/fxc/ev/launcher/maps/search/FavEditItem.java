@@ -1,15 +1,14 @@
 package com.fxc.ev.launcher.maps.search;
 
-import com.tomtom.navkit2.place.Location;
-
 import java.io.Serializable;
+import java.util.Objects;
 
 public class FavEditItem implements Serializable {
     private String name;
     private int image;
     private int background;
     private int textColor;
-    private Location location;
+    private String coordinate;
     private String address;
     private int distance;
 
@@ -17,12 +16,12 @@ public class FavEditItem implements Serializable {
 
     }
 
-    public FavEditItem(String name, int image, int background, int textColor, Location location, String address) {
+    public FavEditItem(String name, int image, int background, int textColor, String coordinate, String address) {
         this.name = name;
         this.image = image;
         this.background = background;
         this.textColor = textColor;
-        this.location = location;
+        this.coordinate = coordinate;
         this.address = address;
     }
 
@@ -58,12 +57,12 @@ public class FavEditItem implements Serializable {
         this.textColor = textColor;
     }
 
-    public Location getLocation() {
-        return location;
+    public String getCoordinate() {
+        return coordinate;
     }
 
-    public void setLocation(Location location) {
-        this.location = location;
+    public void setCoordinate(String coordinate) {
+        this.coordinate = coordinate;
     }
 
     public String getAddress() {
@@ -80,5 +79,18 @@ public class FavEditItem implements Serializable {
 
     public void setDistance(int distance) {
         this.distance = distance;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FavEditItem that = (FavEditItem) o;
+        return Objects.equals(coordinate, that.coordinate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(coordinate);
     }
 }

@@ -27,7 +27,6 @@ import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.activities.LauncherActivity;
 import com.fxc.ev.launcher.utils.ApplicationPreferences;
-import com.fxc.ev.launcher.utils.NetWorkUtil;
 import com.fxc.ev.launcher.utils.SpUtils;
 import com.fxc.ev.launcher.utils.SpaceItemDecoration;
 import com.tomtom.navkit2.PoiDetailsOnboardService;
@@ -35,7 +34,6 @@ import com.tomtom.navkit2.SearchOnboardService;
 import com.tomtom.navkit2.drivingassistance.Position;
 import com.tomtom.navkit2.place.Coordinate;
 import com.tomtom.navkit2.place.Location;
-import com.tomtom.navkit2.search.ExecutionMode;
 import com.tomtom.navkit2.search.FilterByGeoRadius;
 import com.tomtom.navkit2.search.FtsResult;
 import com.tomtom.navkit2.search.FtsResultVector;
@@ -145,7 +143,7 @@ public class SearchFragment extends Fragment {
                                 searchResultItem.setAddress(ftsResult.getAddress());
                                 searchResultItem.setDistance(ftsResult.getDistance());
                                 searchResultItem.setPhoneNums(ftsResult.getPoiPhoneNumbers());
-                                searchResultItem.setLocation(ftsResult.getLocation());
+                                searchResultItem.setCoordinate(ftsResult.getLocation().coordinate());
                                 searchResultItem.setSearchType(mSearchType);
 
                                 locationList.add(ftsResult.getLocation());
@@ -194,6 +192,7 @@ public class SearchFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         rootView = inflater.inflate(R.layout.search_fragment, container, false);
         launcherActivity = (LauncherActivity) getActivity();
         mSearchFragment = this;
@@ -273,7 +272,8 @@ public class SearchFragment extends Fragment {
                         launcherActivity.setCurrentFragment(mFavoritesEditFragment);
                     }
                 } else {
-                    RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
+                    Log.v(TAG, "getLocation1: " + searchResultItem.getCoordinate());
+                    RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
                     launcherActivity.setCurrentFragment(routePreviewFragment);
                     routePreviewFragment.setData(searchResultItem);
 
@@ -369,7 +369,7 @@ public class SearchFragment extends Fragment {
             itemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (favEditItem.getLocation() == null) {
+                    if (TextUtils.isEmpty(favEditItem.getCoordinate())) {
                         if (itemType.equals("favorite")) {
                             go2SearchFromFavorites(FROM_SEARCH_PAGE, (int) v.getTag());
                         } else if (itemType.equals("interest")) {
@@ -377,13 +377,13 @@ public class SearchFragment extends Fragment {
                         }
                     } else {
                         SearchResultItem searchResultItem = new SearchResultItem();
-                        searchResultItem.setLocation(favEditItem.getLocation());
+                        searchResultItem.setCoordinate(SpUtils.string2Coordinate(favEditItem.getCoordinate()));
                         searchResultItem.setName(favEditItem.getName());
                         searchResultItem.setAddress(favEditItem.getAddress());
                         searchResultItem.setDistance(favEditItem.getDistance());
                         searchResultItem.setSearchType(TYPE_FAVORITE);
 
-                        RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
+                        RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
                         launcherActivity.setCurrentFragment(routePreviewFragment);
                         routePreviewFragment.setData(searchResultItem);
 
@@ -454,15 +454,18 @@ public class SearchFragment extends Fragment {
         mRecentAdapter.setItemClickListener(new RecentAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, FavEditItem favEditItem, int position) {
-                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
-                launcherActivity.setCurrentFragment(routePreviewFragment);
-
                 SearchResultItem searchResultItem = new SearchResultItem();
                 searchResultItem.setAddress(favEditItem.getAddress());
                 searchResultItem.setName(favEditItem.getName());
-                searchResultItem.setLocation(favEditItem.getLocation());
+                searchResultItem.setCoordinate(SpUtils.string2Coordinate(favEditItem.getCoordinate()));
                 searchResultItem.setDistance(favEditItem.getDistance());
+
+                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
+                launcherActivity.setCurrentFragment(routePreviewFragment);
                 routePreviewFragment.setData(searchResultItem);
+
+                curFavEditItem = favEditItem;
+                updateRecentItemData(searchResultItem);
             }
         });
     }
@@ -509,21 +512,13 @@ public class SearchFragment extends Fragment {
     }
 
     private Input createInputConfiguration(String searchText, Coordinate coordinate) {
-        Input.Builder builder = new Input.Builder()
+        Input input = new Input.Builder()
                 .setLanguage("zh-TW")
                 .setSearchString(searchText)
                 .setFilterByGeoRadius(new FilterByGeoRadius(coordinate, 50 * 1000))
                 .setFuzzyLevel(5)
-                .setLimit(20);
-                //.build();
-        //Jerry@20220414 add:for POI query by network connecting status->
-        if (NetWorkUtil.isConnect(getContext())) {//Jerry@20220414 add:for POI query when no network connect
-            builder.setExecutionMode(ExecutionMode.kOnline);
-        } else {
-            builder.setExecutionMode(ExecutionMode.kOnboard);
-        }
-        Input input = builder.build();
-        //<-Jerry@20220414 add:for POI query by network connecting status
+                .setLimit(20)
+                .build();
         return input;
     }
 
@@ -553,17 +548,21 @@ public class SearchFragment extends Fragment {
         FavEditItem favEditItem = new FavEditItem();
         favEditItem.setName(searchResultItem.getName());
         favEditItem.setAddress(searchResultItem.getAddress());
-        favEditItem.setLocation(searchResultItem.getLocation());
+        favEditItem.setCoordinate(searchResultItem.getCoordinate().toString());
         favEditItem.setDistance(searchResultItem.getDistance());
-        if (searchResultItem.getSearchType().equals(TYPE_SEARCH)) {
+        if (searchResultItem.getSearchType() != null && searchResultItem.getSearchType().equals(TYPE_SEARCH)) {
             favEditItem.setImage(locationIcon);
             favEditItem.setBackground(atmBg);
         } else {
-            if (searchResultItem.getSearchType().equals(TYPE_INTEREST)) {
-                mSearchType = TYPE_SEARCH;
-            }
+            mSearchType = TYPE_SEARCH;
             favEditItem.setImage(curFavEditItem.getImage());
             favEditItem.setBackground(curFavEditItem.getBackground());
+        }
+
+        for (int i = mRecentItemList.size() - 1; i >= 0; i--) {
+            if (mRecentItemList.get(i).getCoordinate().equals(favEditItem.getCoordinate())) {
+                mRecentItemList.remove(mRecentItemList.get(i));
+            }
         }
 
         mRecentItemList.add(favEditItem);
@@ -587,7 +586,7 @@ public class SearchFragment extends Fragment {
         }
         favEditItem.setBackground(background);
         favEditItem.setTextColor(textColor);
-        favEditItem.setLocation(searchResultItem.getLocation());
+        favEditItem.setCoordinate(searchResultItem.getCoordinate().toString());
         favEditItem.setAddress(searchResultItem.getAddress());
         favEditItem.setDistance(searchResultItem.getDistance());
 

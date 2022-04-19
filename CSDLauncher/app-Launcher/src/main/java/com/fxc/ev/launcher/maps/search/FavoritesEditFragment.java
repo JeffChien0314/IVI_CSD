@@ -1,8 +1,5 @@
 package com.fxc.ev.launcher.maps.search;
 
-import android.app.Activity;
-
-import android.app.Instrumentation;
 import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -11,7 +8,6 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +62,7 @@ public class FavoritesEditFragment extends Fragment {
     private int fromPosition = 0;
     private boolean isFirstMove = true;
     private SearchFragment mSearchFragment;
+    private EditDialog mEditDialog;
 
     public FavoritesEditFragment(SearchFragment searchFragment) {
         this.mSearchFragment = searchFragment;
@@ -99,7 +96,7 @@ public class FavoritesEditFragment extends Fragment {
                     case ITEM:
                         Log.v(TAG, "isFocusable:" + v.isFocusable());
                         if (v.isFocusable()) {
-                            if (favEditItem.getLocation() == null) {
+                            if (TextUtils.isEmpty(favEditItem.getCoordinate())) {
                                 launcherActivity.setCurrentFragment(mSearchFragment);
                                 new Handler().post(new Runnable() {
                                     @Override
@@ -109,12 +106,13 @@ public class FavoritesEditFragment extends Fragment {
                                 });
                             } else {
                                 SearchResultItem searchResultItem = new SearchResultItem();
-                                searchResultItem.setLocation(favEditItem.getLocation());
+                                searchResultItem.setCoordinate(SpUtils.string2Coordinate(favEditItem.getCoordinate()));
                                 searchResultItem.setName(favEditItem.getName());
                                 searchResultItem.setAddress(favEditItem.getAddress());
+                                searchResultItem.setDistance(favEditItem.getDistance());
                                 searchResultItem.setSearchType(Constants.TYPE_FAVORITE);
 
-                                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
+                                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
                                 launcherActivity.setCurrentFragment(routePreviewFragment);
                                 routePreviewFragment.setData(searchResultItem);
 
@@ -124,7 +122,10 @@ public class FavoritesEditFragment extends Fragment {
                         break;
                     case EDIT:
                         Log.v(TAG, "edit 被点击啦: " + v.findViewById(R.id.icon_edit).isFocusable());
-                        showDialog(favEditItem, position);
+                        mEditDialog = new EditDialog(launcherActivity, favEditItem, position);
+                        mEditDialog.setDeleteBtnVisibility(View.VISIBLE);
+                        mEditDialog.showDialog();
+                        //showDialog(favEditItem, position);
                         break;
                 }
             }
@@ -187,7 +188,7 @@ public class FavoritesEditFragment extends Fragment {
                 if (btnEdit.getText().equals("Edit")) {
                     for (int i = 0; i < mFavEditItemList.size(); i++) {
                         FavoritesEditAdapter.FavoritesItemViewHolder viewHolder = (FavoritesEditAdapter.FavoritesItemViewHolder) favEditRecyclerView.findViewHolderForAdapterPosition(i);
-                        if (mFavEditItemList.get(i).getLocation() == null) {
+                        if (TextUtils.isEmpty(mFavEditItemList.get(i).getCoordinate())) {
                             viewHolder.itemView.findViewById(R.id.icon_edit).setVisibility(View.INVISIBLE);
                         } else {
                             viewHolder.itemView.findViewById(R.id.icon_edit).setVisibility(View.VISIBLE);
@@ -213,6 +214,44 @@ public class FavoritesEditFragment extends Fragment {
                 }
             }
         });
+    }
+
+    class EditDialog extends FavoriteBaseDialog {
+        int position;
+
+        protected EditDialog(LauncherActivity launcherActivity, FavEditItem favEditItem, int position) {
+            super(launcherActivity, favEditItem);
+            this.position = position;
+        }
+
+        @Override
+        public void processDoneEvent() {
+            favoritesEditAdapter.notifyItemChanged(position, new EditItemStatus(View.VISIBLE, false));
+            SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
+        }
+
+        @Override
+        public void processDeleteEvent(FavEditItem favEditItem) {
+            if (mFavEditItemList.size() == 1) {
+                favEditItem.setName(Constants.ADD_FAVORITE);
+                favEditItem.setImage(R.drawable.icon_add_disable);
+                favEditItem.setBackground(R.drawable.fav_item_btn_disable_bg);
+                favEditItem.setTextColor(Constants.textDisableColor);
+                favEditItem.setCoordinate("");
+                favEditItem.setAddress("");
+                favoritesEditAdapter.notifyItemChanged(position, new EditItemStatus(View.INVISIBLE, true));
+
+                mItemTouchHelper.attachToRecyclerView(null);
+                btnEdit.setVisibility(View.INVISIBLE);
+            } else {
+                mFavEditItemList.remove(position);
+                favoritesEditAdapter.notifyItemRemoved(position);
+                favoritesEditAdapter.notifyItemRangeChanged(position, favoritesEditAdapter.getItemCount(), new EditItemStatus(View.VISIBLE, false));
+            }
+            mEditDialog.dismissDialog();
+            hideSoftInput();
+            SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
+        }
     }
 
     private void showDialog(FavEditItem favEditItem, int position) {
@@ -289,7 +328,7 @@ public class FavoritesEditFragment extends Fragment {
                     favEditItem.setImage(R.drawable.icon_add_disable);
                     favEditItem.setBackground(R.drawable.fav_item_btn_disable_bg);
                     favEditItem.setTextColor(Constants.textDisableColor);
-                    favEditItem.setLocation(null);
+                    favEditItem.setCoordinate("");
                     favEditItem.setAddress("");
                     favoritesEditAdapter.notifyItemChanged(position, new EditItemStatus(View.INVISIBLE, true));
 

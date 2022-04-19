@@ -71,7 +71,7 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
                 holder.icon.setImageResource(favEditItem.getImage());
             }
 
-            if (favEditItem.getLocation() == null) {
+            if (TextUtils.isEmpty(favEditItem.getCoordinate())) {
                 holder.icon_layout.setBackgroundResource(R.drawable.fav_item_icon_disable_bg);
             } else {
                 holder.icon_layout.setBackgroundResource(favEditItem.getBackground());
@@ -121,7 +121,7 @@ public class FavoritesEditAdapter extends RecyclerView.Adapter<FavoritesEditAdap
             icon.setImageResource(favEditItem.getImage());
             name.setText(favEditItem.getName());
 
-            if (favEditItem.getLocation() == null) {
+            if (TextUtils.isEmpty(favEditItem.getCoordinate())) {
                 if (favEditItem.getName().equals(Constants.ADD_FAVORITE)) {
                     icon.setImageResource(R.drawable.icon_add_normal);
                 } else if (favEditItem.getName().equals("Home")) {

@@ -2,11 +2,13 @@ package com.fxc.ev.launcher.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.tomtom.navkit2.place.Coordinate;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -54,15 +56,6 @@ public class SpUtils {
         }
 
         Gson gson = new Gson();
-
-        //使用泛型解析数据会出错，返回的数据类型是LinkedTreeMap
-//        dataList = gson.fromJson(strJson, new TypeToken<List<T>>() {
-//        }.getType());
-
-        //这样写，太死
-//        dataList = gson.fromJson(strJson, new TypeToken<List<UserModel>>() {
-//        }.getType());
-
         JsonArray array = new JsonParser().parse(strJson).getAsJsonArray();
         for (JsonElement jsonElement : array) {
             dataList.add(gson.fromJson(jsonElement, cls));
@@ -82,6 +75,24 @@ public class SpUtils {
             i++;
         }
         return targetList;
+    }
+
+    public static Coordinate string2Coordinate(String s) {
+        /*Coordinate{Latitude: 25.057740, Longitude: 121.296910, Altitude: 0.000000, IsValid: true}*/
+        Log.v("Search", "s: " + s);
+        String latitudeStr = s.substring((s.indexOf(":") + 2), s.indexOf(", Longitude"));
+        String longitudeStr = s.substring((s.indexOf("Longitude: ") + 11), s.indexOf(", Altitude"));
+        String altitudeStr = s.substring((s.indexOf("Altitude: ") + 10), s.indexOf(", IsValid"));
+        String isValidStr = s.substring((s.indexOf("IsValid: ") + 9), s.indexOf("}"));
+
+        double latitude = Double.parseDouble(latitudeStr);
+        double longitude = Double.parseDouble(longitudeStr);
+        double altitude = Double.parseDouble(altitudeStr);
+        boolean isValid = Boolean.parseBoolean(isValidStr);
+
+        Log.v("Search", "latitude:" + latitude + ", longitude:" + longitude + ", altitude:" + altitude + ", isValid:" + isValid);
+
+        return new Coordinate(latitude, longitude);
     }
 
 }

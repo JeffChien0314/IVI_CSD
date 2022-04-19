@@ -46,9 +46,10 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         SearchResultItem searchResultItem = searchResultItemArrayList.get(position);
         if (searchResultItem != null) {
             Log.v(TAG, "name: " + searchResultItem.getName()
-                    + ",address:" + searchResultItem.getAddress()
-                    + ",distance:" + searchResultItem.getDistance()
-                    + ",phoneNum::" + searchResultItem.getPhoneNums());
+                    + ",address: " + searchResultItem.getAddress()
+                    + ",distance: " + searchResultItem.getDistance()
+                    + ",phoneNum: " + searchResultItem.getPhoneNums()
+                    + ",location: " + searchResultItem.getCoordinate());
             holder.name.setText(searchResultItem.getName());
             if (!TextUtils.isEmpty(searchResultItem.getAddress())) {
                 holder.address.setVisibility(View.VISIBLE);

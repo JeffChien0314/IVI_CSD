@@ -902,6 +902,94 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         });
     }
 
+    //metis@220419 路线规划-->
+    public void displayRoutes(Coordinate coordinate) {
+        MarkerBuilder markerBuilder = new MarkerBuilder();
+        markerBuilder.setCoordinate(toMapCoordinate(coordinate))
+                // Equivalent for Michi default route markers configuration
+                .setPinUri(getString(R.string.navigation_route_marker_pin_path))
+                .setShieldUri(getString(R.string.navigation_route_marker_shield_path))
+                .setShieldColor(toMapColor(ContextCompat.getColor(getApplicationContext(), R.color.route_marker_default_shield)))
+                .setShieldAnchor(SHIELD_ANCHOR_X, SHIELD_ANCHOR_Y)
+                .setIconUri(getString(R.string.navigation_route_marker_destination_icon_path))
+                .setIconAnchor(DESTINATION_ICON_ANCHOR_X, DESTINATION_ICON_ANCHOR_Y);
+        destinationMarker = markerLayer.addMarker(markerBuilder);
+
+        tripPlan.setDestination(coordinate);
+        doReadSettings();
+        tripPlan.setNumberOfAlternatives(numberOfAlternatives);
+        tripPlan.getRoutingParameters().setBorderCrossingsPreference(bordersPreference);
+        tripPlan.getRoutingParameters().setFerriesPreference(ferriesPreference);
+        tripPlan.getRoutingParameters().setMotorwaysPreference(motorwaysPreference);
+        tripPlan.getRoutingParameters().setTollsPreference(tollsPreference);
+        tripPlan.getRoutingParameters().setUnpavedRoadsPreference(unpavedPreference);
+        tripPlan.getRoutingParameters().setCarpoolsPreference(carpoolsPreference);
+
+        navigation.planTrip(tripPlan, new TripPlanCallback() {
+
+            @Override
+            public void onTripPlanned(TripPlanResult tripPlanResult) {
+                waypoints.clear();
+                removeAllMarkers();
+
+                if (tripRenderer != null) {
+                    getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
+                    tripRenderer.stop();
+                    tripRenderer = null;
+                }
+                if (trip != null) {
+                    trip.removeListener(tripUpdateListener);
+                    tripUpdateListener = null;
+                    navigation.deleteTrip(trip);
+                    trip = null;
+                }
+                trip = tripPlanResult.trip();
+
+                tripUpdateListener = new TripUpdateListener() {
+                    @Override
+                    public void onRoutesChange(Trip trip) {
+
+                    }
+
+                    @Override
+                    public void onStateChange(Trip trip) {
+                    }
+
+                    @Override
+                    public void onTripArrival(Trip trip) {
+                        Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
+                    }
+                };
+                trip.addListener(tripUpdateListener);
+
+                trafficRenderer.setTrafficMarkerVisibility(false);
+                tripRenderer = TripRenderer.create(trip, getMapHolder().getMap(), trafficConfiguration);
+
+                getCameraStackController().addTripToOverviewCamera(tripRenderer);
+                if (trip.routeList().size() <= 1) {
+
+                } else {
+                    Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
+                    tripRenderer.addClickListener(new TripRendererClickListener() {
+                        @Override
+                        public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
+                            trip.setPreferredRoute(route);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onTripPlanFailed(TripPlanError tripPlanError) {
+                trafficRenderer.setTrafficMarkerVisibility(true);
+                Toast.makeText(mContext, getString(R.string.navigation_experience_route_planning_error), Toast.LENGTH_LONG).show();
+                waypoints.clear();
+                removeAllMarkers();
+            }
+        });
+    }
+    //metis@220419 路线规划<--
+
     private void setMapWidgetVisibility(int visibility) {
         searchButton.setVisibility(visibility);
         favHomeBtn.setVisibility(visibility);
