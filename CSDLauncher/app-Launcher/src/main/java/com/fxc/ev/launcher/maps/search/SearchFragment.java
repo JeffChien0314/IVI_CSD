@@ -249,35 +249,42 @@ public class SearchFragment extends Fragment {
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
         searchResultRecyclerView.addItemDecoration(spaceItemDecoration);
         searchResultRecyclerView.setLayoutManager(linearLayoutManager);
-        searchResultsAdapter = new SearchResultsAdapter(getContext(), searchResultItemArrayList);
+        searchResultsAdapter = new SearchResultsAdapter(launcherActivity, searchResultItemArrayList);
         searchResultRecyclerView.setAdapter(searchResultsAdapter);
 
         searchResultsAdapter.setItemClickListener(new SearchResultsAdapter.OnItemClickListener() {
             @Override
-            public void onItemClick(SearchResultItem searchResultItem) {
-                searchEditText.setText("");
-                if (searchResultItem.getSearchType().equals(TYPE_FAVORITE)) {
-                    mSearchType = TYPE_SEARCH; //reset mSearchType value to search
-                    updateItemData(clickIndex, mFavEditItemList, favItemEnableBg, textEnableColor, searchResultItem);
-                    SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
+            public void onItemClick(SearchResultsAdapter.ViewName viewName, SearchResultItem searchResultItem) {
+                switch (viewName) {
+                    case ITEM:
+                        searchEditText.setText("");
+                        if (searchResultItem.getSearchType().equals(TYPE_FAVORITE)) {
+                            mSearchType = TYPE_SEARCH; //reset mSearchType value to search
+                            updateItemData(clickIndex, mFavEditItemList, favItemEnableBg, textEnableColor, searchResultItem);
+                            SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
 
-                    if (mSourceType.equals(FROM_SEARCH_PAGE)) {
-                        favItemParentLayout.removeAllViews();
-                        initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5), "favorite");
-                        searchResultRecyclerView.setVisibility(View.GONE);
-                        favMainLayout.setVisibility(View.VISIBLE);
-                        hideSoftInput();
-                    } else if (mSourceType.equals(FROM_FAV_EDIT_PAGE)) {
-                        //FavoritesEditFragment favoritesEditFragment = new FavoritesEditFragment();
-                        launcherActivity.setCurrentFragment(mFavoritesEditFragment);
-                    }
-                } else {
-                    Log.v(TAG, "getLocation1: " + searchResultItem.getCoordinate());
-                    RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
-                    launcherActivity.setCurrentFragment(routePreviewFragment);
-                    routePreviewFragment.setData(searchResultItem);
+                            if (mSourceType.equals(FROM_SEARCH_PAGE)) {
+                                favItemParentLayout.removeAllViews();
+                                initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5), "favorite");
+                                searchResultRecyclerView.setVisibility(View.GONE);
+                                favMainLayout.setVisibility(View.VISIBLE);
+                                hideSoftInput();
+                            } else if (mSourceType.equals(FROM_FAV_EDIT_PAGE)) {
+                                //FavoritesEditFragment favoritesEditFragment = new FavoritesEditFragment();
+                                launcherActivity.setCurrentFragment(mFavoritesEditFragment);
+                            }
+                        } else {
+                            RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
+                            launcherActivity.setCurrentFragment(routePreviewFragment);
+                            routePreviewFragment.setData(searchResultItem);
 
-                    updateRecentItemData(searchResultItem);
+                            updateRecentItemData(searchResultItem);
+                        }
+                        break;
+                    case NAVIGATION:
+                        launcherActivity.startNavigation(launcherActivity.toMapCoordinate(searchResultItem.getCoordinate()));
+                        mSearchFragment.getFragmentManager().popBackStack();
+                        break;
                 }
             }
         });

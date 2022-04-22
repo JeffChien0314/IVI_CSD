@@ -220,6 +220,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private PositioningExtension positioningExtension;
     private DrivingContextApi drivingContextApi;
     private Position lastKnownPosition;
+    private String curCountryCode; //metis@0422 add
 
     private ImageButton mapModeButton;
     private ImageButton planningSettingsButton;
@@ -250,18 +251,30 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private Coordinate poiSearchCoordinate;//Jerry@20220415 add
     private double poiSearchScale;//Jerry@20220415 add
 
+    //metis@0422 更新route信息到路线规划页面 -->
+    private OnRouteInfoUpdateListener mOnRouteInfoUpdateListener;
+
+    public interface OnRouteInfoUpdateListener {
+        void OnRouteInfoUpdate(Route route);
+    }
+
+    public void setOnRouteInfoUpdateListener(OnRouteInfoUpdateListener onRouteInfoUpdateListener) {
+        mOnRouteInfoUpdateListener = onRouteInfoUpdateListener;
+    }
+    //metis@0422 更新route信息到路线规划页面 <--
+
     //Jerry@20220415 add:handle poi search
     private Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
-            switch (msg.what){
+            switch (msg.what) {
                 case Constants.POI_SEARCH_MESSAGE:
-                    handler.sendEmptyMessageDelayed(Constants.POI_SEARCH_DELAY_MESSAGE,Constants.POI_SEARCH_DELAY_MILLIS);
+                    handler.sendEmptyMessageDelayed(Constants.POI_SEARCH_DELAY_MESSAGE, Constants.POI_SEARCH_DELAY_MILLIS);
                     break;
                 case Constants.POI_SEARCH_DELAY_MESSAGE:
-                    if(isMapAlreadyInit){
-                        poiSearch(poiSearchCoordinate,poiSearchScale);
-                    }else{
+                    if (isMapAlreadyInit) {
+                        poiSearch(poiSearchCoordinate, poiSearchScale);
+                    } else {
                         handler.sendEmptyMessage(Constants.POI_SEARCH_MESSAGE);
                     }
                     break;
@@ -406,6 +419,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     //metis@0309 获取当前位置
     public Position getLastKnownPosition() {
         return lastKnownPosition;
+    }
+
+    //metis@0422 获取当前CountryCode
+    public String getCurrentCountryCode() {
+        curCountryCode = lastKnownPosition != null ? lastKnownPosition.place().address().countryCode() : "";
+        return curCountryCode;
     }
 
     public void setCurrentFragment(Fragment currentFragment) {
@@ -609,7 +628,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         map.setMapClickListener(new MapClickListener() {
             @Override
             public void onMapClick(MapClickEvent e) {
-                Log.v("metis", "onMapClick");
                 if (isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
                     isFragmentHide = false;
                     return;
@@ -628,7 +646,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         map.setMapLongClickListener(new MapLongClickListener() {
             @Override
             public void onMapLongClick(MapLongClickEvent e) {
-                Log.v("metis", "onMapLongClick");
                 if (isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
                     isFragmentHide = false;
                     return;
@@ -916,7 +933,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         destinationMarker = markerLayer.addMarker(markerBuilder);
 
         tripPlan.setDestination(coordinate);
+
         doReadSettings();
+
         tripPlan.setNumberOfAlternatives(numberOfAlternatives);
         tripPlan.getRoutingParameters().setBorderCrossingsPreference(bordersPreference);
         tripPlan.getRoutingParameters().setFerriesPreference(ferriesPreference);
@@ -964,16 +983,20 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
                 trafficRenderer.setTrafficMarkerVisibility(false);
                 tripRenderer = TripRenderer.create(trip, getMapHolder().getMap(), trafficConfiguration);
-
                 getCameraStackController().addTripToOverviewCamera(tripRenderer);
                 if (trip.routeList().size() <= 1) {
-
+                    if (mOnRouteInfoUpdateListener != null) {
+                        mOnRouteInfoUpdateListener.OnRouteInfoUpdate(trip.routeList().get(0));
+                    }
                 } else {
                     Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
                     tripRenderer.addClickListener(new TripRendererClickListener() {
                         @Override
                         public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
                             trip.setPreferredRoute(route);
+                            if (mOnRouteInfoUpdateListener != null) {
+                                mOnRouteInfoUpdateListener.OnRouteInfoUpdate(route);
+                            }
                         }
                     });
                 }
@@ -1033,7 +1056,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 return;
             }
 
-            if(isMapAlreadyInit) poiSearch(coordinate,scale);
+            if (isMapAlreadyInit) poiSearch(coordinate, scale);
         }
 
         @Override
@@ -1043,7 +1066,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@0308 add poi category search method
-    private void poiSearch(Coordinate coordinate,double scale){
+    private void poiSearch(Coordinate coordinate, double scale) {
         for (int index = 0; index < Constants.ALL_CATEGORY.length; index++) {
             MyFtsResultsListener myFtsResultsListener = new MyFtsResultsListener(Constants.ALL_CATEGORY[index]);
             MyPoiSuggestionsListener myPoiSuggestionsListener = new MyPoiSuggestionsListener();
@@ -1071,11 +1094,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         return new com.tomtom.navkit.map.Color(rgb, alpha);
     }
 
-    private static com.tomtom.navkit2.place.Coordinate toPlaceCoordinate(com.tomtom.navkit.map.Coordinate coordinate) {
+    private com.tomtom.navkit2.place.Coordinate toPlaceCoordinate(com.tomtom.navkit.map.Coordinate coordinate) {
         return new com.tomtom.navkit2.place.Coordinate(coordinate.getLatitude(), coordinate.getLongitude());
     }
 
-    private static com.tomtom.navkit.map.Coordinate toMapCoordinate(com.tomtom.navkit2.place.Coordinate coordinate) {
+    public com.tomtom.navkit.map.Coordinate toMapCoordinate(com.tomtom.navkit2.place.Coordinate coordinate) {
         return new com.tomtom.navkit.map.Coordinate(coordinate.latitude(), coordinate.longitude());
     }
 
@@ -1119,8 +1142,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         GregorianCalendar eta = progress.eta();
 
         DistanceConversions.FormattedDistance fd = DistanceConversions.convert((int) (progress.remainingLengthInCm() / 100), countryCode);
-        String etaAndDistanceText =
-                EtaFormatter.toString(eta) + "\n" + fd.distance + " " + fd.unit + "\n";
+        String etaAndDistanceText = EtaFormatter.toString(eta) + "\n" + fd.distance + " " + fd.unit + "\n";
 
         int trafficDelayInMins = Math.round(progress.remainingTrafficDelayInSeconds() / 60.0f);
         String trafficDelayText = trafficDelayInMins > 0 ? "\u26a0 +" + trafficDelayInMins + "min" : "";
@@ -1195,7 +1217,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         // onboard map settings
         Log.d(TAG, "Onboard Map Path:" + onboardMapPath);
         Log.d(TAG, "Onboard Keystore Path:" + onboardKeystorePath);
-        if(ApplicationPreferences.isOnboardMapAvailable(this)) {
+        if (ApplicationPreferences.isOnboardMapAvailable(this)) {
             // connect to the tile service
             final Bundle tileServiceBundle = makeTileServiceBundle();
             final Intent tileServiceIntent = new Intent(this, NavigationTileService.class);
@@ -1222,7 +1244,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         bundle.putString(NavigationService.ROUTING_API_AUTH_TOKEN_KEY, BuildConfig.API_KEY);
         bundle.putString(NavigationService.NAVIGATION_AUTH_TOKEN_KEY, BuildConfig.API_KEY);
         //Jerry@20220408 add for onboard map->
-        if(ApplicationPreferences.isOnboardMapAvailable(this)) {
+        if (ApplicationPreferences.isOnboardMapAvailable(this)) {
             bundle.putString(NavigationService.NAVIGATION_ONBOARD_TILE_SERVICE_URI, TILE_SERVICE_URI);
             setupOnboardmapServiceParameters(bundle);
         }

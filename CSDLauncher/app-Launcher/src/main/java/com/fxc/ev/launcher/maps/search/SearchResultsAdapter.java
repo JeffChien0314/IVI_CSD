@@ -2,8 +2,6 @@ package com.fxc.ev.launcher.maps.search;
 
 import static com.fxc.ev.launcher.maps.search.Constants.TYPE_FAVORITE;
 
-import android.content.Context;
-
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fxc.ev.launcher.R;
+import com.fxc.ev.launcher.activities.LauncherActivity;
+import com.fxc.ev.launcher.utils.DistanceConversions;
 
 import java.util.ArrayList;
 
@@ -25,12 +25,19 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public static final String TAG = "SearchResultsAdapter";
     private ArrayList<SearchResultItem> searchResultItemArrayList;
     private OnItemClickListener mItemClickListener;
+    private LauncherActivity launcherActivity;
 
     public interface OnItemClickListener {
-        void onItemClick(SearchResultItem searchResultItem);
+        void onItemClick(ViewName viewName, SearchResultItem searchResultItem);
     }
 
-    public SearchResultsAdapter(Context context, ArrayList<SearchResultItem> searchResultItemArrayList) {
+    public enum ViewName {
+        ITEM,
+        NAVIGATION,
+    }
+
+    public SearchResultsAdapter(LauncherActivity launcherActivity, ArrayList<SearchResultItem> searchResultItemArrayList) {
+        this.launcherActivity = launcherActivity;
         this.searchResultItemArrayList = searchResultItemArrayList;
     }
 
@@ -58,18 +65,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 holder.address.setVisibility(View.GONE);
             }
             if (!TextUtils.isEmpty(String.valueOf(searchResultItem.getDistance()))) {
+                String countryCode = launcherActivity.getCurrentCountryCode();
                 holder.distance.setVisibility(View.VISIBLE);
-                int distance = searchResultItem.getDistance();
-                if (distance >= 10 * 1000) {
-                    holder.distance.setText(String.valueOf(distance / 1000));
-                    holder.distanceUnits.setText("km");
-                } else if (distance > 1000 && distance < 10 * 1000) {
-                    holder.distance.setText(String.valueOf(distance * 0.001).substring(0, 3));
-                    holder.distanceUnits.setText("km");
-                } else {
-                    holder.distance.setText(String.valueOf(distance));
-                    holder.distanceUnits.setText("m");
-                }
+                DistanceConversions.FormattedDistance fd = DistanceConversions.convert((searchResultItem.getDistance()), countryCode);
+                holder.distance.setText(fd.distance);
+                holder.distanceUnits.setText(fd.unit);
             } else {
                 holder.distance.setVisibility(View.GONE);
             }
@@ -78,13 +78,21 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                 holder.icon.setImageResource(0);
             } else {
                 holder.icon.setImageResource(R.drawable.icon_search_item_nav);
+                holder.icon.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mItemClickListener != null) {
+                            mItemClickListener.onItemClick(ViewName.NAVIGATION, searchResultItem);
+                        }
+                    }
+                });
             }
 
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mItemClickListener != null) {
-                        mItemClickListener.onItemClick(searchResultItem);
+                        mItemClickListener.onItemClick(ViewName.ITEM, searchResultItem);
                     }
                 }
             });

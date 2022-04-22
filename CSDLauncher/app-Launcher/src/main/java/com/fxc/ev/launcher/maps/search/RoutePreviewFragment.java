@@ -18,13 +18,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.activities.LauncherActivity;
+import com.fxc.ev.launcher.utils.DistanceConversions;
+import com.fxc.ev.launcher.utils.EtaFormatter;
+import com.fxc.ev.launcher.utils.NavigationTimeParser;
 import com.fxc.ev.launcher.utils.SpUtils;
 import com.tomtom.navkit2.navigation.Navigation;
+import com.tomtom.navkit2.navigation.Route;
+import com.tomtom.navkit2.navigation.RouteProgress;
 import com.tomtom.navkit2.navigation.Trip;
 import com.tomtom.navkit2.navigation.TripPlan;
 import com.tomtom.navkit2.place.Coordinate;
 import com.tomtom.navkit2.place.Location;
 
+import java.util.GregorianCalendar;
 import java.util.List;
 
 public class RoutePreviewFragment extends Fragment {
@@ -52,7 +58,7 @@ public class RoutePreviewFragment extends Fragment {
     private Trip mTrip;
     private TripPlan mTripPlan;
     private Coordinate mCoordinate;
-
+    private NavigationTimeParser mNavigationTimeParser;
 
     public RoutePreviewFragment(SearchFragment searchFragment) {
         this.mSearchFragment = searchFragment;
@@ -121,16 +127,40 @@ public class RoutePreviewFragment extends Fragment {
         });
         mNavTime = mRootView.findViewById(R.id.nav_time);
         mNavDistance = mRootView.findViewById(R.id.nav_distance);
-        mNavDistance.setText(String.valueOf(mSearchResultItem.getDistance()));
         mDirectionRecyclerView = mRootView.findViewById(R.id.direction_recyclerview);
     }
 
     private void initRoutes() {
+        mNavigationTimeParser = new NavigationTimeParser(launcherActivity);
         mCoordinate = mSearchResultItem.getCoordinate();
         new Handler().post(new Runnable() {
             @Override
             public void run() {
                 launcherActivity.displayRoutes(mCoordinate);
+            }
+        });
+        launcherActivity.setOnRouteInfoUpdateListener(new LauncherActivity.OnRouteInfoUpdateListener() {
+            @Override
+            public void OnRouteInfoUpdate(Route route) {
+                String countryCode = launcherActivity.getCurrentCountryCode();
+                RouteProgress routeProgress = route.snapshot().progress();
+                GregorianCalendar eta = routeProgress.eta();
+                DistanceConversions.FormattedDistance fd = DistanceConversions.convert((int) (routeProgress.remainingLengthInCm() / 100), countryCode);
+
+                String remainingRouteLength = fd.distance + " " + fd.unit;
+
+                int trafficDelayInMins = Math.round(routeProgress.remainingTrafficDelayInSeconds() / 60.0f);
+                String trafficDelayText = trafficDelayInMins > 0 ? "\u26a0 +" + trafficDelayInMins + "min" : "";
+
+                int remainingTimeInSeconds = routeProgress.remainingTimeInSeconds() + routeProgress.remainingTrafficDelayInSeconds();
+
+                String estimatedArrivalTime = EtaFormatter.toString(eta) + trafficDelayText;
+                String arrivalTime = mNavigationTimeParser.parserSecondToTime(remainingTimeInSeconds).substring(2) + " " + estimatedArrivalTime;
+
+                Log.v(TAG, "remainingRouteLength: " + remainingRouteLength);
+                Log.v(TAG, "arrivalTime: " + arrivalTime);
+                mNavDistance.setText(remainingRouteLength);
+                mNavTime.setText(arrivalTime);
             }
         });
     }
