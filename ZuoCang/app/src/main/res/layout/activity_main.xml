@@ -1,0 +1,691 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/icon_portrait_bg"
+    tools:context=".MainActivity">
+        <!--RelativeLayout
+            android:layout_width="270px"
+            android:layout_height="match_parent"
+            android:background="#15284A"
+            android:layout_marginTop="30px"
+            android:orientation="vertical"
+            tools:ignore="MissingConstraints">
+            <LinearLayout
+                android:id="@+id/door_item"
+                android:layout_width="270px"
+                android:layout_height="wrap_content"
+                android:descendantFocusability="beforeDescendants"
+                android:layout_marginTop="30px"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/door_icon"
+                    android:layout_width="36px"
+                    android:layout_height="36px"
+                    android:layout_marginStart="36px"
+                    android:src="@drawable/icon_doorswindows_normal" />
+
+                <TextView
+                    android:id="@+id/door_description"
+                    android:layout_width="167px"
+                    android:layout_height="34px"
+                    android:layout_marginLeft="18px"
+                    android:text="menu name"
+                    android:layout_toRightOf="@+id/device_icon"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="28px" />
+
+
+            </LinearLayout>
+            <View
+                android:id="@+id/door_divider"
+                android:layout_width="1px"
+                android:layout_height="96px"
+                android:layout_marginLeft="53px"
+                android:layout_below="@+id/door_item"
+                android:background="#80FFFFFF"
+                android:layout_marginTop="10px"
+                android:layout_marginBottom="10px"/>
+
+            <LinearLayout
+                android:id="@+id/lights_item"
+                android:layout_width="270px"
+                android:descendantFocusability="beforeDescendants"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/door_divider"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/lights_icon"
+                    android:layout_width="36px"
+                    android:layout_height="36px"
+                    android:layout_marginStart="36px"
+                    android:src="@drawable/icon_doorswindows_normal" />
+
+                <TextView
+                    android:id="@+id/lights_description"
+                    android:layout_width="167px"
+                    android:layout_height="34px"
+                    android:layout_marginLeft="18px"
+                    android:layout_toRightOf="@+id/device_icon"
+                    android:text="Lights"
+                    android:textColor="#80FFFFFF"
+                    android:textSize="28px" />
+
+
+            </LinearLayout>
+            <View
+                android:id="@+id/menu_divider1"
+                android:layout_width="1px"
+                android:layout_height="96px"
+                android:layout_marginLeft="53px"
+                android:layout_below="@+id/lights_item"
+                android:background="#80FFFFFF"
+                android:layout_marginTop="10px"
+                android:layout_marginBottom="10px"/>
+
+        </RelativeLayout>-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+        <ListView
+            android:id="@+id/menu_item_list"
+            android:layout_width="270px"
+            android:layout_height="1551px"
+            android:paddingTop="71px"
+            android:choiceMode="singleChoice"
+            android:background="#15284A"
+            android:scrollbars="none"
+            android:listSelector="@android:color/transparent"
+            android:divider="@null"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/door_windows_layout"
+            tools:ignore="MissingConstraints" />
+
+                     <androidx.constraintlayout.widget.ConstraintLayout
+                         android:layout_width="810px"
+                         android:layout_height="match_parent"
+                         android:paddingTop="67px"
+                         android:layout_marginLeft="60px"
+                         app:layout_constraintRight_toRightOf="parent"
+                         app:layout_constraintLeft_toRightOf="@+id/menu_item_list"
+                         android:id="@+id/door_windows_layout">
+                             <TextView
+                                 android:id="@+id/door_title"
+                                 android:layout_width="256px"
+                                 android:layout_height="46px"
+                                 android:text="Doors,Windows"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="38px"
+                                 tools:ignore="MissingConstraints" />
+                             <LinearLayout
+                                 android:id="@+id/window_front_left_layout"
+                                 android:layout_width="90px"
+                                 android:layout_height="240px"
+                                 app:layout_constraintLeft_toLeftOf="parent"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_title"
+                                 android:layout_marginTop="67px"
+                                 android:layout_marginLeft="60px"
+                                 android:orientation="vertical"
+                                 android:gravity="center_horizontal"
+                                 android:background="@drawable/bg_window">
+                                     <ImageView
+                                         android:id="@+id/window_front_left_up"
+                                         android:layout_width="28px"
+                                         android:layout_height="12px"
+                                         android:layout_marginTop="33px"
+                                         android:clickable="true"
+                                         android:scaleType="center"
+                                         android:src="@drawable/selector_window_up" />
+
+                                     <ImageView
+                                         android:layout_width="40px"
+                                         android:layout_height="36px"
+                                         android:layout_marginTop="57px"
+                                         android:clickable="true"
+                                         android:scaleType="centerCrop"
+                                         android:src="@drawable/selector_window_control" />
+
+                                     <ImageView
+                                         android:id="@+id/window_front_left_down"
+                                         android:layout_width="28px"
+                                         android:layout_height="12px"
+                                         android:layout_marginTop="57px"
+                                         android:clickable="true"
+                                         android:scaleType="center"
+                                         android:src="@drawable/selector_window_down" />
+                             </LinearLayout>
+                                     <LinearLayout
+                                         android:id="@+id/window_rear_left_layout"
+                                         android:layout_width="90px"
+                                         android:layout_height="240px"
+                                         android:layout_marginTop="60px"
+                                         android:layout_marginLeft="60px"
+                                         android:background="@drawable/bg_window"
+                                         android:gravity="center_horizontal"
+                                         android:orientation="vertical"
+                                         app:layout_constraintLeft_toLeftOf="parent"
+                                         app:layout_constraintTop_toBottomOf="@+id/window_front_left_layout">
+
+                                             <ImageView
+                                                 android:id="@+id/window_rear_left_up"
+                                                 android:layout_width="28px"
+                                                 android:layout_height="12px"
+                                                 android:layout_marginTop="33px"
+                                                 android:clickable="true"
+                                                 android:scaleType="center"
+                                                 android:src="@drawable/selector_window_up" />
+
+                                             <ImageView
+                                                 android:layout_width="40px"
+                                                 android:layout_height="36px"
+                                                 android:layout_marginTop="57px"
+                                                 android:clickable="true"
+                                                 android:scaleType="centerCrop"
+                                                 android:src="@drawable/selector_window_control" />
+
+                                             <ImageView
+                                                 android:id="@+id/window_rear_left_down"
+                                                 android:layout_width="28px"
+                                                 android:layout_height="12px"
+                                                 android:layout_marginTop="57px"
+                                                 android:clickable="true"
+                                                 android:scaleType="center"
+                                                 android:src="@drawable/selector_window_down" />
+                                     </LinearLayout>
+                             <LinearLayout
+                                 android:id="@+id/dooropen_left_layout"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_marginStart="30px"
+                                 android:layout_marginTop="212px"
+                                 android:orientation="vertical"
+                                 app:layout_constraintLeft_toRightOf="@+id/window_front_left_layout"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_title"
+                                 android:layout_below="@+id/door_title">
+                                     <ImageView
+                                         android:id="@+id/doorlock_left1"
+                                         android:layout_width="90px"
+                                         android:layout_height="90px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_doorlock_separate" />
+
+                                     <ImageView
+                                         android:id="@+id/doorlock_left2"
+                                         android:layout_width="90px"
+                                         android:layout_height="90px"
+                                         android:layout_marginTop="120px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_doorlock_separate" />
+                             </LinearLayout>
+                             <ImageView
+                                 android:id="@+id/childlock_left"
+                                 android:layout_width="30px"
+                                 android:layout_height="30px"
+                                 android:layout_marginBottom="60px"
+                                 android:src="@drawable/icon_child_lock"
+                                 app:layout_constraintBottom_toBottomOf="@+id/dooropen_left_layout"
+                                 app:layout_constraintLeft_toRightOf="@+id/dooropen_left_layout" />
+                             <LinearLayout
+                                 android:id="@+id/window_front_right_layout"
+                                 android:layout_width="90px"
+                                 android:layout_height="240px"
+                                 android:layout_marginTop="67px"
+                                 android:layout_marginRight="60px"
+                                 app:layout_constraintRight_toRightOf="parent"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_title"
+                                 android:background="@drawable/bg_window"
+                                 android:gravity="center_horizontal"
+                                 android:orientation="vertical">
+                                     <ImageView
+                                         android:id="@+id/window_front_right_up"
+                                         android:layout_width="28px"
+                                         android:layout_height="12px"
+                                         android:layout_marginTop="33px"
+                                         android:clickable="true"
+                                         android:scaleType="center"
+                                         android:src="@drawable/selector_window_up" />
+
+                                     <ImageView
+                                         android:layout_width="40px"
+                                         android:layout_height="36px"
+                                         android:layout_marginTop="57px"
+                                         android:clickable="true"
+                                         android:scaleType="centerCrop"
+                                         android:src="@drawable/selector_window_control" />
+
+                                     <ImageView
+                                         android:id="@+id/window_front_right_down"
+                                         android:layout_width="28px"
+                                         android:layout_height="12px"
+                                         android:layout_marginTop="57px"
+                                         android:clickable="true"
+                                         android:scaleType="center"
+                                         android:src="@drawable/selector_window_down" />
+                             </LinearLayout>
+                             <LinearLayout
+                                 android:id="@+id/window_rear_Right_layout"
+                                 android:layout_width="90px"
+                                 android:layout_height="240px"
+                                 android:layout_marginTop="67px"
+                                 android:layout_marginRight="60px"
+                                 android:background="@drawable/bg_window"
+                                 android:gravity="center_horizontal"
+                                 android:orientation="vertical"
+                                 app:layout_constraintRight_toRightOf="parent"
+                                 app:layout_constraintTop_toBottomOf="@+id/window_front_right_layout">
+                                     <ImageView
+                                         android:id="@+id/window_rear_right_up"
+                                         android:layout_width="28px"
+                                         android:layout_height="12px"
+                                         android:layout_marginTop="33px"
+                                         android:clickable="true"
+                                         android:scaleType="center"
+                                         android:src="@drawable/selector_window_up" />
+
+                                     <ImageView
+                                         android:layout_width="40px"
+                                         android:layout_height="36px"
+                                         android:layout_marginTop="57px"
+                                         android:clickable="true"
+                                         android:scaleType="centerCrop"
+                                         android:src="@drawable/selector_window_control" />
+
+                                     <ImageView
+                                         android:id="@+id/window_rear_right_down"
+                                         android:layout_width="28px"
+                                         android:layout_height="12px"
+                                         android:layout_marginTop="57px"
+                                         android:clickable="true"
+                                         android:scaleType="center"
+                                         android:src="@drawable/selector_window_down" />
+                             </LinearLayout>
+                             <LinearLayout
+                                 android:id="@+id/dooropen_right_layout"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_marginRight="30px"
+                                 android:layout_marginTop="207px"
+                                 android:orientation="vertical"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_title"
+                                 app:layout_constraintRight_toLeftOf="@+id/window_front_right_layout">
+
+                                     <ImageView
+                                         android:id="@+id/doorlock_right1"
+                                         android:layout_width="90px"
+                                         android:layout_height="90px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_doorlock_separate" />
+
+                                     <ImageView
+                                         android:id="@+id/doorlock_right2"
+                                         android:layout_width="90px"
+                                         android:layout_height="90px"
+                                         android:layout_marginTop="102px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_doorlock_separate" />
+                             </LinearLayout>
+                             <ImageView
+                                 android:id="@+id/childlock_right"
+                                 android:layout_width="30px"
+                                 android:layout_height="30px"
+                                 android:layout_marginBottom="60px"
+                                 android:src="@drawable/icon_child_lock"
+                                 app:layout_constraintBottom_toBottomOf="@+id/dooropen_right_layout"
+                                 app:layout_constraintRight_toLeftOf="@+id/dooropen_right_layout" />
+                             <ImageView
+                                 android:id="@+id/car_image"
+                                 android:layout_width="840px"
+                                 android:layout_height="472px"
+                                 android:layout_marginTop="76px"
+                                 android:scaleType="centerCrop"
+                                 android:src="@drawable/img_car_door_close"
+                                 app:layout_constraintLeft_toLeftOf="parent"
+                                 app:layout_constraintRight_toRightOf="parent"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_title" />
+                             <LinearLayout
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_marginTop="42px"
+                                 app:layout_constraintLeft_toLeftOf="parent"
+                                 app:layout_constraintRight_toRightOf="parent"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_title"
+                                 android:orientation="vertical">
+
+                                     <ImageView
+                                         android:id="@+id/luggage_frunk"
+                                         android:layout_width="90px"
+                                         android:layout_height="90px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_luggage_frunk" />
+
+                                     <ImageView
+                                         android:id="@+id/luggage_dormer"
+                                         android:layout_width="90px"
+                                         android:layout_height="90px"
+                                         android:layout_marginTop="122px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_dormer" />
+
+                                     <ImageView
+                                         android:id="@+id/luggage_trunk"
+                                         android:layout_width="90px"
+                                         android:layout_height="90px"
+                                         android:layout_marginTop="148px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_luggage_trunk" />
+                             </LinearLayout>
+                             <LinearLayout
+                                 android:id="@+id/switch_layout"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_marginTop="30px"
+                                 app:layout_constraintLeft_toLeftOf="@+id/window_rear_left_layout"
+                                 app:layout_constraintRight_toRightOf="@+id/window_rear_Right_layout"
+                                 app:layout_constraintTop_toBottomOf="@+id/window_rear_left_layout">
+                                     <ImageView
+                                         android:id="@+id/window_lock"
+                                         android:layout_width="150px"
+                                         android:layout_height="120px"
+                                         android:layout_marginRight="30px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_window_lock" />
+                                     <ImageView
+                                         android:id="@+id/door_lock"
+                                         android:layout_width="150px"
+                                         android:layout_height="120px"
+                                         android:layout_marginRight="30px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_door_lock" />
+                                     <ImageView
+                                         android:id="@+id/child_lock"
+                                         android:layout_width="150px"
+                                         android:layout_height="120px"
+                                         android:layout_marginRight="30px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_child_lock" />
+                                     <ImageView
+                                         android:id="@+id/sun_curtain"
+                                         android:layout_width="150px"
+                                         android:layout_height="120px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_sun_curtain"/>
+                             </LinearLayout>
+                             <LinearLayout
+                                 android:id="@+id/door_swith_description1"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_marginTop="60px"
+                                 android:orientation="horizontal"
+                                 android:gravity="center"
+                                 app:layout_constraintLeft_toLeftOf="@+id/switch_layout"
+                                 app:layout_constraintTop_toBottomOf="@+id/switch_layout">
+                                     <Switch
+                                         android:layout_width="84px"
+                                         android:layout_height="45px"
+                                         android:background="@drawable/bg_switch"
+                                         android:thumb="@android:color/transparent">
+                                     </Switch>
+                                     <TextView
+                                         android:id="@+id/door_unlock_description1"
+                                         android:layout_width="wrap_content"
+                                         android:layout_height="36px"
+                                         android:layout_marginLeft="24px"
+                                         android:text="Door auto unlock when key is near"
+                                         android:textColor="#FFFFFF"
+                                         android:textSize="30px" />
+                                     <ImageView
+                                         android:id="@+id/union"
+                                         android:layout_width="30px"
+                                         android:layout_height="30px"
+                                         android:layout_marginLeft="24px"
+                                         android:clickable="true"
+                                         android:src="@drawable/icon_info" />
+                             </LinearLayout>
+                             <LinearLayout
+                                 android:id="@+id/door_swith_description2"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_marginTop="30px"
+                                 android:orientation="horizontal"
+                                 android:gravity="center"
+                                 app:layout_constraintLeft_toLeftOf="@+id/switch_layout"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_swith_description1">
+                                     <Switch
+                                         android:layout_width="84px"
+                                         android:layout_height="45px"
+                                         android:background="@drawable/bg_switch"
+                                         android:textOff=""
+                                         android:textOn=""
+                                         android:thumb="@android:color/transparent">
+                                     </Switch>
+                                     <TextView
+                                         android:id="@+id/door_unlock_description2"
+                                         android:layout_width="wrap_content"
+                                         android:layout_height="36px"
+                                         android:layout_marginLeft="24px"
+                                         android:text="Door auto unlock when shifting into Park"
+                                         android:textColor="#FFFFFF"
+                                         android:textSize="30px" />
+                             </LinearLayout>
+                             <LinearLayout
+                                 android:id="@+id/door_swith_description3"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 android:layout_marginTop="30px"
+                                 android:orientation="horizontal"
+                                 android:gravity="center"
+                                 app:layout_constraintLeft_toLeftOf="@+id/switch_layout"
+                                 app:layout_constraintTop_toBottomOf="@+id/door_swith_description2">
+                                     <Switch
+                                         android:layout_width="84px"
+                                         android:layout_height="45px"
+                                         android:background="@drawable/bg_switch"
+                                         android:thumb="@android:color/transparent">
+                                     </Switch>
+                                     <TextView
+                                         android:id="@+id/door_unlock_description3"
+                                         android:layout_width="wrap_content"
+                                         android:layout_height="36px"
+                                         android:layout_marginLeft="24px"
+                                         android:text="Walk away auto lock"
+                                         android:textColor="#FFFFFF"
+                                         android:textSize="30px" />
+                                     <ImageView
+                                         android:layout_width="30px"
+                                         android:layout_height="30px"
+                                         android:layout_marginLeft="24px"
+                                         android:clickable="true"
+                                         android:src="@drawable/icon_info" />
+                             </LinearLayout>
+                     </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:id="@+id/middle_divider"
+                    android:layout_width="750px"
+                    android:layout_height="3px"
+                    android:layout_marginTop="60px"
+                    android:layout_marginLeft="60px"
+                    android:background="#40FFFFFF"
+                    android:gravity="center"
+                    app:layout_constraintLeft_toRightOf="@+id/menu_item_list"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/door_windows_layout" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent"
+                             android:paddingTop="67px"
+                             android:layout_marginLeft="330px"
+                             android:orientation="vertical"
+                             app:layout_constraintLeft_toRightOf="@+id/menu_item_list"
+                             app:layout_constraintRight_toRightOf="parent"
+                             app:layout_constraintTop_toBottomOf="@+id/middle_divider"
+                             android:id="@+id/lights_layout">
+                             <TextView
+                                 android:id="@+id/lights_title"
+                                 android:layout_width="256px"
+                                 android:layout_height="46px"
+                                 android:text="Lights"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="38px"
+                                 tools:ignore="MissingConstraints" />
+                                 <TextView
+                                     android:id="@+id/lights_type"
+                                     android:layout_width="91px"
+                                     android:layout_height="34px"
+                                     android:layout_marginTop="37px"
+                                     android:text="Exterior"
+                                     android:textColor="#FFFFFF"
+                                     android:textSize="28px"
+                                     app:layout_constraintTop_toBottomOf="@+id/lights_title"
+                                     tools:ignore="MissingConstraints" />
+                        <LinearLayout
+                            android:id="@+id/exterior_light_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30px"
+                            android:orientation="horizontal"
+                            app:layout_constraintTop_toBottomOf="@+id/lights_type"
+                            tools:ignore="MissingConstraints">
+                                <ImageView
+                                    android:id="@+id/exterior_light_auto"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_bnt_light_auto"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_exterio_light_auto" />
+                                <LinearLayout
+                                    android:id="@+id/exterior_high_low_beam_light_layout"
+                                    android:layout_width="360px"
+                                    android:layout_height="90px"
+                                    android:paddingRight="30px"
+                                    android:background="@drawable/bg_exterior_lights">
+                                <ImageView
+                                    android:id="@+id/exterior_light_low_beam"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_exterior_light_low_beam" />
+                                        <View
+                                            android:layout_width="3px"
+                                            android:layout_height="42px"
+                                            android:background="#40FFFFFF"
+                                            android:gravity="center"
+                                            android:layout_marginTop="24px"/>
+                                <ImageView
+                                    android:id="@+id/exterior_light_high_beam"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_exterior_light_high_beam" />
+                                        <View
+                                            android:layout_width="3px"
+                                            android:layout_height="42px"
+                                            android:background="#40FFFFFF"
+                                            android:gravity="center"
+                                            android:layout_marginTop="24px"/>
+                                <ImageView
+                                    android:id="@+id/exterior_light_off"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_exterior_light_off"/>
+                                </LinearLayout>
+
+                        </LinearLayout>
+                        <ImageView
+                            android:id="@+id/exterior_high_beam_light_auto"
+                            android:layout_width="120px"
+                            android:layout_height="90px"
+                            android:layout_marginTop="30px"
+                            android:layout_marginLeft="30px"
+                            android:background="@drawable/bg_exterior_lights"
+                            android:clickable="true"
+                            android:src="@drawable/selector_exterio_high_beam_light_auto"
+                            app:layout_constraintLeft_toRightOf="@+id/exterior_light_layout"
+                            app:layout_constraintRight_toRightOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/lights_type" />
+                        <LinearLayout
+                            android:id="@+id/frog_right_layout"
+                            android:layout_width="258px"
+                            android:layout_height="90px"
+                            android:layout_marginTop="30px"
+                            android:orientation="horizontal"
+                            app:layout_constraintTop_toBottomOf="@+id/exterior_light_layout"
+                            tools:ignore="MissingConstraints">
+
+                                <ImageView
+                                    android:id="@+id/front_light"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:background="#1AFFFFFF"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_front_light" />
+
+                                <ImageView
+                                    android:id="@+id/rear_light"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:layout_marginLeft="18px"
+                                    android:background="#1AFFFFFF"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_rear_light" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/adaptive_Frontlight_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="60px"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            app:layout_constraintTop_toBottomOf="@+id/frog_right_layout"
+                            tools:ignore="MissingConstraints">
+                                <Switch
+                                    android:layout_width="84px"
+                                    android:layout_height="45px"
+                                    android:background="@drawable/bg_switch"
+                                    android:thumb="@android:color/transparent">
+                                </Switch>
+                                <TextView
+                                    android:id="@+id/adaptive_Frontlight_description"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36px"
+                                    android:layout_marginLeft="24px"
+                                    android:text="Adaptive Frontlight System"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="30px" />
+                                <ImageView
+                                    android:layout_width="30px"
+                                    android:layout_height="30px"
+                                    android:layout_marginLeft="24px"
+                                    android:clickable="true"
+                                    android:src="@drawable/icon_info" />
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/rear_roof_light_tital"
+                            android:layout_width="304px"
+                            android:layout_height="34px"
+                            android:layout_marginTop="60px"
+                            android:text="Rear roof lights"
+                            android:textColor="#FFFFFF"
+                            android:textSize="28px"
+                            app:layout_constraintTop_toBottomOf="@+id/adaptive_Frontlight_layout"
+                            tools:ignore="MissingConstraints" />
+
+                         </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
+
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+</ScrollView>
