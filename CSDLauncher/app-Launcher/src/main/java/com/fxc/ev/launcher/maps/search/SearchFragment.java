@@ -45,6 +45,7 @@ import com.tomtom.navkit2.search.PoiSuggestionsListener;
 import com.tomtom.navkit2.search.Search;
 
 import static com.fxc.ev.launcher.maps.search.Constants.FROM_FAV_EDIT_PAGE;
+import static com.fxc.ev.launcher.maps.search.Constants.FROM_MAIN_PAGE;
 import static com.fxc.ev.launcher.maps.search.Constants.FROM_SEARCH_PAGE;
 import static com.fxc.ev.launcher.maps.search.Constants.TYPE_FAVORITE;
 import static com.fxc.ev.launcher.maps.search.Constants.TYPE_INTEREST;
@@ -111,6 +112,7 @@ public class SearchFragment extends Fragment {
     private String mSearchType = TYPE_SEARCH;
     private String mSourceType = "";
     private int clickIndex;
+    private String clickName;
     private FavEditItem curFavEditItem;
 
     private TextView mRecentDeleteAll;
@@ -260,9 +262,15 @@ public class SearchFragment extends Fragment {
                         searchEditText.setText("");
                         if (searchResultItem.getSearchType().equals(TYPE_FAVORITE)) {
                             mSearchType = TYPE_SEARCH; //reset mSearchType value to search
+                            if (mSourceType.equals(FROM_MAIN_PAGE)) {
+                                updateItemDataForMainPage(clickName, searchResultItem);
+                                launcherActivity.getSupportFragmentManager().popBackStack();
+                                launcherActivity.refreshFavoriteContent();
+                                return;
+                            }
+
                             updateItemData(clickIndex, mFavEditItemList, favItemEnableBg, textEnableColor, searchResultItem);
                             SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
-
                             if (mSourceType.equals(FROM_SEARCH_PAGE)) {
                                 favItemParentLayout.removeAllViews();
                                 initAutoLinearLayout(favItemParentLayout, SpUtils.clipList(mFavEditItemList, 5), "favorite");
@@ -273,8 +281,9 @@ public class SearchFragment extends Fragment {
                                 //FavoritesEditFragment favoritesEditFragment = new FavoritesEditFragment();
                                 launcherActivity.setCurrentFragment(mFavoritesEditFragment);
                             }
+
                         } else {
-                            RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
+                            RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
                             launcherActivity.setCurrentFragment(routePreviewFragment);
                             routePreviewFragment.setData(searchResultItem);
 
@@ -314,11 +323,11 @@ public class SearchFragment extends Fragment {
 
         mFavEditItemList = SpUtils.getDataList(launcherActivity, "favorites_edit_item_list", "favorites", FavEditItem.class);
         Log.v(TAG, "mFavEditItemList:" + mFavEditItemList.size());
-        if (mFavEditItemList.size() == 0) {
+        /*if (mFavEditItemList.size() == 0) {
             mFavEditItemList.add(new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
             mFavEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
             SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
-        }
+        }*/
 
         mInterestEditItemList = SpUtils.getDataList(launcherActivity, "interest_edit_list", "interest", FavEditItem.class);
         if (mInterestEditItemList.size() == 0) {
@@ -390,7 +399,7 @@ public class SearchFragment extends Fragment {
                         searchResultItem.setDistance(favEditItem.getDistance());
                         searchResultItem.setSearchType(TYPE_FAVORITE);
 
-                        RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
+                        RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
                         launcherActivity.setCurrentFragment(routePreviewFragment);
                         routePreviewFragment.setData(searchResultItem);
 
@@ -467,7 +476,7 @@ public class SearchFragment extends Fragment {
                 searchResultItem.setCoordinate(SpUtils.string2Coordinate(favEditItem.getCoordinate()));
                 searchResultItem.setDistance(favEditItem.getDistance());
 
-                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
+                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
                 launcherActivity.setCurrentFragment(routePreviewFragment);
                 routePreviewFragment.setData(searchResultItem);
 
@@ -482,6 +491,14 @@ public class SearchFragment extends Fragment {
         mSearchType = TYPE_FAVORITE;
         mSourceType = sourceType;
         clickIndex = position;
+        showSoftInput();
+    }
+
+    public void go2SearchFromMainPage(String sourceType, String name) {
+        searchEditText.requestFocus();
+        mSearchType = TYPE_FAVORITE;
+        mSourceType = sourceType;
+        clickName = name;
         showSoftInput();
     }
 
@@ -551,6 +568,10 @@ public class SearchFragment extends Fragment {
         return bundle;
     }
 
+    public void setCurFavEditItem(FavEditItem favEditItem) {
+        this.curFavEditItem = favEditItem;
+    }
+
     public void updateRecentItemData(SearchResultItem searchResultItem) {
         FavEditItem favEditItem = new FavEditItem();
         favEditItem.setName(searchResultItem.getName());
@@ -581,6 +602,45 @@ public class SearchFragment extends Fragment {
         updateRecentItemData(searchResultItem);
     }
 
+    private void updateItemDataForMainPage(String clickName, SearchResultItem searchResultItem) {
+        if (mFavEditItemList.size() == 1 && mFavEditItemList.get(0).getName().equals(Constants.ADD_FAVORITE)) {
+            mFavEditItemList.clear();
+        }
+        if (isContains(mFavEditItemList, clickName)) {
+            for (FavEditItem favEditItem : mFavEditItemList) {
+                if (favEditItem.getName().equals(clickName)) {
+                    if (favEditItem.getName().equals("Home")) {
+                        favEditItem.setImage(homeEnableIcon);
+                    } else if (favEditItem.getName().equals("Office")) {
+                        favEditItem.setImage(officeEnableIcon);
+                    }
+                    favEditItem.setBackground(favItemEnableBg);
+                    favEditItem.setTextColor(textEnableColor);
+                    favEditItem.setCoordinate(searchResultItem.getCoordinate().toString());
+                    favEditItem.setAddress(searchResultItem.getAddress());
+                    favEditItem.setDistance(searchResultItem.getDistance());
+                }
+            }
+        } else {
+            FavEditItem favEditItem = new FavEditItem();
+            favEditItem.setBackground(favItemEnableBg);
+            favEditItem.setTextColor(textEnableColor);
+            favEditItem.setCoordinate(searchResultItem.getCoordinate().toString());
+            favEditItem.setAddress(searchResultItem.getAddress());
+            favEditItem.setDistance(searchResultItem.getDistance());
+            if (clickName.equals("Home")) {
+                favEditItem.setName("Home");
+                favEditItem.setImage(homeEnableIcon);
+                mFavEditItemList.add(0, favEditItem);
+            } else if (clickName.equals("Office")) {
+                favEditItem.setName("Office");
+                favEditItem.setImage(officeEnableIcon);
+                mFavEditItemList.add(favEditItem);
+            }
+        }
+        SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
+    }
+
     private <T> List<T> updateItemData(int updateIndex, List<T> list, int background, int textColor, SearchResultItem searchResultItem) {
         FavEditItem favEditItem = (FavEditItem) list.get(updateIndex);
         if (favEditItem.getName().equals("Home")) {
@@ -598,6 +658,16 @@ public class SearchFragment extends Fragment {
         favEditItem.setDistance(searchResultItem.getDistance());
 
         return list;
+    }
+
+    private boolean isContains(List<FavEditItem> favEditItemList, String s) {
+        for (FavEditItem item : favEditItemList) {
+            if (item.getName().equals(s)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void showSoftInput() {

@@ -112,7 +112,7 @@ public class FavoritesEditFragment extends Fragment {
                                 searchResultItem.setDistance(favEditItem.getDistance());
                                 searchResultItem.setSearchType(Constants.TYPE_FAVORITE);
 
-                                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment(mSearchFragment);
+                                RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
                                 launcherActivity.setCurrentFragment(routePreviewFragment);
                                 routePreviewFragment.setData(searchResultItem);
 
@@ -175,7 +175,7 @@ public class FavoritesEditFragment extends Fragment {
         });
 
         btnEdit = mRootView.findViewById(R.id.fav_edit);
-        if (mFavEditItemList.get(0).getName().equals(Constants.ADD_FAVORITE)) {
+        if (mFavEditItemList.size() == 1 && mFavEditItemList.get(0).getName().equals(Constants.ADD_FAVORITE)) {
             btnEdit.setVisibility(View.INVISIBLE);
         } else {
             btnEdit.setVisibility(View.VISIBLE);

@@ -46,30 +46,18 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Button
-                android:id="@+id/favorites_home"
-                android:layout_width="127px"
-                android:layout_height="60px"
-                android:layout_marginLeft="30px"
-                android:layout_marginTop="30px"
-                android:background="@drawable/icon_fav_home_bg"
+            <LinearLayout
+                android:id="@+id/launcher_fav_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_btn">
-
-            </Button>
-
-            <Button
-                android:id="@+id/favorites_office"
-                android:layout_width="127px"
-                android:layout_height="60px"
+                app:layout_constraintTop_toBottomOf="@+id/search_btn"
                 android:layout_marginLeft="30px"
                 android:layout_marginTop="30px"
-                android:background="@drawable/icon_fav_office_bg"
-                app:layout_constraintLeft_toRightOf="@+id/favorites_home"
-                app:layout_constraintTop_toBottomOf="@+id/search_btn">
+                android:orientation="horizontal">
 
-            </Button>
-
+            </LinearLayout>
+            
             <ImageButton
                 android:id="@+id/recenterButton"
                 style="@style/NK2Button.Recenter"

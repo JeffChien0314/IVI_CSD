@@ -10,6 +10,10 @@
  */
 package com.fxc.ev.launcher.activities;
 
+import static com.fxc.ev.launcher.maps.search.Constants.favItemDisableBg;
+import static com.fxc.ev.launcher.maps.search.Constants.homeDisableIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.officeDisableIcon;
+import static com.fxc.ev.launcher.maps.search.Constants.textDisableColor;
 import static com.fxc.ev.launcher.utils.ApplicationPreferences.getKeystore;
 import static com.fxc.ev.launcher.utils.ApplicationPreferences.getKeystorePassword;
 import static com.fxc.ev.launcher.utils.ApplicationPreferences.getMapUpdateServerApiKey;
@@ -52,6 +56,7 @@ import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fxc.ev.launcher.BuildConfig;
@@ -61,6 +66,7 @@ import com.fxc.ev.launcher.fragment.Frg_WidgetsEdit;
 import com.fxc.ev.launcher.maps.poicatsearch.Constants;
 import com.fxc.ev.launcher.maps.poicatsearch.PoiSearchThread;
 import com.fxc.ev.launcher.maps.route.RoutePlanningPreferencesActivity;
+import com.fxc.ev.launcher.maps.search.FavEditItem;
 import com.fxc.ev.launcher.maps.search.SearchFragment;
 import com.fxc.ev.launcher.utils.ApplicationPreferences;
 import com.fxc.ev.launcher.utils.CameraStackController;
@@ -70,6 +76,7 @@ import com.fxc.ev.launcher.utils.EtaFormatter;
 import com.fxc.ev.launcher.utils.NetWorkUtil;
 import com.fxc.ev.launcher.utils.PermissionsManager;
 import com.fxc.ev.launcher.utils.SharedPreferenceUtils;
+import com.fxc.ev.launcher.utils.SpUtils;
 import com.fxc.ev.launcher.utils.Toaster;
 import com.tomtom.navkit.map.ClickCoordinates;
 import com.tomtom.navkit.map.Event;
@@ -166,7 +173,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private GridView gridView;
     private ImageView widgetEditBtn;
 
-
     private static final long COMPASS_ROTATION_ANIMATION_DURATION = 500l;
     private static final long TRAFFIC_LISTENER_SEARCH_DISTANCE_IN_METERS = 1000L;
     private static final long TRAFFIC_LISTENER_UPDATE_PERIOD_IN_SECONDS = 1L;
@@ -226,9 +232,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private ImageButton planningSettingsButton;
     private ImageButton voiceGuidanceButton;
     private Button searchButton; //metis@ add
-    private Button favHomeBtn; //metis@0314 add
-    private Button favOfficeBtn; //metis@0314 add
     private FrameLayout searchContainer;
+    private List<FavEditItem> mFavEditItemList = new ArrayList<>(); //metis@0423 add
+    private LinearLayout launcherFavLayout; //metis@0423 add
 
     private boolean fullVoiceGuidanceMode = true;
     private boolean navigationServiceBound = false;
@@ -453,7 +459,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         super.onCreate(savedInstanceState);
 
         initMap();
-
     }
 
     @Override
@@ -790,8 +795,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         });
 
         //metis@0309 显示搜索页面 -->
-        favHomeBtn = findViewById(R.id.favorites_home);
-        favOfficeBtn = findViewById(R.id.favorites_office);
+        launcherFavLayout = findViewById(R.id.launcher_fav_layout);
         searchContainer = findViewById(R.id.search_container);
         searchButton = findViewById(R.id.search_btn);
         searchButton.setOnClickListener(new View.OnClickListener() {
@@ -817,7 +821,40 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             //finish();
         }
 
+        refreshFavoriteContent(); //metis@0423 刷新Home&Office数据
     }
+
+    //metis@0423 刷新Home&Office数据 -->
+    public void refreshFavoriteContent() {
+        if (mFavEditItemList.size() != 0) mFavEditItemList.clear();
+        List<FavEditItem> favEditItemList = SpUtils.getDataList(this, "favorites_edit_item_list", "favorites", FavEditItem.class);
+        if (favEditItemList.size() == 0) {
+            favEditItemList.add(new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+            favEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+            SpUtils.setDataList(this, "favorites_edit_item_list", "favorites", favEditItemList);
+        }
+        for (FavEditItem favEditItem : favEditItemList) {
+            if (favEditItem.getName().equals("Home") || favEditItem.getName().equals("Office")) {
+                mFavEditItemList.add(favEditItem);
+            }
+        }
+
+        if (mFavEditItemList.size() == 0) {
+            mFavEditItemList.add(new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+            mFavEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+        } else if (mFavEditItemList.size() == 1) {
+            if (mFavEditItemList.get(0).getName().equals("Home")) {
+                mFavEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+            } else if (mFavEditItemList.get(0).getName().equals("Office")) {
+                mFavEditItemList.add(0, new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
+            }
+        }
+
+        launcherFavLayout.removeAllViews();
+        SpUtils.createFavLayout(this, launcherFavLayout, mFavEditItemList);
+        setMapWidgetVisibility(View.VISIBLE);
+    }
+    //metis@0423 刷新Home&Office数据 <--
 
     //Jerry@20220322 add
     public void startNavigation(com.tomtom.navkit.map.Coordinate destination) {
@@ -1011,12 +1048,32 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
     }
+
+    public void hideRoutes() {
+        /*waypoints.clear();
+        removeAllMarkers();*/
+        Log.v("RoutePreviewFragment", "tripRenderer:" + tripRenderer);
+
+        if (tripRenderer != null) {
+            getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
+            tripRenderer.stop();
+            tripRenderer = null;
+        }
+
+        Log.v("RoutePreviewFragment", "trip:" + trip);
+        if (trip != null) {
+            trip.removeListener(tripUpdateListener);
+            tripUpdateListener = null;
+            navigation.deleteTrip(trip);
+            trip = null;
+        }
+    }
     //metis@220419 路线规划<--
 
     private void setMapWidgetVisibility(int visibility) {
         searchButton.setVisibility(visibility);
-        favHomeBtn.setVisibility(visibility);
-        favOfficeBtn.setVisibility(visibility);
+        launcherFavLayout.setVisibility(visibility);
+
         //voiceGuidanceButton.setVisibility(visibility);//Jerry@20220318 add:not display
         planningSettingsButton.setVisibility(visibility);
         mapModeButton.setVisibility(visibility);
@@ -1025,8 +1082,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     private void setMapWidgetVisibility2(int visibility) {
         searchButton.setVisibility(visibility);
-        favHomeBtn.setVisibility(visibility);
-        favOfficeBtn.setVisibility(visibility);
+        launcherFavLayout.setVisibility(visibility);
         //voiceGuidanceButton.setVisibility(visibility);//Jerry@20220318 add:not display
     }
 
@@ -1371,6 +1427,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 isFragmentHide = false;
                 setMapViewMove(Constants.MOVE_LEFT);
                 isAlreadyTranslation = false;
+                refreshFavoriteContent(); //metis@0423 刷新Home&Office数据
             }
         } else {
             super.onBackPressed();
@@ -1502,6 +1559,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             isFragmentHide = true;
             setMapViewMove(Constants.MOVE_LEFT);
             isAlreadyTranslation = false;
+            refreshFavoriteContent(); //metis@0423 刷新Home&Office数据
         }
     }
 

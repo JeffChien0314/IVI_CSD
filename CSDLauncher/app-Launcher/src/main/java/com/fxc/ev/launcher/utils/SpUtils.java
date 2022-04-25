@@ -1,9 +1,28 @@
 package com.fxc.ev.launcher.utils;
 
+import static com.fxc.ev.launcher.maps.search.Constants.FROM_MAIN_PAGE;
+import static com.fxc.ev.launcher.maps.search.Constants.TYPE_FAVORITE;
+
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import com.fxc.ev.launcher.R;
+import com.fxc.ev.launcher.activities.LauncherActivity;
+import com.fxc.ev.launcher.maps.search.FavEditItem;
+import com.fxc.ev.launcher.maps.search.RoutePreviewFragment;
+import com.fxc.ev.launcher.maps.search.SearchFragment;
+import com.fxc.ev.launcher.maps.search.SearchResultItem;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -11,9 +30,8 @@ import com.google.gson.JsonParser;
 import com.tomtom.navkit2.place.Coordinate;
 
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
+
 
 public class SpUtils {
     /**
@@ -94,5 +112,70 @@ public class SpUtils {
 
         return new Coordinate(latitude, longitude);
     }
+
+    public static <T> void createFavLayout(LauncherActivity launcherActivity, LinearLayout parentLayout, List<T> dataList) {
+        ConstraintLayout.LayoutParams lp = (ConstraintLayout.LayoutParams) parentLayout.getLayoutParams();
+        LinearLayout.LayoutParams itemViewLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        itemViewLp.setMargins(30, 0, 0, 0);
+
+        for (int i = 0; i < dataList.size(); i++) {
+            FavEditItem favEditItem = (FavEditItem) dataList.get(i);
+
+            LinearLayout itemLayout = (LinearLayout) LayoutInflater.from(launcherActivity)
+                    .inflate(R.layout.favorites_item, null);
+            TextView favName = itemLayout.findViewById(R.id.fav_name);
+            ImageView favImg = itemLayout.findViewById(R.id.fav_img);
+
+            favName.setText(favEditItem.getName());
+            favName.setTextColor(launcherActivity.getResources().getColor(favEditItem.getTextColor()));
+            favImg.setImageResource(favEditItem.getImage());
+            itemLayout.setBackgroundResource(favEditItem.getBackground());
+            itemLayout.setTag(favName.getText().toString());
+
+            itemLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (TextUtils.isEmpty(favEditItem.getCoordinate())) {
+                        SearchFragment searchFragment = new SearchFragment();
+                        launcherActivity.setCurrentFragment(searchFragment);
+                        new Handler().post(new Runnable() {
+                            @Override
+                            public void run() {
+                                searchFragment.go2SearchFromMainPage(FROM_MAIN_PAGE, (String) v.getTag());
+                            }
+                        });
+                    } else {
+                        SearchResultItem searchResultItem = new SearchResultItem();
+                        searchResultItem.setCoordinate(SpUtils.string2Coordinate(favEditItem.getCoordinate()));
+                        searchResultItem.setName(favEditItem.getName());
+                        searchResultItem.setAddress(favEditItem.getAddress());
+                        searchResultItem.setDistance(favEditItem.getDistance());
+                        searchResultItem.setSearchType(TYPE_FAVORITE);
+
+                        RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
+                        launcherActivity.setCurrentFragment(routePreviewFragment);
+                        routePreviewFragment.setData(searchResultItem);
+
+                        List<FavEditItem> recentList = getDataList(launcherActivity, "recent_list", "recent", FavEditItem.class);
+                        for (int i = recentList.size() - 1; i >= 0; i--) {
+                            if (recentList.get(i).getCoordinate().equals(favEditItem.getCoordinate())) {
+                                recentList.remove(recentList.get(i));
+                            }
+                        }
+
+                        recentList.add(favEditItem);
+                        SpUtils.setDataList(launcherActivity, "recent_list", "recent", recentList);
+                    }
+                }
+            });
+            if (i == 1) {
+                itemLayout.setLayoutParams(itemViewLp);
+            }
+
+            parentLayout.setLayoutParams(lp);
+            parentLayout.addView(itemLayout);
+        }
+    }
+
 
 }

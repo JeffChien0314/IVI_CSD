@@ -48,7 +48,7 @@ public class RoutePreviewFragment extends Fragment {
     private RecyclerView mDirectionRecyclerView;
     private SearchResultItem mSearchResultItem;
     private FavEditItem mCurFavEditItem;
-    private SearchFragment mSearchFragment;
+    //private SearchFragment mSearchFragment;
     private RoutePreviewFragment mRoutePreviewFragment;
     private LauncherActivity launcherActivity;
     private AddFavDialog mAddFavDialog;
@@ -60,9 +60,9 @@ public class RoutePreviewFragment extends Fragment {
     private Coordinate mCoordinate;
     private NavigationTimeParser mNavigationTimeParser;
 
-    public RoutePreviewFragment(SearchFragment searchFragment) {
+    /*public RoutePreviewFragment(SearchFragment searchFragment) {
         this.mSearchFragment = searchFragment;
-    }
+    }*/
 
     @Nullable
     @Override
@@ -148,14 +148,9 @@ public class RoutePreviewFragment extends Fragment {
                 DistanceConversions.FormattedDistance fd = DistanceConversions.convert((int) (routeProgress.remainingLengthInCm() / 100), countryCode);
 
                 String remainingRouteLength = fd.distance + " " + fd.unit;
-
-                int trafficDelayInMins = Math.round(routeProgress.remainingTrafficDelayInSeconds() / 60.0f);
-                String trafficDelayText = trafficDelayInMins > 0 ? "\u26a0 +" + trafficDelayInMins + "min" : "";
-
                 int remainingTimeInSeconds = routeProgress.remainingTimeInSeconds() + routeProgress.remainingTrafficDelayInSeconds();
 
-                String estimatedArrivalTime = EtaFormatter.toString(eta) + trafficDelayText;
-                String arrivalTime = mNavigationTimeParser.parserSecondToTime(remainingTimeInSeconds).substring(2) + " " + estimatedArrivalTime;
+                String arrivalTime = mNavigationTimeParser.parserSecondToTime(remainingTimeInSeconds).substring(2) + " " + mNavigationTimeParser.getCurrentTime(eta.getTime());
 
                 Log.v(TAG, "remainingRouteLength: " + remainingRouteLength);
                 Log.v(TAG, "arrivalTime: " + arrivalTime);
@@ -227,6 +222,13 @@ public class RoutePreviewFragment extends Fragment {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.v(TAG, "onDestroy");
+        launcherActivity.hideRoutes();
+    }
+
     class AddFavDialog extends FavoriteBaseDialog {
 
         protected AddFavDialog(LauncherActivity launcherActivity, FavEditItem favEditItem) {
@@ -240,6 +242,9 @@ public class RoutePreviewFragment extends Fragment {
             mAddFav.setTextColor(Color.parseColor("#418eff"));
             mCurFavEditItem.setTextColor(Constants.textEnableColor);
             mCurFavEditItem.setBackground(Constants.favItemEnableBg);
+            if (favEditItemList.size() == 1 && favEditItemList.get(0).getName().equals(Constants.ADD_FAVORITE)) {
+                favEditItemList.clear();
+            }
             favEditItemList.add(mCurFavEditItem);
             SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", favEditItemList);
         }
