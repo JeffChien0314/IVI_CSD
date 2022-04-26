@@ -350,6 +350,7 @@ public class CarStatusBar extends StatusBar implements
         CarSystemUIFactory factory = SystemUIFactory.getInstance();
         mCarFacetButtonController = factory.getCarDependencyComponent()
                 .getCarFacetButtonController();
+		mCarFacetButtonController.registerReceiver();
         mNotificationPanelBackground = getDefaultWallpaper();
         mScrimController.setScrimBehindDrawable(mNotificationPanelBackground);
 

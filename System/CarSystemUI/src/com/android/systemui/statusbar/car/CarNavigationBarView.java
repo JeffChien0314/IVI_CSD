@@ -17,8 +17,10 @@
 package com.android.systemui.statusbar.car;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Rect;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 import android.view.View;
@@ -53,6 +55,24 @@ class CarNavigationBarView extends LinearLayout {
 
     private CarUserManagerHelper mCarUserManagerHelper;
 
+    //EV温控
+    private LinearLayout mEvClimateLayout;
+    private ImageView mLeftTemperatureUp;
+    private ImageView mLeftTemperatureDown;
+    private CarFacetButton mLeftTemperature;
+    private ImageView mLeftAirUp;
+    private ImageView mLeftAirDown;
+    private CarFacetButton mLeftAir;
+    private ImageView mAirCirculation;
+    private ImageView mFogRemoval;
+    private ImageView mRightAirUp;
+    private ImageView mRightAirDown;
+    private CarFacetButton mRightAir;
+    private ImageView mRightTemperatureUp;
+    private ImageView mRightTemperatureDown;
+    private CarFacetButton mRightTemperature;   
+    
+
 
     public CarNavigationBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -82,29 +102,157 @@ class CarNavigationBarView extends LinearLayout {
         // needs to be clickable so that it will receive ACTION_MOVE events
 
         View mUserInfo = findViewById(R.id.user_info);
-        if(mUserInfo!=null){
-         //int userId= mCarUserManagerHelper.getCurrentProcessUserId();
-         //UserManager userManager= (UserManager)mContext.getSystemService(Context.USER_SERVICE);
-         //UserInfo userInfo=userManager.getUserInfo(userId);
-         UserInfo userInfo=null;
-         try{
-         userInfo=ActivityManager.getService().getCurrentUser();
-         }catch(RemoteException re){
-         
-         }
-         if(userInfo!=null){
-         ((TextView)findViewById(R.id.user_name)).setText(userInfo.name);
-         Drawable icon = userInfo.iconPath != null ? Drawable.createFromPath(userInfo.iconPath):null;
-         if(icon!=null){
-           ((ImageView)findViewById(R.id.user_icon)).setImageDrawable(icon);
-         }else{
-           ((ImageView)findViewById(R.id.user_icon)).setImageDrawable(mContext.getDrawable(R.drawable.ic_menu_cc_am)); 
-         }
+        if (mUserInfo != null) {
+            //int userId= mCarUserManagerHelper.getCurrentProcessUserId();
+            //UserManager userManager= (UserManager)mContext.getSystemService(Context.USER_SERVICE);
+            //UserInfo userInfo=userManager.getUserInfo(userId);
+            UserInfo userInfo = null;
+            try {
+                userInfo = ActivityManager.getService().getCurrentUser();
+            } catch (RemoteException re) {
 
-       }     
-         
-      }
+            }
+            if (userInfo != null) {
+                ((TextView) findViewById(R.id.user_name)).setText(userInfo.name);
+                Drawable icon = userInfo.iconPath != null ? Drawable.createFromPath(userInfo.iconPath) : null;
+                if (icon != null) {
+                    ((ImageView) findViewById(R.id.user_icon)).setImageDrawable(icon);
+                } else {
+                    ((ImageView) findViewById(R.id.user_icon)).setImageDrawable(mContext.getDrawable(R.drawable.ic_menu_cc_am));
+                }
+
+            }
+        }        
         setClickable(true);
+        mEvClimateLayout = findViewById(R.id.ev_climate_layout);
+        if (mEvClimateLayout != null) {
+            mLeftTemperatureUp = findViewById(R.id.left_temperature_up);
+            mLeftTemperatureDown = findViewById(R.id.left_temperature_down);
+            mLeftTemperature = findViewById(R.id.left_temperature);
+            mLeftAirUp = findViewById(R.id.left_air_up);
+            mLeftAirDown = findViewById(R.id.left_air_down);
+            mLeftAir = findViewById(R.id.left_air);
+            mAirCirculation = findViewById(R.id.air_circulation);
+            mAirCirculation.setTag("" + R.drawable.selector_air_circulation_1); //方便比对图片
+            mFogRemoval = findViewById(R.id.fog_removal);
+            mRightAirUp = findViewById(R.id.right_air_up);
+            mRightAirDown = findViewById(R.id.right_air_down);
+            mRightAir = findViewById(R.id.right_air);
+            mRightTemperatureUp = findViewById(R.id.right_temperature_up);
+            mRightTemperatureDown = findViewById(R.id.right_temperature_down);
+            mRightTemperature = findViewById(R.id.right_temperature);
+
+            AddClimateListener();
+        }
+    }
+
+    private void AddClimateListener() {
+        mLeftTemperatureUp.setOnClickListener(v -> {
+            try {
+                String originalLeftTemperature = mLeftTemperature.getTextViewValue();
+                if (originalLeftTemperature == null || originalLeftTemperature.isEmpty()) return;
+                if (Integer.parseInt(originalLeftTemperature.substring(0, originalLeftTemperature.length() - 1)) < 32)
+                    mLeftTemperature.updateTextView(Integer.parseInt(originalLeftTemperature.substring(0, originalLeftTemperature.length() - 1)) + 1 + "°");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        mLeftTemperatureDown.setOnClickListener(v -> {
+            try {
+                String originalLeftTemperature = mLeftTemperature.getTextViewValue();
+                if (originalLeftTemperature == null || originalLeftTemperature.isEmpty()) return;
+                if (Integer.parseInt(originalLeftTemperature.substring(0, originalLeftTemperature.length() - 1)) > 16)
+                    mLeftTemperature.updateTextView(Integer.parseInt(originalLeftTemperature.substring(0, originalLeftTemperature.length() - 1)) - 1 + "°");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        mLeftAirUp.setOnClickListener(v -> {
+            try {
+                String originalLeftAir = mLeftAir.getTextViewValue();
+                if (originalLeftAir == null || originalLeftAir.isEmpty()) return;
+                if (Integer.parseInt(originalLeftAir) < 6)
+                    mLeftAir.updateTextView(Integer.parseInt(originalLeftAir) + 1 + "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        mLeftAirDown.setOnClickListener(v -> {
+            try {
+                String originalLeftAir = mLeftAir.getTextViewValue();
+                if (originalLeftAir == null || originalLeftAir.isEmpty()) return;
+                if (Integer.parseInt(originalLeftAir) > 0)
+                    mLeftAir.updateTextView(Integer.parseInt(originalLeftAir) - 1 + "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        mAirCirculation.setOnClickListener(v -> {
+            Object tag = mAirCirculation.getTag();
+            if (tag != null) {
+                String rTag = (String) tag;
+
+                if (rTag.equals("" + R.drawable.selector_air_circulation_1)) {
+                    mAirCirculation.setImageResource(R.drawable.selector_air_circulation_2);
+                    mAirCirculation.setTag("" + R.drawable.selector_air_circulation_2);
+                } else if (rTag.equals("" + R.drawable.selector_air_circulation_2)) {
+                    mAirCirculation.setImageResource(R.drawable.selector_air_circulation_3);
+                    mAirCirculation.setTag("" + R.drawable.selector_air_circulation_3);
+                } else if (rTag.equals("" + R.drawable.selector_air_circulation_3)) {
+                    mAirCirculation.setImageResource(R.drawable.selector_air_circulation_1);
+                    mAirCirculation.setTag("" + R.drawable.selector_air_circulation_1);
+                }
+            }
+        });
+
+        mRightTemperatureUp.setOnClickListener(v -> {
+            try {
+                String originalRightTemperature = mRightTemperature.getTextViewValue();
+                if (originalRightTemperature == null || originalRightTemperature.isEmpty()) return;
+                if (Integer.parseInt(originalRightTemperature.substring(0, originalRightTemperature.length() - 1)) < 32)
+                    mRightTemperature.updateTextView(Integer.parseInt(originalRightTemperature.substring(0, originalRightTemperature.length() - 1)) + 1 + "°");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        mRightTemperatureDown.setOnClickListener(v -> {
+            try {
+                String originalRightTemperature = mRightTemperature.getTextViewValue();
+                if (originalRightTemperature == null || originalRightTemperature.isEmpty()) return;
+                if (Integer.parseInt(originalRightTemperature.substring(0, originalRightTemperature.length() - 1)) > 16)
+                    mRightTemperature.updateTextView(Integer.parseInt(originalRightTemperature.substring(0, originalRightTemperature.length() - 1)) - 1 + "°");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        mRightAirUp.setOnClickListener(v -> {
+            try {
+                String originalRightAir = mRightAir.getTextViewValue();
+                if (originalRightAir == null || originalRightAir.isEmpty()) return;
+                if (Integer.parseInt(originalRightAir) < 6)
+                    mRightAir.updateTextView(Integer.parseInt(originalRightAir) + 1 + "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        mRightAirDown.setOnClickListener(v -> {
+            try {
+                String originalRightAir = mRightAir.getTextViewValue();
+                if (originalRightAir == null || originalRightAir.isEmpty()) return;
+                if (Integer.parseInt(originalRightAir) > 0)
+                    mRightAir.updateTextView(Integer.parseInt(originalRightAir) - 1 + "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     // Used to forward touch events even if the touch was initiated from a child component

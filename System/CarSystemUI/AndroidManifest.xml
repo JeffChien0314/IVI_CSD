@@ -16,6 +16,7 @@
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:androidprv="http://schemas.android.com/apk/prv/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         package="com.android.systemui"
         android:sharedUserId="android.uid.systemui"
         coreApp="true">
@@ -24,5 +25,106 @@
     <uses-permission android:name="android.permission.REAL_GET_TASKS" />
     <uses-permission android:name="android.permission.GET_DETAILED_TASKS" />
     <uses-permission android:name="android.permission.GET_TASKS" />
+
+
+  
+<application
+        android:name="com.android.systemui.SystemUIApplication"
+        android:label="@string/app_name"        
+        tools:replace="android:label">
+
+       <activity
+            android:name="com.android.systemui.statusbar.car.climate.TemperatureLeftActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+
+                <action android:name="com.fxc.ev.temperature.left" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+            </intent-filter>
+        </activity>
+
+       <activity
+            android:name="com.android.systemui.statusbar.car.climate.TemperatureRightActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+
+                <action android:name="com.fxc.ev.temperature.right" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.android.systemui.statusbar.car.climate.AirLeftActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+
+                <action android:name="com.fxc.ev.air.left" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.android.systemui.statusbar.car.climate.AirRightActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+
+                <action android:name="com.fxc.ev.air.right" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.android.systemui.statusbar.car.climate.VolumeAdjustActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+
+                <action android:name="com.fxc.ev.volume" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="com.android.systemui.statusbar.car.climate.ClimateMenuActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:launchMode="singleTask"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.fxc.ev.climateMenu"/>
+                <action android:name="com.fxc.ev.temperature.left"/>
+                <action android:name="com.fxc.ev.air.left"/>
+                <action android:name="com.fxc.ev.volume"/>
+                <action android:name="com.fxc.ev.air.right"/>
+                <action android:name="com.fxc.ev.temperature.right"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+           
+        </activity>
+
+ </application>
 
 </manifest>
