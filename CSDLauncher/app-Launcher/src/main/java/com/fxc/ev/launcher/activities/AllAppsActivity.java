@@ -1,10 +1,10 @@
-package com.fxc.ev.launcher.fragment;
+package com.fxc.ev.launcher.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,14 +21,12 @@ import com.fxc.ev.launcher.utils.view.DraggableGridViewPager;
 
 import java.util.List;
 
-import androidx.fragment.app.Fragment;
 
-public class Frg_AllApps extends Fragment {
-    public static final String TAG = Frg_AllApps.class.getSimpleName();
+public class AllAppsActivity extends Activity {
+    public static final String TAG = AllAppsActivity.class.getSimpleName();
 
     private Context mContext;
 
-    private View mRootView;
     private ViewGroup points;//小圆点指示器
     private ImageView[] ivPoints;//小圆点图片集合
     private List<PakageMod> listDatas;//总的数据源
@@ -41,18 +39,18 @@ public class Frg_AllApps extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mContext = getActivity().getApplicationContext();
-
-        mRootView = inflater.inflate(R.layout.all_apps_layout, container, false);
-        mDraggableGridViewPager = (DraggableGridViewPager) mRootView.findViewById(R.id.draggable_grid_view_pager);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.all_apps_layout);
+        mContext = this;
+        mDraggableGridViewPager = (DraggableGridViewPager) findViewById(R.id.draggable_grid_view_pager);
         //初始化行、列数及gap between grids
         mDraggableGridViewPager.setColCount(3);
         mDraggableGridViewPager.setRowCount(3);
         mDraggableGridViewPager.setGridGap(30);
 
         //初始化小圆点指示器
-        points = (ViewGroup) mRootView.findViewById(R.id.points);
+        points = (ViewGroup) findViewById(R.id.points);
 
         mAdapter = new ArrayAdapter<PakageMod>(mContext, 0) {
             @Override
@@ -144,7 +142,6 @@ public class Frg_AllApps extends Fragment {
             }
         });
 
-        return mRootView;
     }
 
     /**
