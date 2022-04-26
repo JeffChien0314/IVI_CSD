@@ -24,6 +24,7 @@
         android:theme="@style/TomTomTheme">
         <activity
             android:name=".activities.LauncherActivity"
+            android:launchMode="singleTask"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:configChanges="locale|keyboardHidden|orientation">
             <intent-filter>
@@ -37,8 +38,10 @@
         </activity>
         <activity android:name=".maps.route.RoutePlanningPreferencesActivity" />
 
-        <activity android:name=".activities.InteractiveMapActivity" />
-        <activity android:name=".activities.BaseActivity" />
+        <activity android:name=".activities.InteractiveMapActivity"
+            android:launchMode="singleTask" />
+        <activity android:name=".activities.BaseActivity"
+            android:launchMode="singleTask" />
 
     </application>
 
