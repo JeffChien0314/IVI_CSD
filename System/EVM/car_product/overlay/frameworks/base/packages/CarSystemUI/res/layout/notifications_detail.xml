@@ -1,0 +1,661 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/fast_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/recent_apps_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45px"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" >
+
+            <ImageView
+                android:id="@+id/recent_app1"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:background="@drawable/app_icon_default"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/recent_app2"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginStart="84px"
+                android:background="@drawable/app_icon_default"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/recent_app3"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginStart="84px"
+                android:background="@drawable/app_icon_default"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/recent_app4"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginStart="84px"
+                android:background="@drawable/app_icon_default"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/recent_app5"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginStart="84px"
+                android:background="@drawable/app_icon_default"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+
+            <ImageView
+                android:id="@+id/recent_app6"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginStart="84px"
+                android:background="@drawable/app_icon_default"
+                android:clickable="true"
+                android:scaleType="centerCrop" />
+        </LinearLayout>
+
+        <View
+            android:id="@+id/top_divider"
+            android:layout_width="1020px"
+            android:layout_height="1px"
+            android:layout_marginTop="45px"
+            android:background="#40FFFFFF"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recent_apps_layout" />
+
+        <LinearLayout
+            android:id="@+id/exterior_lights_ins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="60px"
+            android:layout_marginTop="37px"
+            android:gravity="center_vertical"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/top_divider">
+
+            <ImageView
+                android:layout_width="36px"
+                android:layout_height="36px"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icon_exterior_lights" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12px"
+                android:text="Exterior Lights"
+                android:textColor="#FFFFFF"
+                android:textSize="28px" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/exterior_lights_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16px"
+            app:layout_constraintLeft_toLeftOf="@+id/exterior_lights_ins"
+            app:layout_constraintTop_toBottomOf="@+id/exterior_lights_ins">
+
+            <RadioGroup
+                android:id="@+id/exterior_lights"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_a01_open_item"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/light_radio1"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:checked="true"
+                    android:button="@null"
+                    android:background="@drawable/selector_exterior_lights_auto" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/divider" />
+
+                <RadioButton
+                    android:id="@+id/light_radio2"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:button="@null"
+                    android:background="@drawable/selector_exterior_lights_lowbeam" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/divider" />
+
+                <RadioButton
+                    android:id="@+id/light_radio3"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:button="@null"
+                    android:background="@drawable/selector_exterior_lights_hightbeam" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/divider" />
+
+                <RadioButton
+                    android:id="@+id/light_radio4"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:button="@null"
+                    android:background="@drawable/selector_exterior_lights_off" />
+
+            </RadioGroup>
+
+            <ImageView
+                android:id="@+id/front_fog_light"
+                android:layout_width="120px"
+                android:layout_height="90px"
+                android:layout_marginStart="222px"
+                android:src="@drawable/selector_front_fog_light"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/rear_fog_light"
+                android:layout_width="120px"
+                android:layout_height="90px"
+                android:layout_marginStart="18px"
+                android:src="@drawable/selector_rear_fog_light"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wiper_ins"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="46px"
+            android:gravity="center_vertical"
+            app:layout_constraintLeft_toLeftOf="@+id/exterior_lights_layout"
+            app:layout_constraintTop_toBottomOf="@+id/exterior_lights_layout">
+
+            <ImageView
+                android:layout_width="36px"
+                android:layout_height="36px"
+                android:scaleType="centerCrop"
+                android:src="@drawable/icon_wiper" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12px"
+                android:text="Wiper"
+                android:textColor="#FFFFFF"
+                android:textSize="28px" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/wiper_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16px"
+            app:layout_constraintLeft_toLeftOf="@+id/wiper_ins"
+            app:layout_constraintTop_toBottomOf="@+id/wiper_ins">
+
+            <RadioGroup
+                android:id="@+id/wiper"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_a01_open_item"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/wiper_radio1"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:checked="true"
+                    android:button="@null"
+                    android:background="@drawable/selector_exterior_lights_auto" />
+
+                <RadioButton
+                    android:id="@+id/wiper_radio2"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:button="@null"
+                    android:background="@drawable/selector_wiper_level_1" />
+
+                <RadioButton
+                    android:id="@+id/wiper_radio3"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:button="@null"
+                    android:background="@drawable/selector_wiper_level_2" />
+
+
+                <RadioButton
+                    android:id="@+id/wiper_radio4"
+                    android:layout_width="120px"
+                    android:layout_height="90px"
+                    android:button="@null"
+                    android:background="@drawable/selector_exterior_lights_off" />
+
+            </RadioGroup>
+
+            <ImageView
+                android:id="@+id/reading_light"
+                android:layout_width="120px"
+                android:layout_height="90px"
+                android:layout_marginStart="222px"
+                android:src="@drawable/selector_reading_light"
+                android:clickable="true" />
+
+            <ImageView
+                android:id="@+id/rearview_mirror"
+                android:layout_width="120px"
+                android:layout_height="90px"
+                android:layout_marginStart="18px"
+                android:src="@drawable/selector_rearview_mirror"
+                android:clickable="true" />
+
+        </LinearLayout>
+
+        <View
+            android:id="@+id/middle_divider"
+            android:layout_width="1020px"
+            android:layout_height="1px"
+            android:layout_marginTop="36px"
+            android:background="#40FFFFFF"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/wiper_layout" />
+
+        <LinearLayout
+            android:id="@+id/window_front_left_layout"
+            android:layout_width="90px"
+            android:layout_height="240px"
+            android:layout_marginTop="42px"
+            android:background="@drawable/bg_window"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toLeftOf="@+id/wiper_layout"
+            app:layout_constraintTop_toBottomOf="@+id/middle_divider">
+
+            <ImageView
+                android:id="@+id/window_front_left_up"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="33px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_up" />
+
+            <ImageView
+                android:layout_width="40px"
+                android:layout_height="36px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/selector_window_control" />
+
+            <ImageView
+                android:id="@+id/window_front_left_down"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_down" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/window_rear_left_layout"
+            android:layout_width="90px"
+            android:layout_height="240px"
+            android:layout_marginTop="60px"
+            android:background="@drawable/bg_window"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toLeftOf="@+id/wiper_layout"
+            app:layout_constraintTop_toBottomOf="@+id/window_front_left_layout">
+
+            <ImageView
+                android:id="@+id/window_rear_left_up"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="33px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_up" />
+
+            <ImageView
+                android:layout_width="40px"
+                android:layout_height="36px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/selector_window_control" />
+
+            <ImageView
+                android:id="@+id/window_rear_left_down"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_down" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dooropen_left_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="90px"
+            android:layout_marginTop="207px"
+            android:orientation="vertical"
+            app:layout_constraintLeft_toRightOf="@+id/window_front_left_layout"
+            app:layout_constraintTop_toBottomOf="@+id/middle_divider">
+
+            <ImageView
+                android:id="@+id/doorlock_left1"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:clickable="true"
+                android:src="@drawable/selector_doorlock_separate" />
+
+            <ImageView
+                android:id="@+id/doorlock_left2"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginTop="102px"
+                android:clickable="true"
+                android:src="@drawable/selector_doorlock_separate" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/childlock_left"
+            android:layout_width="30px"
+            android:layout_height="30px"
+            android:layout_marginBottom="60px"
+            android:src="@drawable/icon_childlock"
+            app:layout_constraintBottom_toBottomOf="@+id/dooropen_left_layout"
+            app:layout_constraintLeft_toRightOf="@+id/dooropen_left_layout" />
+
+        <LinearLayout
+            android:id="@+id/window_front_right_layout"
+            android:layout_width="90px"
+            android:layout_height="240px"
+            android:layout_marginTop="42px"
+            android:background="@drawable/bg_window"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintRight_toRightOf="@+id/wiper_layout"
+            app:layout_constraintTop_toBottomOf="@+id/middle_divider">
+
+            <ImageView
+                android:id="@+id/window_front_right_up"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="33px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_up" />
+
+            <ImageView
+                android:layout_width="40px"
+                android:layout_height="36px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/selector_window_control" />
+
+            <ImageView
+                android:id="@+id/window_front_right_down"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_down" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/window_rear_Right_layout"
+            android:layout_width="90px"
+            android:layout_height="240px"
+            android:layout_marginTop="60px"
+            android:background="@drawable/bg_window"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            app:layout_constraintRight_toRightOf="@+id/wiper_layout"
+            app:layout_constraintTop_toBottomOf="@+id/window_front_right_layout">
+
+            <ImageView
+                android:id="@+id/window_rear_right_up"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="33px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_up" />
+
+            <ImageView
+                android:layout_width="40px"
+                android:layout_height="36px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="centerCrop"
+                android:src="@drawable/selector_window_control" />
+
+            <ImageView
+                android:id="@+id/window_rear_right_down"
+                android:layout_width="28px"
+                android:layout_height="12px"
+                android:layout_marginTop="57px"
+                android:clickable="true"
+                android:scaleType="center"
+                android:src="@drawable/selector_window_down" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/dooropen_right_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="90px"
+            android:layout_marginTop="207px"
+            android:orientation="vertical"
+            app:layout_constraintRight_toLeftOf="@+id/window_front_right_layout"
+            app:layout_constraintTop_toBottomOf="@+id/middle_divider">
+
+            <ImageView
+                android:id="@+id/doorlock_right1"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:clickable="true"
+                android:src="@drawable/selector_doorlock_separate" />
+
+            <ImageView
+                android:id="@+id/doorlock_right2"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginTop="102px"
+                android:clickable="true"
+                android:src="@drawable/selector_doorlock_separate" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/childlock_right"
+            android:layout_width="30px"
+            android:layout_height="30px"
+            android:layout_marginBottom="60px"
+            android:src="@drawable/icon_childlock"
+            app:layout_constraintBottom_toBottomOf="@+id/dooropen_right_layout"
+            app:layout_constraintLeft_toRightOf="@+id/dooropen_right_layout" />
+
+        <ImageView
+            android:id="@+id/car_image"
+            android:layout_width="840px"
+            android:layout_height="472px"
+            android:layout_marginTop="76px"
+            android:scaleType="centerCrop"
+            android:src="@drawable/img_car_door_close"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/middle_divider" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="42px"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/middle_divider"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/luggage_frunk"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:clickable="true"
+                android:src="@drawable/selector_luggage_frunk" />
+
+            <ImageView
+                android:id="@+id/luggage_dormer"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginTop="122px"
+                android:clickable="true"
+                android:src="@drawable/selector_dormer" />
+
+            <ImageView
+                android:id="@+id/luggage_trunk"
+                android:layout_width="90px"
+                android:layout_height="90px"
+                android:layout_marginTop="148px"
+                android:clickable="true"
+                android:src="@drawable/selector_luggage_trunk" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/switch_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="75px"
+            app:layout_constraintLeft_toLeftOf="@+id/window_rear_left_layout"
+            app:layout_constraintRight_toRightOf="@+id/window_rear_Right_layout"
+            app:layout_constraintTop_toBottomOf="@+id/window_rear_left_layout">
+
+            <ImageView
+                android:id="@+id/leave_mode"
+                android:layout_width="150px"
+                android:layout_height="120px"
+                android:clickable="true"
+                android:src="@drawable/selector_leave_mode" />
+
+            <ImageView
+                android:id="@+id/window_lock"
+                android:layout_width="150px"
+                android:layout_height="120px"
+                android:layout_marginStart="75px"
+                android:clickable="true"
+                android:src="@drawable/selector_window_lock" />
+
+            <ImageView
+                android:id="@+id/door_lock"
+                android:layout_width="150px"
+                android:layout_height="120px"
+                android:layout_marginStart="30px"
+                android:clickable="true"
+                android:src="@drawable/selector_door_lock" />
+
+            <ImageView
+                android:id="@+id/sun_curtain"
+                android:layout_width="150px"
+                android:layout_height="120px"
+                android:layout_marginStart="30px"
+                android:clickable="true"
+                android:src="@drawable/selector_sun_curtain" />
+
+            <ImageView
+                android:id="@+id/close_screen"
+                android:layout_width="150px"
+                android:layout_height="120px"
+                android:layout_marginStart="75px"
+                android:clickable="true"
+                android:src="@drawable/selector_close_screen" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/brightness_layout"
+            android:layout_width="510px"
+            android:layout_height="60px"
+            android:layout_marginTop="45px"
+            android:background="@drawable/bg_a01_open_seekbar"
+            android:gravity="center_vertical"
+            app:layout_constraintLeft_toLeftOf="@+id/window_rear_left_layout"
+            app:layout_constraintRight_toRightOf="@+id/window_rear_Right_layout"
+            app:layout_constraintTop_toBottomOf="@+id/switch_layout">
+
+            <ImageView
+                android:layout_width="31px"
+                android:layout_height="31px"
+                android:layout_marginStart="30px"
+                android:src="@drawable/brightness_icon" />
+
+            <SeekBar
+                android:id="@+id/brightness_seekbar"
+                android:layout_width="449px"
+                android:layout_height="60px"
+                android:max="100"
+                android:maxHeight="12px"
+                android:maxWidth="389px"
+                android:progress="60"
+                android:progressDrawable="@drawable/brightness_seekbar_bg"
+                android:thumb="@drawable/select_brightness_seekbar_thumb" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/up_arrow"
+            android:layout_width="28px"
+            android:layout_height="12px"
+            android:layout_marginTop="31px"
+            android:src="@drawable/up_arrow"
+            app:layout_constraintLeft_toLeftOf="@+id/window_rear_left_layout"
+            app:layout_constraintRight_toRightOf="@+id/window_rear_Right_layout"
+            app:layout_constraintTop_toBottomOf="@+id/brightness_layout" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</RelativeLayout>

@@ -24,6 +24,8 @@
 
     <!-- Allow for custom attribs to be added to a facet button -->
     <declare-styleable name="CarFacetButton">
+        <!-- icon show or not . Defaults true  -->
+        <attr name="useIcon" format="boolean" />
         <!-- icon to be rendered (drawable) -->
         <attr name="icon"/>
         <!-- icon to be rendered when in selected state -->
@@ -44,6 +46,12 @@
         <attr name="unselectedAlpha" />
         <!-- Render a "more" icon. Defaults true  -->
         <attr name="useMoreIcon" format="boolean" />
+        <!-- Render a text . Defaults false  -->
+        <attr name="useText" format="boolean" />
+        <!-- text size-->
+        <attr name="textSize" format="dimension" />
+        <!-- button default value-->
+        <attr name="initValue" format="string" />
 
     </declare-styleable>
 
