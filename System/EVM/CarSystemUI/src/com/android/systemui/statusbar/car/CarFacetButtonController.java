@@ -19,18 +19,23 @@ package com.android.systemui.statusbar.car;
 import android.app.ActivityManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.BroadcastReceiver;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.view.Display;
 import android.view.View;
 import android.view.ViewGroup;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -48,6 +53,9 @@ public class CarFacetButtonController {
     protected ButtonMap mButtonsByComponentName = new ButtonMap();
     protected HashSet<CarFacetButton> mSelectedFacetButtons;
     protected Context mContext;
+
+    protected ActivityManager.StackInfo currentValidStackInfo;
+   
 
     @Inject
     public CarFacetButtonController(Context context) {
@@ -122,6 +130,8 @@ public class CarFacetButtonController {
             }
         }
 
+        currentValidStackInfo = validStackInfo;
+
         if (validStackInfo == null) {
             // No stack was found that was on the same display as the facet buttons thus return
             return;
@@ -129,7 +139,7 @@ public class CarFacetButtonController {
 
         if (mSelectedFacetButtons != null) {
             Iterator<CarFacetButton> iterator = mSelectedFacetButtons.iterator();
-            while(iterator.hasNext()) {
+            while (iterator.hasNext()) {
                 CarFacetButton carFacetButton = iterator.next();
                 if (carFacetButton.getDisplayId() == validStackInfo.displayId) {
                     carFacetButton.setSelected(false);
@@ -151,6 +161,7 @@ public class CarFacetButtonController {
                 facetButton = mButtonsByCategory.get(category);
             }
         }
+
 
         if (facetButton != null) {
             for (CarFacetButton carFacetButton : facetButton) {
@@ -202,4 +213,56 @@ public class CarFacetButtonController {
             return true;
         }
     }
+
+    public void registerReceiver() {
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction("temperature.left.change");
+        intentFilter.addAction("temperature.right.change");
+        intentFilter.addAction("air.left.change");
+        intentFilter.addAction("air.right.change");
+        intentFilter.addAction("volume.change");
+        mContext.registerReceiver(mBroadcastReceiver, intentFilter);
+
+    }
+
+    private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = null;
+            if (intent != null) action = intent.getAction();
+            if ("temperature.left.change".equals(action) || "temperature.right.change".equals(action) || "air.left.change".equals(action) || "air.right.change".equals(action)) {
+                updateCarStatusBar(intent.getStringExtra("className"), intent.getStringExtra("value"));
+            } else if ("volume.change".equals(action)) {
+                updateCarStatusBar(intent.getStringExtra("className"), "volume", intent.getIntExtra("value", -1));
+            }
+        }
+    };
+
+    public void updateCarStatusBar(String className, String textValue) {
+        if (mSelectedFacetButtons != null && currentValidStackInfo != null && currentValidStackInfo.topActivity.getClassName().equals(className)) {
+            Iterator<CarFacetButton> iterator = mSelectedFacetButtons.iterator();
+            while (iterator.hasNext()) {
+                CarFacetButton carFacetButton = iterator.next();
+                if (carFacetButton.getDisplayId() == currentValidStackInfo.displayId) {
+                    //update view
+                    carFacetButton.updateTextView(textValue);
+                }
+            }
+        }
+    }
+
+    public void updateCarStatusBar(String className, String iconType, int iconLevel) {
+        if (mSelectedFacetButtons != null && currentValidStackInfo != null && currentValidStackInfo.topActivity.getClassName().equals(className)) {
+            Iterator<CarFacetButton> iterator = mSelectedFacetButtons.iterator();
+            while (iterator.hasNext()) {
+                CarFacetButton carFacetButton = iterator.next();
+                if (carFacetButton.getDisplayId() == currentValidStackInfo.displayId) {
+                    //update view
+                    carFacetButton.updateIcon(iconType, iconLevel);
+                }
+            }
+        }
+    }
+    
 }

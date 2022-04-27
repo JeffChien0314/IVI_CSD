@@ -116,6 +116,7 @@ import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.android.systemui.statusbar.policy.ZenModeController;
 import com.android.systemui.volume.VolumeUI;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -182,6 +183,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
     // The container for the notifications.
     private CarNotificationView mNotificationView;
     private RecyclerView mNotificationList;
+    private NotificationsAdapter mNotificationsAdapter;
     // The handler bar view at the bottom of notification shade.
     private View mHandleBar;
     // The controller for the notification view.
@@ -648,6 +650,7 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         CarSystemUIFactory factory = SystemUIFactory.getInstance();
         mCarFacetButtonController = factory.getCarDependencyComponent()
                 .getCarFacetButtonController();
+		mCarFacetButtonController.registerReceiver();
         mNotificationPanelBackground = getDefaultWallpaper();
         mScrimController.setScrimBehindDrawable(mNotificationPanelBackground);
 
@@ -791,6 +794,10 @@ public class CarStatusBar extends StatusBar implements CarBatteryController.Batt
         });
 
         mNotificationList = mNotificationView.findViewById(R.id.notifications);
+        mNotificationsAdapter = new NotificationsAdapter(mContext,mNotificationClickHandlerFactory); //self-defined NotificationList
+        mNotificationList.setLayoutManager(new LinearLayoutManager(mContext));
+        mNotificationList.setAdapter(mNotificationsAdapter);
+
         mNotificationList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {

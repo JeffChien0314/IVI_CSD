@@ -32,4 +32,11 @@
         <attr name="android:minEms"/>
         <attr name="android:textAppearance"/>
     </declare-styleable>
+
+    <declare-styleable name="IndicatorVerticalSeekBar">
+        <attr name="indicator_count" format="integer" />
+        <attr name="indicator_color" format="integer" />
+        <attr name="indicator_width" format="dimension" />
+    </declare-styleable>
+
 </resources>

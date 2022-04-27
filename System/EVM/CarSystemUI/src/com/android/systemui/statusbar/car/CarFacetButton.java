@@ -25,11 +25,13 @@ import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.android.keyguard.AlphaOptimizedImageButton;
 import com.android.systemui.CarSystemUIFactory;
 import com.android.systemui.R;
 import com.android.systemui.SystemUIFactory;
+import android.util.Log;
 
 /**
  * CarFacetButton is a ui component designed to be used as a shortcut for an app of a defined
@@ -54,6 +56,7 @@ public class CarFacetButton extends LinearLayout {
     private Context mContext;
     private AlphaOptimizedImageButton mIcon;
     private AlphaOptimizedImageButton mMoreIcon;
+    private TextView mText; 
     private boolean mSelected = false;
     private String[] mComponentNames;
     /** App categories that are to be used with this widget */
@@ -66,7 +69,11 @@ public class CarFacetButton extends LinearLayout {
      * selected
      */
     private int mSelectedIconResourceId;
+    private boolean mUseIcon=true;
     private boolean mUseMoreIcon = true;
+    private boolean mUseText = false;
+    private float mTextSize;
+    private String mDefaultValue;
     private float mSelectedAlpha = 1f;
     private float mUnselectedAlpha = 1f;
 
@@ -111,6 +118,7 @@ public class CarFacetButton extends LinearLayout {
             }
 
             intent.putExtra(EXTRA_FACET_LAUNCH_PICKER, mSelected);
+            if (mDefaultValue != null) intent.putExtra("defaultValue", mDefaultValue);
             setOnClickListener(getButtonClickListener(intent));
 
             if (longPressIntentString != null) {
@@ -148,6 +156,9 @@ public class CarFacetButton extends LinearLayout {
         mUnselectedAlpha = styledAttributes.getFloat(
                 R.styleable.CarFacetButton_unselectedAlpha, mUnselectedAlpha);
         mIcon = findViewById(R.id.car_nav_button_icon);
+        mUseIcon = styledAttributes.getBoolean(R.styleable.CarFacetButton_useIcon, true);
+        mIcon.setVisibility(mUseIcon ? VISIBLE : GONE);
+        if(mUseIcon){
         mIcon.setScaleType(ImageView.ScaleType.CENTER);
         mIcon.setClickable(false);
         mIcon.setAlpha(mUnselectedAlpha);
@@ -155,13 +166,27 @@ public class CarFacetButton extends LinearLayout {
         mIcon.setImageResource(mIconResourceId);
         mSelectedIconResourceId = styledAttributes.getResourceId(
                 R.styleable.CarFacetButton_selectedIcon, mIconResourceId);
+         }        
+        
 
         mMoreIcon = findViewById(R.id.car_nav_button_more_icon);
         mMoreIcon.setClickable(false);
         mMoreIcon.setAlpha(mSelectedAlpha);
         mMoreIcon.setVisibility(GONE);
         mUseMoreIcon = styledAttributes.getBoolean(R.styleable.CarFacetButton_useMoreIcon, true);
+
+        mDefaultValue = styledAttributes.getString(R.styleable.CarFacetButton_initValue);
+
+        mText = findViewById(R.id.car_nav_text);
+        mUseText = styledAttributes.getBoolean(R.styleable.CarFacetButton_useText, false);
+        mText.setVisibility(mUseText ? VISIBLE : GONE);
+        if (mUseText) {
+            mTextSize = styledAttributes.getDimension(R.styleable.CarFacetButton_textSize, 15);
+            mText.setTextSize(mTextSize);
+            if (mDefaultValue != null) mText.setText(mDefaultValue);
     }
+    }
+
 
     /**
      * @return The app categories the component represents
@@ -212,11 +237,57 @@ public class CarFacetButton extends LinearLayout {
      */
     public void setSelected(boolean selected, boolean showMoreIcon) {
         mSelected = selected;
+        if(mUseIcon){
         mIcon.setAlpha(mSelected ? mSelectedAlpha : mUnselectedAlpha);
         mIcon.setImageResource(mSelected ? mSelectedIconResourceId : mIconResourceId);
+        }        
         if (mUseMoreIcon) {
             mMoreIcon.setVisibility(showMoreIcon ? VISIBLE : GONE);
         }
+    }
+
+    /**
+     * Updates the textView diaplay
+     *
+     */
+    public void updateTextView(String value) {
+        if (mUseText) mText.setText(value);
+        mDefaultValue = value;
+    }
+
+    /**
+     * Updates the icon diaplay
+     *
+     */
+    public void updateIcon(String iconType, int iconLevel) {
+        if (iconType.equals("volume")) {
+            if (iconLevel == 0) {
+                mIconResourceId = R.drawable.icon_volume_normal_mute;
+                mSelectedIconResourceId = R.drawable.icon_volume_pressed_mute;
+            } else if (iconLevel > 0 && iconLevel <= 10) {
+                mIconResourceId = R.drawable.icon_volume_normal_1;
+                mSelectedIconResourceId = R.drawable.icon_volume_pressed_1;
+            } else if (iconLevel > 10 && iconLevel <= 20) {
+                mIconResourceId = R.drawable.icon_volume_normal_2;
+                mSelectedIconResourceId = R.drawable.icon_volume_pressed_2;
+            } else if (iconLevel > 20 && iconLevel <= 30) {
+                mIconResourceId = R.drawable.icon_volume_normal_3;
+                mSelectedIconResourceId = R.drawable.icon_volume_pressed_3;
+            }
+            mDefaultValue = iconLevel + "";
+            setSelected(true);
+        }
+    }
+
+
+    /**
+     * Get the textView diaplay
+     *
+     */
+    public String getTextViewValue() {
+        if (mUseText) {
+            return mText.getText().toString();
+        } else return null;
     }
 
     /**
