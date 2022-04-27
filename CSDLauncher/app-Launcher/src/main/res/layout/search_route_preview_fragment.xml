@@ -111,15 +111,27 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/direction_steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nav_layout"
+        android:layout_marginTop="72px"
+        android:layout_marginLeft="30px"
+        android:text="Steps"
+        android:textSize="30px"
+        android:textColor="#ffffff">
+
+    </TextView>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/direction_recyclerview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/nav_layout"
+        android:layout_below="@+id/direction_steps"
         android:layout_marginLeft="30px"
         android:layout_marginTop="30px"
-        android:layout_marginRight="30px"
-        android:visibility="visible">
+        android:layout_marginRight="30px">
 
     </androidx.recyclerview.widget.RecyclerView>
 

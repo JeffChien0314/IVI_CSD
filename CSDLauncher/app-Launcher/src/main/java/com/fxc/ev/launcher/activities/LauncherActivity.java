@@ -258,6 +258,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private double poiSearchScale;//Jerry@20220415 add
 
     //metis@0422 更新route信息到路线规划页面 -->
+    private boolean isUpdateInstruction;
+
+    public void setUpdateInstruction(boolean isUpdateInstruction) {
+        this.isUpdateInstruction = isUpdateInstruction;
+    }
+
     private OnRouteInfoUpdateListener mOnRouteInfoUpdateListener;
 
     public interface OnRouteInfoUpdateListener {
@@ -266,6 +272,16 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     public void setOnRouteInfoUpdateListener(OnRouteInfoUpdateListener onRouteInfoUpdateListener) {
         mOnRouteInfoUpdateListener = onRouteInfoUpdateListener;
+    }
+
+    private OnInstructionUpdateListener mOnInstructionUpdateListener;
+
+    public interface OnInstructionUpdateListener {
+        void OnInstructionUpdate(int distanceToInstructionInMeters, List<Instruction> instructionList);
+    }
+
+    public void setOnInstructionUpdateListener(OnInstructionUpdateListener onInstructionUpdateListener) {
+        mOnInstructionUpdateListener = onInstructionUpdateListener;
     }
     //metis@0422 更新route信息到路线规划页面 <--
 
@@ -761,6 +777,18 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             public void onNextInstructionChange(int distanceToInstructionInMeters, List<Instruction> instructions) {
                 int visibility = View.GONE;
                 if (!instructions.isEmpty()) {
+                    //metis@0426 传递instruction数据到路线规划 -->
+                    if (isUpdateInstruction == true && mOnInstructionUpdateListener != null) {
+                        mOnInstructionUpdateListener.OnInstructionUpdate(distanceToInstructionInMeters, instructions);
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                trip.stopPreview();
+                            }
+                        },1000);
+                    }
+                    //metis@0426 传递instruction数据到路线规划 <--
+
                     getNextInstructionPanelView().update(distanceToInstructionInMeters, instructions);
                     visibility = View.VISIBLE;
                     if (View.VISIBLE == searchButton.getVisibility()) {//Jerry@20220314
@@ -996,6 +1024,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 if (trip != null) {
                     trip.removeListener(tripUpdateListener);
                     tripUpdateListener = null;
+                    trip.stopPreview();
                     navigation.deleteTrip(trip);
                     trip = null;
                 }
@@ -1025,12 +1054,22 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     if (mOnRouteInfoUpdateListener != null) {
                         mOnRouteInfoUpdateListener.OnRouteInfoUpdate(trip.routeList().get(0));
                     }
+                    navigation.startNavigation(trip);
+                    trip.startPreview(Constants.SPEED_MULTIPLIER);
+                    hideEtaPanel();
+                    hideNextInstructionPanel();
+                    isUpdateInstruction = true;
                 } else {
                     Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
                     tripRenderer.addClickListener(new TripRendererClickListener() {
                         @Override
                         public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
                             trip.setPreferredRoute(route);
+                            navigation.startNavigation(trip);
+                            trip.startPreview(Constants.SPEED_MULTIPLIER);
+                            hideEtaPanel();
+                            hideNextInstructionPanel();
+                            isUpdateInstruction = true;
                             if (mOnRouteInfoUpdateListener != null) {
                                 mOnRouteInfoUpdateListener.OnRouteInfoUpdate(route);
                             }

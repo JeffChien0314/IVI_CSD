@@ -1,5 +1,7 @@
 package com.fxc.ev.launcher.maps.search;
 
+import static com.tomtom.navkit2.guidance.Instruction.DrivingSide.RIGHT;
+
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,22 +16,29 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.activities.LauncherActivity;
 import com.fxc.ev.launcher.utils.DistanceConversions;
-import com.fxc.ev.launcher.utils.EtaFormatter;
 import com.fxc.ev.launcher.utils.NavigationTimeParser;
 import com.fxc.ev.launcher.utils.SpUtils;
+import com.fxc.ev.launcher.utils.SpaceItemDecoration;
+import com.tomtom.navkit2.guidance.Instruction;
+import com.tomtom.navkit2.guidance.InstructionBuilder;
+import com.tomtom.navkit2.guidance.RoadInformation;
+import com.tomtom.navkit2.guidance.Turn;
 import com.tomtom.navkit2.navigation.Navigation;
 import com.tomtom.navkit2.navigation.Route;
 import com.tomtom.navkit2.navigation.RouteProgress;
 import com.tomtom.navkit2.navigation.Trip;
 import com.tomtom.navkit2.navigation.TripPlan;
+import com.tomtom.navkit2.navigation.common.StringVector;
 import com.tomtom.navkit2.place.Coordinate;
-import com.tomtom.navkit2.place.Location;
 
+import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 
@@ -45,7 +54,9 @@ public class RoutePreviewFragment extends Fragment {
     private LinearLayout mNavLayout;
     private TextView mNavDistance;
     private TextView mNavTime;
+    private ImageView mIconGo;
     private RecyclerView mDirectionRecyclerView;
+    private InstructionAdapter mInstructionAdapter;
     private SearchResultItem mSearchResultItem;
     private FavEditItem mCurFavEditItem;
     //private SearchFragment mSearchFragment;
@@ -59,6 +70,7 @@ public class RoutePreviewFragment extends Fragment {
     private TripPlan mTripPlan;
     private Coordinate mCoordinate;
     private NavigationTimeParser mNavigationTimeParser;
+    private List<Instructions> instructionsList = new ArrayList<>();
 
     /*public RoutePreviewFragment(SearchFragment searchFragment) {
         this.mSearchFragment = searchFragment;
@@ -72,6 +84,8 @@ public class RoutePreviewFragment extends Fragment {
         mRoutePreviewFragment = this;
         favEditItemList = SpUtils.getDataList(launcherActivity, "favorites_edit_item_list", "favorites", FavEditItem.class);
         mCurFavEditItem = createFavEditItem(mSearchResultItem);
+        mCoordinate = mSearchResultItem.getCoordinate();
+        //createInstruction();
         initView();
         initRoutes();
         return mRootView;
@@ -114,6 +128,15 @@ public class RoutePreviewFragment extends Fragment {
             }
         });
 
+        mIconGo = mRootView.findViewById(R.id.icon_go);
+        mIconGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                launcherActivity.startNavigation(launcherActivity.toMapCoordinate(mCoordinate));
+                launcherActivity.getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            }
+        });
+
         mPoiName = mRootView.findViewById(R.id.poi_name);
         mPoiName.setText(mSearchResultItem.getName());
         mPoiAddress = mRootView.findViewById(R.id.poi_address);
@@ -127,12 +150,18 @@ public class RoutePreviewFragment extends Fragment {
         });
         mNavTime = mRootView.findViewById(R.id.nav_time);
         mNavDistance = mRootView.findViewById(R.id.nav_distance);
+
         mDirectionRecyclerView = mRootView.findViewById(R.id.direction_recyclerview);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
+        mDirectionRecyclerView.addItemDecoration(spaceItemDecoration);
+        mDirectionRecyclerView.setLayoutManager(linearLayoutManager);
+        mInstructionAdapter = new InstructionAdapter(launcherActivity, instructionsList);
+        mDirectionRecyclerView.setAdapter(mInstructionAdapter);
     }
 
     private void initRoutes() {
         mNavigationTimeParser = new NavigationTimeParser(launcherActivity);
-        mCoordinate = mSearchResultItem.getCoordinate();
         new Handler().post(new Runnable() {
             @Override
             public void run() {
@@ -145,17 +174,25 @@ public class RoutePreviewFragment extends Fragment {
                 String countryCode = launcherActivity.getCurrentCountryCode();
                 RouteProgress routeProgress = route.snapshot().progress();
                 GregorianCalendar eta = routeProgress.eta();
+
                 DistanceConversions.FormattedDistance fd = DistanceConversions.convert((int) (routeProgress.remainingLengthInCm() / 100), countryCode);
-
                 String remainingRouteLength = fd.distance + " " + fd.unit;
-                int remainingTimeInSeconds = routeProgress.remainingTimeInSeconds() + routeProgress.remainingTrafficDelayInSeconds();
 
+                int remainingTimeInSeconds = routeProgress.remainingTimeInSeconds() + routeProgress.remainingTrafficDelayInSeconds();
                 String arrivalTime = mNavigationTimeParser.parserSecondToTime(remainingTimeInSeconds).substring(2) + " " + mNavigationTimeParser.getCurrentTime(eta.getTime());
 
-                Log.v(TAG, "remainingRouteLength: " + remainingRouteLength);
-                Log.v(TAG, "arrivalTime: " + arrivalTime);
                 mNavDistance.setText(remainingRouteLength);
                 mNavTime.setText(arrivalTime);
+            }
+        });
+
+        launcherActivity.setOnInstructionUpdateListener(new LauncherActivity.OnInstructionUpdateListener() {
+            @Override
+            public void OnInstructionUpdate(int distanceToInstructionInMeters, List<Instruction> instructionList) {
+                launcherActivity.setUpdateInstruction(false);
+                if (instructionsList.size() != 0) instructionsList.clear();
+                instructionsList.add(new Instructions(distanceToInstructionInMeters, instructionList.get(0)));
+                mInstructionAdapter.notifyDataSetChanged();
             }
         });
     }
