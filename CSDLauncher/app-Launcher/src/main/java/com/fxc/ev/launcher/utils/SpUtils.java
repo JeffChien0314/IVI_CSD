@@ -130,7 +130,7 @@ public class SpUtils {
             favName.setTextColor(launcherActivity.getResources().getColor(favEditItem.getTextColor()));
             favImg.setImageResource(favEditItem.getImage());
             itemLayout.setBackgroundResource(favEditItem.getBackground());
-            itemLayout.setTag(favName.getText().toString());
+            itemLayout.setTag(i);
 
             itemLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -141,7 +141,7 @@ public class SpUtils {
                         new Handler().post(new Runnable() {
                             @Override
                             public void run() {
-                                searchFragment.go2SearchFromMainPage(FROM_MAIN_PAGE, (String) v.getTag());
+                                searchFragment.go2SearchFromFavorites(FROM_MAIN_PAGE, (int) v.getTag());
                             }
                         });
                     } else {

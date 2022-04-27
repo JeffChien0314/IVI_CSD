@@ -785,7 +785,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                             public void run() {
                                 trip.stopPreview();
                             }
-                        },1000);
+                        }, 1000);
                     }
                     //metis@0426 传递instruction数据到路线规划 <--
 
@@ -854,32 +854,17 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     //metis@0423 刷新Home&Office数据 -->
     public void refreshFavoriteContent() {
-        if (mFavEditItemList.size() != 0) mFavEditItemList.clear();
-        List<FavEditItem> favEditItemList = SpUtils.getDataList(this, "favorites_edit_item_list", "favorites", FavEditItem.class);
-        if (favEditItemList.size() == 0) {
-            favEditItemList.add(new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
-            favEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
-            SpUtils.setDataList(this, "favorites_edit_item_list", "favorites", favEditItemList);
-        }
-        for (FavEditItem favEditItem : favEditItemList) {
-            if (favEditItem.getName().equals("Home") || favEditItem.getName().equals("Office")) {
-                mFavEditItemList.add(favEditItem);
-            }
-        }
-
+        mFavEditItemList = SpUtils.getDataList(this, "favorites_edit_item_list", "favorites", FavEditItem.class);
         if (mFavEditItemList.size() == 0) {
             mFavEditItemList.add(new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
             mFavEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
-        } else if (mFavEditItemList.size() == 1) {
-            if (mFavEditItemList.get(0).getName().equals("Home")) {
-                mFavEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
-            } else if (mFavEditItemList.get(0).getName().equals("Office")) {
-                mFavEditItemList.add(0, new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
-            }
+            SpUtils.setDataList(this, "favorites_edit_item_list", "favorites", mFavEditItemList);
         }
-
         launcherFavLayout.removeAllViews();
-        SpUtils.createFavLayout(this, launcherFavLayout, mFavEditItemList);
+        if (mFavEditItemList.size() != 0
+                && !mFavEditItemList.get(0).getName().equals(com.fxc.ev.launcher.maps.search.Constants.ADD_FAVORITE)) {
+            SpUtils.createFavLayout(this, launcherFavLayout, SpUtils.clipList(mFavEditItemList, 2));
+        }
         setMapWidgetVisibility(View.VISIBLE);
     }
     //metis@0423 刷新Home&Office数据 <--

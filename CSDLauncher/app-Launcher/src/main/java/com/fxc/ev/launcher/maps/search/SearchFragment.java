@@ -262,13 +262,6 @@ public class SearchFragment extends Fragment {
                         searchEditText.setText("");
                         if (searchResultItem.getSearchType().equals(TYPE_FAVORITE)) {
                             mSearchType = TYPE_SEARCH; //reset mSearchType value to search
-                            if (mSourceType.equals(FROM_MAIN_PAGE)) {
-                                updateItemDataForMainPage(clickName, searchResultItem);
-                                launcherActivity.getSupportFragmentManager().popBackStack();
-                                launcherActivity.refreshFavoriteContent();
-                                return;
-                            }
-
                             updateItemData(clickIndex, mFavEditItemList, favItemEnableBg, textEnableColor, searchResultItem);
                             SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
                             if (mSourceType.equals(FROM_SEARCH_PAGE)) {
@@ -280,8 +273,10 @@ public class SearchFragment extends Fragment {
                             } else if (mSourceType.equals(FROM_FAV_EDIT_PAGE)) {
                                 //FavoritesEditFragment favoritesEditFragment = new FavoritesEditFragment();
                                 launcherActivity.setCurrentFragment(mFavoritesEditFragment);
+                            } else if (mSourceType.equals(FROM_MAIN_PAGE)) {
+                                launcherActivity.getSupportFragmentManager().popBackStack();
+                                launcherActivity.refreshFavoriteContent();
                             }
-
                         } else {
                             RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
                             launcherActivity.setCurrentFragment(routePreviewFragment);
@@ -322,13 +317,6 @@ public class SearchFragment extends Fragment {
         });
 
         mFavEditItemList = SpUtils.getDataList(launcherActivity, "favorites_edit_item_list", "favorites", FavEditItem.class);
-        Log.v(TAG, "mFavEditItemList:" + mFavEditItemList.size());
-        /*if (mFavEditItemList.size() == 0) {
-            mFavEditItemList.add(new FavEditItem("Home", homeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
-            mFavEditItemList.add(new FavEditItem("Office", officeDisableIcon, favItemDisableBg, textDisableColor, null, "Set Location"));
-            SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
-        }*/
-
         mInterestEditItemList = SpUtils.getDataList(launcherActivity, "interest_edit_list", "interest", FavEditItem.class);
         if (mInterestEditItemList.size() == 0) {
             mInterestEditItemList.add(new FavEditItem("Parking", parkingIcon, parkingBg, textEnableColor, null, null));
@@ -494,13 +482,13 @@ public class SearchFragment extends Fragment {
         showSoftInput();
     }
 
-    public void go2SearchFromMainPage(String sourceType, String name) {
+    /*public void go2SearchFromMainPage(String sourceType, String name) {
         searchEditText.requestFocus();
         mSearchType = TYPE_FAVORITE;
         mSourceType = sourceType;
         clickName = name;
         showSoftInput();
-    }
+    }*/
 
     public void go2SearchFromInterest(FavEditItem favEditItem) {
         curFavEditItem = favEditItem;
@@ -603,41 +591,20 @@ public class SearchFragment extends Fragment {
     }
 
     private void updateItemDataForMainPage(String clickName, SearchResultItem searchResultItem) {
-        if (mFavEditItemList.size() == 1 && mFavEditItemList.get(0).getName().equals(Constants.ADD_FAVORITE)) {
-            mFavEditItemList.clear();
+        FavEditItem favEditItem = new FavEditItem();
+        favEditItem.setBackground(favItemEnableBg);
+        favEditItem.setTextColor(textEnableColor);
+        favEditItem.setCoordinate(searchResultItem.getCoordinate().toString());
+        favEditItem.setAddress(searchResultItem.getAddress());
+        favEditItem.setDistance(searchResultItem.getDistance());
+        if (clickName.equals("Home")) {
+            favEditItem.setName("Home");
+            favEditItem.setImage(homeEnableIcon);
+        } else if (clickName.equals("Office")) {
+            favEditItem.setName("Office");
+            favEditItem.setImage(officeEnableIcon);
         }
-        if (isContains(mFavEditItemList, clickName)) {
-            for (FavEditItem favEditItem : mFavEditItemList) {
-                if (favEditItem.getName().equals(clickName)) {
-                    if (favEditItem.getName().equals("Home")) {
-                        favEditItem.setImage(homeEnableIcon);
-                    } else if (favEditItem.getName().equals("Office")) {
-                        favEditItem.setImage(officeEnableIcon);
-                    }
-                    favEditItem.setBackground(favItemEnableBg);
-                    favEditItem.setTextColor(textEnableColor);
-                    favEditItem.setCoordinate(searchResultItem.getCoordinate().toString());
-                    favEditItem.setAddress(searchResultItem.getAddress());
-                    favEditItem.setDistance(searchResultItem.getDistance());
-                }
-            }
-        } else {
-            FavEditItem favEditItem = new FavEditItem();
-            favEditItem.setBackground(favItemEnableBg);
-            favEditItem.setTextColor(textEnableColor);
-            favEditItem.setCoordinate(searchResultItem.getCoordinate().toString());
-            favEditItem.setAddress(searchResultItem.getAddress());
-            favEditItem.setDistance(searchResultItem.getDistance());
-            if (clickName.equals("Home")) {
-                favEditItem.setName("Home");
-                favEditItem.setImage(homeEnableIcon);
-                mFavEditItemList.add(0, favEditItem);
-            } else if (clickName.equals("Office")) {
-                favEditItem.setName("Office");
-                favEditItem.setImage(officeEnableIcon);
-                mFavEditItemList.add(favEditItem);
-            }
-        }
+        mFavEditItemList.add(favEditItem);
         SpUtils.setDataList(launcherActivity, "favorites_edit_item_list", "favorites", mFavEditItemList);
     }
 

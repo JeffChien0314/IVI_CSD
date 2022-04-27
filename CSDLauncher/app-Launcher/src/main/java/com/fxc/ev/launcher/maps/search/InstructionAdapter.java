@@ -70,11 +70,14 @@ public class InstructionAdapter extends RecyclerView.Adapter<InstructionAdapter.
         }
 
         public void initHolder(Instructions instruction) {
-
             DistanceConversions.FormattedDistance fd = DistanceConversions.convert((int) (instruction.getDistance()), mLauncherActivity.getCurrentCountryCode());
             interval.setText(fd.distance + " " + fd.unit);
-            direction.setText(instruction.getInstruction().getTurn().getDirection().name());
-            road.setText(instruction.getInstruction().getNextSignificantRoad().getStreetName());
+            if (instruction.getInstruction().getTurn() != null) {
+                direction.setText(instruction.getInstruction().getTurn().getDirection().name());
+            }
+            if (instruction.getInstruction().getNextSignificantRoad() != null) {
+                road.setText(instruction.getInstruction().getNextSignificantRoad().getStreetName());
+            }
             nextInstructionImageHelper.setManeuverImageForInstruction(directionIcon, instruction.getInstruction());
         }
     }
