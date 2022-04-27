@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="menu_nornal">#80FFFFFF</color>
     <color name="menu_select">#58AFFF</color>
+    <color name="button_text_nornal">#BFFFFFFF</color>
+    <color name="button_text_select">#F6BB6D</color>
 </resources>

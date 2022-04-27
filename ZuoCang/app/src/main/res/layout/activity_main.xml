@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -90,10 +90,7 @@
                 android:layout_marginBottom="10px"/>
 
         </RelativeLayout>-->
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            >
+
         <ListView
             android:id="@+id/menu_item_list"
             android:layout_width="270px"
@@ -105,16 +102,25 @@
             android:listSelector="@android:color/transparent"
             android:divider="@null"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/door_windows_layout"
+            app:layout_constraintRight_toLeftOf="@+id/all_detail_scroll"
             tools:ignore="MissingConstraints" />
-
+        <ScrollView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/all_detail_scroll"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/menu_item_list"
+            tools:ignore="MissingConstraints">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="810px"
+            android:layout_height="match_parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintLeft_toRightOf="@+id/menu_item_list">
                      <androidx.constraintlayout.widget.ConstraintLayout
-                         android:layout_width="810px"
+                         android:layout_width="match_parent"
                          android:layout_height="match_parent"
                          android:paddingTop="67px"
                          android:layout_marginLeft="60px"
-                         app:layout_constraintRight_toRightOf="parent"
-                         app:layout_constraintLeft_toRightOf="@+id/menu_item_list"
                          android:id="@+id/door_windows_layout">
                              <TextView
                                  android:id="@+id/door_title"
@@ -506,25 +512,25 @@
                              </LinearLayout>
                      </androidx.constraintlayout.widget.ConstraintLayout>
                 <View
-                    android:id="@+id/middle_divider"
+                    android:id="@+id/middle_door_window_divider"
                     android:layout_width="750px"
                     android:layout_height="3px"
                     android:layout_marginTop="60px"
-                    android:layout_marginLeft="60px"
+                    android:layout_marginLeft="30px"
                     android:background="#40FFFFFF"
                     android:gravity="center"
-                    app:layout_constraintLeft_toRightOf="@+id/menu_item_list"
                     app:layout_constraintRight_toRightOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/door_windows_layout" />
+
+
                 <androidx.constraintlayout.widget.ConstraintLayout
                              android:layout_width="match_parent"
                              android:layout_height="match_parent"
                              android:paddingTop="67px"
-                             android:layout_marginLeft="330px"
+                             android:layout_marginLeft="60px"
                              android:orientation="vertical"
-                             app:layout_constraintLeft_toRightOf="@+id/menu_item_list"
                              app:layout_constraintRight_toRightOf="parent"
-                             app:layout_constraintTop_toBottomOf="@+id/middle_divider"
+                             app:layout_constraintTop_toBottomOf="@+id/middle_door_window_divider"
                              android:id="@+id/lights_layout">
                              <TextView
                                  android:id="@+id/lights_title"
@@ -550,21 +556,16 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="30px"
                             android:orientation="horizontal"
+                            android:background="@drawable/bg_exterior_lights"
                             app:layout_constraintTop_toBottomOf="@+id/lights_type"
                             tools:ignore="MissingConstraints">
                                 <ImageView
                                     android:id="@+id/exterior_light_auto"
                                     android:layout_width="120px"
                                     android:layout_height="90px"
-                                    android:background="@drawable/bg_bnt_light_auto"
                                     android:clickable="true"
                                     android:src="@drawable/selector_exterio_light_auto" />
-                                <LinearLayout
-                                    android:id="@+id/exterior_high_low_beam_light_layout"
-                                    android:layout_width="360px"
-                                    android:layout_height="90px"
-                                    android:paddingRight="30px"
-                                    android:background="@drawable/bg_exterior_lights">
+
                                 <ImageView
                                     android:id="@+id/exterior_light_low_beam"
                                     android:layout_width="120px"
@@ -597,7 +598,6 @@
                                     android:src="@drawable/selector_exterior_light_off"/>
                                 </LinearLayout>
 
-                        </LinearLayout>
                         <ImageView
                             android:id="@+id/exterior_high_beam_light_auto"
                             android:layout_width="120px"
@@ -611,7 +611,7 @@
                             app:layout_constraintRight_toRightOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/lights_type" />
                         <LinearLayout
-                            android:id="@+id/frog_right_layout"
+                            android:id="@+id/frog_light_layout"
                             android:layout_width="258px"
                             android:layout_height="90px"
                             android:layout_marginTop="30px"
@@ -620,19 +620,17 @@
                             tools:ignore="MissingConstraints">
 
                                 <ImageView
-                                    android:id="@+id/front_light"
+                                    android:id="@+id/frog_front_light"
                                     android:layout_width="120px"
                                     android:layout_height="90px"
-                                    android:background="#1AFFFFFF"
                                     android:clickable="true"
                                     android:src="@drawable/selector_front_light" />
 
                                 <ImageView
-                                    android:id="@+id/rear_light"
+                                    android:id="@+id/frog_rear_light"
                                     android:layout_width="120px"
                                     android:layout_height="90px"
                                     android:layout_marginLeft="18px"
-                                    android:background="#1AFFFFFF"
                                     android:clickable="true"
                                     android:src="@drawable/selector_rear_light" />
                         </LinearLayout>
@@ -643,9 +641,10 @@
                             android:layout_marginTop="60px"
                             android:orientation="horizontal"
                             android:gravity="center"
-                            app:layout_constraintTop_toBottomOf="@+id/frog_right_layout"
+                            app:layout_constraintTop_toBottomOf="@+id/frog_light_layout"
                             tools:ignore="MissingConstraints">
                                 <Switch
+                                    android:id="@+id/frontlight_system_switch"
                                     android:layout_width="84px"
                                     android:layout_height="45px"
                                     android:background="@drawable/bg_switch"
@@ -676,16 +675,807 @@
                             android:textSize="28px"
                             app:layout_constraintTop_toBottomOf="@+id/adaptive_Frontlight_layout"
                             tools:ignore="MissingConstraints" />
+                        <LinearLayout
+                            android:id="@+id/rear_roof_light_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30px"
+                            app:layout_constraintTop_toBottomOf="@+id/rear_roof_light_tital"
+                            tools:ignore="MissingConstraints">
+                                <ImageView
+                                    android:id="@+id/reading_light_l"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:layout_marginRight="18px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_reading_light_l" />
+                                <ImageView
+                                    android:id="@+id/reading_light"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:layout_marginRight="18px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_reading_light" />
+                                <ImageView
+                                    android:id="@+id/reading_light_r"
+                                    android:layout_width="120px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:layout_marginRight="30px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_reading_light_r" />
+                                <ImageView
+                                    android:id="@+id/pubble_light"
+                                    android:layout_width="150px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_puddle_light"/>
+                        </LinearLayout>
 
-                         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
-
-
-
+                        <LinearLayout
+                            android:id="@+id/ambient_turn_on_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="67px"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            app:layout_constraintTop_toBottomOf="@+id/rear_roof_light_layout"
+                            tools:ignore="MissingConstraints">
+                                <TextView
+                                    android:id="@+id/ambient_title"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="46px"
+                                    android:layout_marginRight="36px"
+                                    android:text="Ambient"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="38px" />
+                                <Switch
+                                    android:id="@+id/ambient_switch"
+                                    android:layout_width="84px"
+                                    android:layout_height="45px"
+                                    android:background="@drawable/bg_switch"
+                                    android:thumb="@android:color/transparent">
+                                </Switch>
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/ambient_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="37px"
+                            android:orientation="vertical"
+                            android:visibility="gone"
+                            app:layout_constraintTop_toBottomOf="@+id/ambient_turn_on_layout"
+                            tools:ignore="MissingConstraints">
+                        <LinearLayout
+                            android:id="@+id/ambient_control_top_layout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            app:layout_constraintTop_toBottomOf="@+id/rear_roof_light_tital"
+                            tools:ignore="MissingConstraints">
+                                <ImageView
+                                    android:id="@+id/original"
+                                    android:layout_width="150px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:layout_marginRight="30px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_original" />
+                                <ImageView
+                                    android:id="@+id/passion"
+                                    android:layout_width="150px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:layout_marginRight="30px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_passion" />
+                                <ImageView
+                                    android:id="@+id/flowing"
+                                    android:layout_width="150px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:layout_marginRight="30px"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_flowing" />
+                                <ImageView
+                                    android:id="@+id/wave"
+                                    android:layout_width="150px"
+                                    android:layout_height="90px"
+                                    android:background="@drawable/bg_exterior_lights"
+                                    android:clickable="true"
+                                    android:src="@drawable/selector_wave"/>
+                        </LinearLayout>
+                                <LinearLayout
+                                    android:id="@+id/ambient_control_down_layout"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="30px"
+                                    app:layout_constraintTop_toBottomOf="@+id/rear_roof_light_tital"
+                                    tools:ignore="MissingConstraints">
+                                        <ImageView
+                                            android:id="@+id/stars"
+                                            android:layout_width="150px"
+                                            android:layout_height="90px"
+                                            android:background="@drawable/bg_exterior_lights"
+                                            android:layout_marginRight="30px"
+                                            android:clickable="true"
+                                            android:src="@drawable/selector_stars" />
+                                        <ImageView
+                                            android:id="@+id/rainbow"
+                                            android:layout_width="150px"
+                                            android:layout_height="90px"
+                                            android:background="@drawable/bg_exterior_lights"
+                                            android:layout_marginRight="30px"
+                                            android:clickable="true"
+                                            android:src="@drawable/selector_rainbow" />
+                                        <ImageView
+                                            android:id="@+id/running"
+                                            android:layout_width="150px"
+                                            android:layout_height="90px"
+                                            android:background="@drawable/bg_exterior_lights"
+                                            android:layout_marginRight="30px"
+                                            android:clickable="true"
+                                            android:src="@drawable/selector_running" />
+                                        <ImageView
+                                            android:id="@+id/rhythm"
+                                            android:layout_width="150px"
+                                            android:layout_height="90px"
+                                            android:background="@drawable/bg_exterior_lights"
+                                            android:clickable="true"
+                                            android:src="@drawable/selector_rhythm"/>
+                                </LinearLayout>
+                                <ImageView
+                                    android:id="@+id/car_ambient_display"
+                                    android:layout_width="690px"
+                                    android:layout_height="369px"
+                                    android:layout_marginTop="30px" />
+                </LinearLayout>
                 </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:id="@+id/middle_light_divider"
+                    android:layout_width="750px"
+                    android:layout_height="3px"
+                    android:layout_marginTop="60px"
+                    android:layout_marginLeft="30px"
+                    android:background="#40FFFFFF"
+                    android:gravity="center"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/lights_layout" />
+
+
+             <androidx.constraintlayout.widget.ConstraintLayout
+                         android:layout_width="match_parent"
+                         android:layout_height="match_parent"
+                         android:paddingTop="67px"
+                         android:layout_marginLeft="60px"
+                         android:orientation="vertical"
+                         app:layout_constraintRight_toRightOf="parent"
+                         app:layout_constraintTop_toBottomOf="@+id/middle_light_divider"
+                         android:id="@+id/drive_mode_layout">
+                             <TextView
+                                 android:id="@+id/drive_mode_title"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="46px"
+                                 android:text="Drive Mode"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="38px"
+                                 tools:ignore="MissingConstraints" />
+                           <ImageView
+                                android:id="@+id/dynamic_mode_image"
+                                android:layout_width="390px"
+                                android:layout_height="260px"
+                                android:layout_marginTop="33px"
+                                android:scaleType="center"
+                                app:layout_constraintLeft_toLeftOf="parent"
+                                app:layout_constraintRight_toRightOf="parent"
+                                app:layout_constraintTop_toBottomOf="@+id/drive_mode_title" />
+                             <LinearLayout
+                                 android:id="@+id/drive_mode_detail_layout"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="wrap_content"
+                                 app:layout_constraintLeft_toLeftOf="parent"
+                                 app:layout_constraintTop_toBottomOf="@+id/dynamic_mode_image"
+                                 android:layout_marginTop="40px"
+                                 android:orientation="horizontal"
+                                 android:gravity="center_horizontal">
+                                     <Button
+                                         android:id="@+id/drive_mode_comfort"
+                                          android:layout_width="210px"
+                                          android:layout_height="90px"
+                                          android:layout_marginRight="30px"
+                                          android:text="Comfort"
+                                          android:textColor="@drawable/selector_buttton_text_color"
+                                          android:textSize="30px"
+                                          android:clickable="true"
+                                          android:textAllCaps="false"
+                                          android:background="@drawable/selector_drive_mode_button_bg">
+                                     </Button>
+                                     <Button
+                                         android:id="@+id/drive_mode_normal"
+                                         android:layout_width="210px"
+                                         android:layout_height="90px"
+                                         android:layout_marginRight="30px"
+                                         android:text="Normal"
+                                         android:textColor="@drawable/selector_buttton_text_color"
+                                         android:textSize="30px"
+                                         android:clickable="true"
+                                         android:textAllCaps="false"
+                                         android:background="@drawable/selector_drive_mode_button_bg">
+                                     </Button>
+                                     <Button
+                                         android:id="@+id/drive_mode_sport"
+                                         android:layout_width="210px"
+                                         android:layout_height="90px"
+                                         android:text="Sport"
+                                         android:textColor="@drawable/selector_buttton_text_color"
+                                         android:textSize="30px"
+                                         android:clickable="true"
+                                         android:textAllCaps="false"
+                                         android:background="@drawable/selector_drive_mode_button_bg">
+                                     </Button>
+                             </LinearLayout>
+                   </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:id="@+id/middle_drive_mode_divider"
+                    android:layout_width="750px"
+                    android:layout_height="3px"
+                    android:layout_marginTop="60px"
+                    android:layout_marginLeft="30px"
+                    android:background="#40FFFFFF"
+                    android:gravity="center"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/drive_mode_layout" />
 
 
 
-</ScrollView>
+
+           <androidx.constraintlayout.widget.ConstraintLayout
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent"
+                             android:paddingTop="67px"
+                             android:orientation="vertical"
+                             app:layout_constraintRight_toRightOf="parent"
+                             app:layout_constraintTop_toBottomOf="@+id/middle_drive_mode_divider"
+                             android:id="@+id/seats_layout">
+                             <TextView
+                                 android:id="@+id/seats_title"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="46px"
+                                 android:text="Seats"
+                                 android:paddingRight="30px"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="38px"
+                                 android:paddingLeft="60px"
+                                 tools:ignore="MissingConstraints" />
+                                 <TextView
+                                     android:id="@+id/seats_instruction"
+                                     android:layout_width="wrap_content"
+                                     android:layout_height="36px"
+                                     android:paddingTop="10px"
+                                     android:text="Tap the arrows to adjust seats"
+                                     android:textColor="#BFFFFFFF"
+                                     android:textSize="22px"
+                                     app:layout_constraintLeft_toRightOf="@+id/seats_title"
+                                     />
+                   <RelativeLayout
+                       android:layout_width="366px"
+                       android:layout_height="544px"
+                       android:layout_marginTop="37px"
+                       android:paddingLeft="30px"
+                       android:gravity="center_horizontal"
+                       android:id="@+id/seats_l_layout"
+                       app:layout_constraintTop_toBottomOf="@+id/seats_title">
+                     <ImageView
+                          android:id="@+id/arrow_l_fall_forward"
+                          android:layout_width="60px"
+                          android:layout_height="60px"
+                         android:layout_marginTop="18px"
+                          android:clickable="true"
+                          android:layout_marginLeft="88px"
+                         android:src="@drawable/selector_l_arrow_fall_forward"/>
+
+                   <ImageView
+                       android:id="@+id/arrow_l_fall_backward"
+                       android:layout_width="60px"
+                       android:layout_height="60px"
+                       android:clickable="true"
+                       android:layout_marginTop="18px"
+                       android:layout_marginLeft="4px"
+                       android:layout_marginRight="126px"
+                       android:layout_toRightOf="@+id/arrow_l_fall_forward"
+                       android:src="@drawable/selector_l_arrow_fall_backward"/>
+                           <ImageView
+                               android:id="@+id/seats_l"
+                               android:layout_width="170px"
+                               android:layout_height="234px"
+                               android:clickable="true"
+                               android:layout_marginTop="6px"
+                               android:layout_toRightOf="@+id/arrow_l_up"
+                               android:layout_below="@+id/arrow_l_fall_forward"
+                               android:src="@drawable/seat_l_normal"/>
+                   <ImageView
+                       android:id="@+id/arrow_l_up"
+                       android:layout_width="60px"
+                       android:layout_height="60px"
+                       android:clickable="true"
+                       android:layout_marginTop="87px"
+                       android:layout_marginLeft="13px"
+                       android:layout_marginRight="24px"
+                       android:src="@drawable/selector_l_arrow_up"/>
+                   <ImageView
+                       android:id="@+id/arrow_l_down"
+                       android:layout_width="60px"
+                       android:layout_height="60px"
+                       android:clickable="true"
+                       android:layout_marginTop="18px"
+                       android:layout_marginLeft="13px"
+                       android:layout_marginRight="24px"
+                       android:layout_below="@+id/arrow_l_up"
+                       android:src="@drawable/selector_l_arrow_down"/>
+
+
+                   <ImageView
+                       android:id="@+id/arrow_l_higher"
+                       android:layout_width="60px"
+                       android:layout_height="60px"
+                       android:clickable="true"
+                       android:layout_marginTop="176px"
+                       android:layout_marginLeft="2px"
+                       android:layout_toRightOf="@+id/seats_l"
+                       android:src="@drawable/selector_l_arrow_higher"/>
+                   <ImageView
+                       android:id="@+id/arrow_l_lower"
+                       android:layout_width="60px"
+                       android:layout_height="60px"
+                       android:clickable="true"
+                       android:layout_marginTop="6px"
+                       android:layout_toRightOf="@+id/seats_l"
+                       android:layout_below="@+id/arrow_l_higher"
+                       android:src="@drawable/selector_l_arrow_lower"/>
+                   <ImageView
+                       android:id="@+id/arrow_l_move_forward"
+                       android:layout_width="122px"
+                       android:layout_height="47px"
+                       android:clickable="true"
+                       android:layout_marginLeft="26px"
+                       android:layout_marginTop="269px"
+                       android:src="@drawable/selector_l_arrow_move_backward"/>
+                   <ImageView
+                       android:id="@+id/arrow_l_move_backward"
+                       android:layout_width="122px"
+                       android:layout_height="47px"
+                       android:clickable="true"
+                       android:layout_marginTop="301px"
+                       android:layout_toRightOf="@+id/arrow_l_move_forward"
+                       android:src="@drawable/selector_l_arrow_move_forwadr"/>
+
+                           <TextView
+                               android:id="@+id/message_l_title"
+                               android:layout_width="wrap_content"
+                               android:layout_height="46px"
+                               android:text="Message"
+                               android:textColor="#BFFFFFFF"
+                               android:textSize="28px"
+                               android:paddingLeft="152px"
+                               android:layout_marginTop="387px" />
+                           <LinearLayout
+                               android:id="@+id/message_l_display_layout"
+                               android:layout_width="240px"
+                               android:layout_height="60px"
+                               android:layout_marginTop="12px"
+                               android:layout_marginLeft="83px"
+                               android:background="@drawable/bg_window"
+                               android:orientation="horizontal"
+                               android:layout_below="@+id/message_l_title"
+                               android:gravity="center_horizontal">
+
+                                   <Button
+                                       android:id="@+id/message_l_reduce"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:layout_marginLeft="12px"
+                                       android:layout_marginRight="40px"
+                                       android:clickable="true"
+                                       android:background="@drawable/selector_massage_control_reduce">
+
+                                   </Button>
+                                   <TextView
+                                       android:id="@+id/l_message_number"
+                                       android:layout_width="17px"
+                                       android:layout_height="36px"
+                                       android:text="1"
+                                       android:textColor="#FFFFFF"
+                                       android:textSize="30px" />
+                                   <Button
+                                       android:id="@+id/message_l_plus"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:layout_marginLeft="40px"
+                                       android:layout_marginRight="12px"
+                                       android:background="@drawable/selector_massage_control_plus"
+                                       android:clickable="true">
+                                   </Button>
+                           </LinearLayout>
+                   </RelativeLayout>
+                   <RelativeLayout
+                       android:layout_width="366px"
+                       android:layout_height="544px"
+                       android:layout_marginLeft="20px"
+                       android:id="@+id/seat_r_layout"
+                       app:layout_constraintTop_toBottomOf="@+id/seats_title"
+                       app:layout_constraintLeft_toRightOf="@+id/seats_l_layout">
+
+                           <ImageView
+                               android:id="@+id/arrow_r_fall_farward"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:layout_marginTop="37px"
+                               android:clickable="true"
+                               android:layout_marginLeft="125px"
+                               android:src="@drawable/selector_r_arrow_fall_forward"/>
+
+                           <ImageView
+                               android:id="@+id/arrow_r_fall_backward"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="18px"
+                               android:layout_marginLeft="4px"
+                               android:layout_toRightOf="@+id/arrow_r_fall_farward"
+                               android:src="@drawable/selector_r_arrow_fall_backward"/>
+                           <ImageView
+                               android:id="@+id/seats_r"
+                               android:layout_width="170px"
+                               android:layout_height="234px"
+                               android:clickable="true"
+                               android:layout_marginTop="6px"
+                               android:layout_marginLeft="100px"
+                               android:layout_below="@+id/arrow_r_fall_backward"
+                               android:src="@drawable/seat_r_normal"/>
+
+                           <ImageView
+                               android:id="@+id/arrow_r_up"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:layout_marginLeft="24px"
+                               android:layout_marginRight="13px"
+                               android:layout_marginTop="87px"
+                               android:layout_toRightOf="@+id/seats_r"
+                               android:clickable="true"
+                               android:src="@drawable/selector_r_arrow_up" />
+                           <ImageView
+                               android:id="@+id/arrow_r_down"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="18px"
+                               android:layout_marginLeft="24px"
+                               android:layout_marginRight="13px"
+                               android:layout_toRightOf="@+id/seats_r"
+                               android:layout_below="@+id/arrow_r_up"
+                               android:src="@drawable/selector_r_arrow_down"/>
+
+                           <ImageView
+                               android:id="@+id/arrow_r_higher"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:layout_marginTop="207px"
+                               android:layout_marginLeft="42px"
+                               android:layout_toLeftOf="@+id/seats_l_layout"
+                               android:clickable="true"
+                               android:src="@drawable/selector_r_arrow_higher"
+                               tools:ignore="NotSibling" />
+                           <ImageView
+                               android:id="@+id/arrow_r_lower"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="6px"
+                               android:layout_marginLeft="42px"
+                               android:layout_toLeftOf="@+id/seats_l_layout"
+                               android:layout_below="@+id/arrow_r_higher"
+                               android:src="@drawable/selector_r_arrow_lower"
+                               tools:ignore="NotSibling"/>
+                           <ImageView
+                               android:id="@+id/arrow_r_move_forward"
+                               android:layout_width="122px"
+                               android:layout_height="47px"
+                               android:clickable="true"
+                               android:layout_marginLeft="126px"
+                               android:layout_marginTop="302px"
+                               android:src="@drawable/selector_r_arrow_move_forwadr"/>
+                           <ImageView
+                               android:id="@+id/arrow_r_move_backward"
+                               android:layout_width="122px"
+                               android:layout_height="47px"
+                               android:clickable="true"
+                               android:layout_marginTop="269px"
+                               android:layout_marginLeft="216px"
+                               android:src="@drawable/selector_r_arrow_move_backward"/>
+                           <TextView
+                               android:id="@+id/message_r_title"
+                               android:layout_width="wrap_content"
+                               android:layout_height="46px"
+                               android:text="Message"
+                               android:textColor="#BFFFFFFF"
+                               android:textSize="28px"
+                               android:layout_marginLeft="180px"
+                               android:layout_marginTop="420px" />
+                           <LinearLayout
+                               android:id="@+id/message_r_display_layout"
+                               android:layout_width="240px"
+                               android:layout_height="60px"
+                               android:layout_marginTop="12px"
+                               android:layout_marginLeft="124px"
+                               android:background="@drawable/bg_window"
+                               android:orientation="horizontal"
+                               android:layout_below="@+id/message_r_title"
+                               android:gravity="center_horizontal">
+
+                                   <Button
+                                       android:id="@+id/message_r_reduce"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:layout_marginLeft="12px"
+                                       android:layout_marginRight="40px"
+                                       android:clickable="true"
+                                       android:background="@drawable/selector_massage_control_reduce">
+
+                                   </Button>
+                                   <TextView
+                                       android:id="@+id/r_message_number"
+                                       android:layout_width="17px"
+                                       android:layout_height="36px"
+                                       android:text="1"
+                                       android:textColor="#FFFFFF"
+                                       android:textSize="30px" />
+                                   <Button
+                                       android:id="@+id/message_r_plus"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:layout_marginLeft="40px"
+                                       android:layout_marginRight="12px"
+                                       android:background="@drawable/selector_massage_control_plus"
+                                       android:clickable="true">
+                                   </Button>
+                           </LinearLayout>
+                   </RelativeLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:id="@+id/middle_seat_divider"
+                    android:layout_width="750px"
+                    android:layout_height="3px"
+                    android:layout_marginTop="50px"
+                    android:layout_marginLeft="30px"
+                    android:background="#40FFFFFF"
+                    android:gravity="center"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/seats_layout" />
+
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                             android:layout_width="match_parent"
+                             android:layout_height="match_parent"
+                             android:layout_marginTop="67px"
+                             android:layout_marginLeft="60px"
+                             android:orientation="vertical"
+                             app:layout_constraintRight_toRightOf="parent"
+                             app:layout_constraintTop_toBottomOf="@+id/middle_seat_divider"
+                             android:id="@+id/mirror_layout">
+                             <TextView
+                                 android:id="@+id/mirror_title"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="46px"
+                                 android:text="Mirror"
+                                 android:textColor="#FFFFFF"
+                                 android:textSize="38px"
+                                 tools:ignore="MissingConstraints" />
+                                 <ImageView
+                                     android:id="@+id/folder"
+                                     android:layout_width="150px"
+                                     android:layout_height="90px"
+                                     android:layout_marginLeft="60px"
+                                     android:layout_marginTop="-20px"
+                                     android:background="@drawable/selector_folder"
+                                     app:layout_constraintLeft_toRightOf="@+id/mirror_title"
+                                     />
+                        <LinearLayout
+                            android:id="@+id/mirror_display_layout"
+                            android:layout_width="690px"
+                            android:layout_height="325px"
+                            android:layout_marginTop="75px"
+                            android:orientation="horizontal"
+                            app:layout_constraintTop_toBottomOf="@+id/mirror_title">
+                                <RelativeLayout
+                                    android:layout_width="294px"
+                                    android:layout_height="257px"
+                                    android:id="@+id/mirror_l_layout">
+                                        <ImageView
+                                            android:id="@+id/mirror_l_up"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginLeft="102px"
+                                            android:src="@drawable/selector_mirror_arrow_up"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_l_down"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginTop="77px"
+                                            android:layout_marginLeft="102px"
+                                            android:layout_below="@+id/mirror_l_up"
+                                            android:src="@drawable/selector_mirror_arrow_down"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_l_left"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginTop="83px"
+                                            android:src="@drawable/selector_mirror_arrow_left"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_l_right"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginLeft="114px"
+                                            android:layout_marginTop="83px"
+                                            android:layout_toRightOf="@+id/mirror_l_left"
+                                            android:src="@drawable/selector_mirror_arrow_right"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_l"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerInParent="true"
+                                            android:src="@drawable/mirrors_l"/>
+                                </RelativeLayout>
+                                <RelativeLayout
+                                    android:layout_width="294px"
+                                    android:layout_height="257px"
+                                    android:layout_marginLeft="102px"
+                                    android:id="@+id/mirror_r_layout">
+                                        <ImageView
+                                            android:id="@+id/mirror_r_up"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginLeft="102px"
+                                            android:src="@drawable/selector_mirror_arrow_up"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_r_down"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginTop="77px"
+                                            android:layout_marginLeft="102px"
+                                            android:layout_below="@+id/mirror_r_up"
+                                            android:src="@drawable/selector_mirror_arrow_down"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_r_left"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginTop="83px"
+                                            android:src="@drawable/selector_mirror_arrow_left"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_r_right"
+                                            android:layout_width="90px"
+                                            android:layout_height="90px"
+                                            android:clickable="true"
+                                            android:layout_marginLeft="114px"
+                                            android:layout_marginTop="83px"
+                                            android:layout_toRightOf="@+id/mirror_r_left"
+                                            android:src="@drawable/selector_mirror_arrow_right"/>
+                                        <ImageView
+                                            android:id="@+id/mirror_r"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_centerInParent="true"
+                                            android:src="@drawable/mirrors_r"/>
+                                </RelativeLayout>
+                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/mirror_instruction"
+                            android:layout_width="wrap_content"
+                            android:layout_height="30px"
+                            android:text="Tap the arrows to adjust mirrors"
+                            android:textColor="#BFFFFFFF"
+                            android:textSize="22px"
+                            android:layout_marginTop="42px"
+                            android:paddingLeft="200px"
+                            android:gravity="center_horizontal"
+                            app:layout_constraintTop_toBottomOf="@+id/mirror_display_layout" />
+                        <LinearLayout
+                            android:id="@+id/mirror_swith_description1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="64px"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            app:layout_constraintTop_toBottomOf="@+id/mirror_instruction">
+                                <Switch
+                                    android:layout_width="84px"
+                                    android:layout_height="45px"
+                                    android:background="@drawable/bg_switch"
+                                    android:thumb="@android:color/transparent">
+                                </Switch>
+                                <TextView
+                                    android:id="@+id/mirror_auto_control_description1"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36px"
+                                    android:layout_marginLeft="24px"
+                                    android:text="Mirror auto fold when shifting into Park"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="30px" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/mirror_swith_description2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30px"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            app:layout_constraintTop_toBottomOf="@+id/mirror_swith_description1">
+                                <Switch
+                                    android:layout_width="84px"
+                                    android:layout_height="45px"
+                                    android:background="@drawable/bg_switch"
+                                    android:textOff=""
+                                    android:textOn=""
+                                    android:thumb="@android:color/transparent">
+                                </Switch>
+                                <TextView
+                                    android:id="@+id/mirror_auto_control_description2"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36px"
+                                    android:layout_marginLeft="24px"
+                                    android:text="Mirror auto tilt when shifting into Reverse"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="30px" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:id="@+id/mirror_swith_description3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="30px"
+                            android:orientation="horizontal"
+                            android:gravity="center"
+                            app:layout_constraintTop_toBottomOf="@+id/mirror_swith_description2">
+                                <Switch
+                                    android:layout_width="84px"
+                                    android:layout_height="45px"
+                                    android:background="@drawable/bg_switch"
+                                    android:thumb="@android:color/transparent">
+                                </Switch>
+                                <TextView
+                                    android:id="@+id/mirror_auto_control_description3"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="36px"
+                                    android:layout_marginLeft="24px"
+                                    android:text="Mirror auto fold when going through a narrow place"
+                                    android:textColor="#FFFFFF"
+                                    android:textSize="30px" />
+                        </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <View
+                    android:id="@+id/middle_mirror_divider"
+                    android:layout_width="750px"
+                    android:layout_height="3px"
+                    android:layout_marginTop="50px"
+                    android:layout_marginLeft="30px"
+                    android:background="#40FFFFFF"
+                    android:gravity="center"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/mirror_layout" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </ScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
