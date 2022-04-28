@@ -24,6 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -66,6 +67,8 @@ public class InteractiveMapActivity extends BaseActivity {
     private NextInstructionPanelView nextInstructionPanelView;
     private TextView etaTextView;
     public ConstraintLayout layout_route_avoids;//Jerry@20220427 add
+    public ImageView imageViewAvoid;//Jerry@20220428 add
+    public ConstraintLayout totalAvoids;//Jerry@20220428 add
 
     public RelativeLayout mapLayout;
     private MapView mapView;
@@ -141,7 +144,11 @@ public class InteractiveMapActivity extends BaseActivity {
     protected void initContentContainerView() {
         mapLayout = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.activity_home, null);
         mContentContainer.addView(mapLayout);
+        //Jerry@20220428 add-->
         layout_route_avoids = (ConstraintLayout) mapLayout.findViewById(R.id.layout_route_avoids);
+        imageViewAvoid = layout_route_avoids.findViewById(R.id.avoid_start);
+        totalAvoids = layout_route_avoids.findViewById(R.id.total_avoids);
+        //<--Jerry@20220428 add
         initMapView();
     }
 

@@ -4,7 +4,6 @@
     android:layout_width="180px"
     android:layout_height="wrap_content"
     android:paddingBottom="36px"
-    android:background="@drawable/layout_route_avoids"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:clickable="true">

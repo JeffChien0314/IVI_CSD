@@ -1985,12 +1985,15 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         if(layout_route_avoids.getVisibility() != visibility) {
             layout_route_avoids.setVisibility(visibility);
         }
+        if(View.VISIBLE == visibility){
+            imageViewAvoid.setVisibility(visibility);
+            totalAvoids.setVisibility(View.GONE);
+            layout_route_avoids.setBackgroundResource(R.drawable.transparent);
+        }
     }
 
     //Jerry@20220427 add:routeAvoidsSettings
     private void routeAvoidsSettings(){
-        ImageView imageViewAvoid = layout_route_avoids.findViewById(R.id.avoid_start);
-        ConstraintLayout totalAvoids = layout_route_avoids.findViewById(R.id.total_avoids);
         ImageView collapseArrow = layout_route_avoids.findViewById(R.id.collapse_arrow);
 
         ImageView tollAvoid = layout_route_avoids.findViewById(R.id.toll_avoid);
@@ -2043,6 +2046,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             public void onClick(View v) {
                 imageViewAvoid.setVisibility(View.GONE);
                 totalAvoids.setVisibility(View.VISIBLE);
+                layout_route_avoids.setBackgroundResource(R.drawable.layout_route_avoids);
             }
         });
         collapseArrow.setOnClickListener(new View.OnClickListener() {
@@ -2050,6 +2054,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             public void onClick(View v) {
                 imageViewAvoid.setVisibility(View.VISIBLE);
                 totalAvoids.setVisibility(View.GONE);
+                layout_route_avoids.setBackgroundResource(R.drawable.transparent);
             }
         });
         tollAvoid.setOnClickListener(new View.OnClickListener() {
