@@ -131,4 +131,10 @@
 	<!--metis@0309 add !-->
 	<string name="search_marker_pin_path">asset:icons@/route-markers/icon_pin.png</string>
 
+    <!--Jerry@20220426 add:route avoid !-->
+    <string name="toll_avoid_text">Tolls</string>
+    <string name="highways_avoid_text">Highways</string>
+    <string name="ferries_avoid_text">Ferries</string>
+    <string name="unpaved_avoid_text">Unpaved \n roads</string>
+
 </resources>

@@ -88,6 +88,7 @@ public class RoutePreviewFragment extends Fragment {
         //createInstruction();
         initView();
         initRoutes();
+        launcherActivity.setRouteAvoidsLayoutVisibility(View.VISIBLE);//Jerry@20220428 add:show route avoids ui
         return mRootView;
     }
 
@@ -264,6 +265,7 @@ public class RoutePreviewFragment extends Fragment {
         super.onDestroy();
         Log.v(TAG, "onDestroy");
         launcherActivity.hideRoutes();
+        launcherActivity.setRouteAvoidsLayoutVisibility(View.GONE);//Jerry@20220428 add:hide route avoids ui
     }
 
     class AddFavDialog extends FavoriteBaseDialog {

@@ -57,6 +57,7 @@ import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fxc.ev.launcher.BuildConfig;
@@ -153,6 +154,7 @@ import java.util.Scanner;
 
 import androidx.annotation.ColorInt;
 import androidx.annotation.NonNull;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -840,6 +842,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
         //metis@0309 显示搜索页面 <--
+
+        //Jerry@20220427 add:route avoids
+        routeAvoidsSettings();
 
         //Jerry@20220411 add:for map update
         mapUpdateStoragePath = new File(getExternalFilesDir(null), NDS_MAP_UPDATES_RELATIVE_PATH);
@@ -1972,5 +1977,140 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         public Marker getMarker() {
             return marker;
         }
+    }
+
+    //Jerry@20220427 add:routeAvoidsSettings
+    private void routeAvoidsSettings(){
+        ImageView imageViewAvoid = layout_route_avoids.findViewById(R.id.avoid_start);
+        ConstraintLayout totalAvoids = layout_route_avoids.findViewById(R.id.total_avoids);
+        ImageView collapseArrow = layout_route_avoids.findViewById(R.id.collapse_arrow);
+
+        ImageView tollAvoid = layout_route_avoids.findViewById(R.id.toll_avoid);
+        TextView tollAvoidText = layout_route_avoids.findViewById(R.id.toll_avoid_text);
+
+        ImageView highwayAvoid = layout_route_avoids.findViewById(R.id.highway_avoid);
+        TextView highwayAvoidText = layout_route_avoids.findViewById(R.id.highway_avoid_text);
+
+        ImageView ferryAvoid = layout_route_avoids.findViewById(R.id.ferry_avoid);
+        TextView ferryAvoidText = layout_route_avoids.findViewById(R.id.ferry_avoid_text);
+
+        ImageView unpavedAvoid = layout_route_avoids.findViewById(R.id.unpaved_avoid);
+        TextView unpavedAvoidText = layout_route_avoids.findViewById(R.id.unpaved_avoid_text);
+
+        doReadSettings();
+        if(tollsPreference == Preference.AVOID){
+            tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+            tollAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+        }else if(tollsPreference == Preference.ALLOW){
+            tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+            tollAvoidText.setTextColor(getResources().getColor(R.color.white));
+        }
+
+        if(motorwaysPreference == Preference.AVOID){
+            highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+            highwayAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+        }else if(motorwaysPreference == Preference.ALLOW){
+            highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+            highwayAvoidText.setTextColor(getResources().getColor(R.color.white));
+        }
+
+        if(ferriesPreference == Preference.AVOID){
+            ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+            ferryAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+        }else if(ferriesPreference == Preference.ALLOW){
+            ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+            ferryAvoidText.setTextColor(getResources().getColor(R.color.white));
+        }
+
+        if(unpavedPreference == Preference.AVOID){
+            unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+            unpavedAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+        }else if(unpavedPreference == Preference.ALLOW){
+            unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+            unpavedAvoidText.setTextColor(getResources().getColor(R.color.white));
+        }
+
+        imageViewAvoid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageViewAvoid.setVisibility(View.GONE);
+                totalAvoids.setVisibility(View.VISIBLE);
+            }
+        });
+        collapseArrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                imageViewAvoid.setVisibility(View.VISIBLE);
+                totalAvoids.setVisibility(View.GONE);
+            }
+        });
+        tollAvoid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
+                tollsPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_TOLLS, false)
+                        ? Preference.AVOID : Preference.ALLOW;
+                if(tollsPreference == Preference.AVOID){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_TOLLS,false).commit();
+                    tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+                    tollAvoidText.setTextColor(getResources().getColor(R.color.white));
+                }else if(tollsPreference == Preference.ALLOW){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_TOLLS,true).commit();
+                    tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+                    tollAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+                }
+            }
+        });
+        highwayAvoid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
+                motorwaysPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS, false)
+                        ? Preference.AVOID : Preference.ALLOW;
+                if(motorwaysPreference == Preference.AVOID){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS,false).commit();
+                    highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+                    highwayAvoidText.setTextColor(getResources().getColor(R.color.white));
+                }else if(motorwaysPreference == Preference.ALLOW){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS,true).commit();
+                    highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+                    highwayAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+                }
+            }
+        });
+        ferryAvoid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
+                ferriesPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_FERRIES, false)
+                        ? Preference.AVOID : Preference.ALLOW;
+                if(ferriesPreference == Preference.AVOID){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_FERRIES,false).commit();
+                    ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+                    ferryAvoidText.setTextColor(getResources().getColor(R.color.white));
+                }else if(ferriesPreference == Preference.ALLOW){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_FERRIES,true).commit();
+                    ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+                    ferryAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+                }
+            }
+        });
+        unpavedAvoid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
+                unpavedPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_UNPAVED, false)
+                        ? Preference.AVOID : Preference.ALLOW;
+                if(unpavedPreference == Preference.AVOID){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_UNPAVED,false).commit();
+                    unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
+                    unpavedAvoidText.setTextColor(getResources().getColor(R.color.white));
+                }else if(unpavedPreference == Preference.ALLOW){
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_UNPAVED,true).commit();
+                    unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
+                    unpavedAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
+                }
+            }
+        });
     }
 }

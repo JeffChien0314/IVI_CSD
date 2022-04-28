@@ -93,4 +93,6 @@
     <color name="fav_text_enable_color">#FFFFFFFF</color>
     <color name="fav_text_disable_color">#40FFFFFF</color>
     <!--metis@0316 add for search-->
+
+    <color name="route_avoids_text_color_418eff">#418eff</color>
 </resources>

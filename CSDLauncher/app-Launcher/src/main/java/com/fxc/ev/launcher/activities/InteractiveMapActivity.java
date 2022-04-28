@@ -27,6 +27,8 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import com.fxc.ev.launcher.BuildConfig;
 import com.fxc.ev.launcher.R;
 import com.fxc.ev.launcher.maps.poicatsearch.Constants;
@@ -63,6 +65,7 @@ public class InteractiveMapActivity extends BaseActivity {
     private ImageButton recenterButton;
     private NextInstructionPanelView nextInstructionPanelView;
     private TextView etaTextView;
+    public ConstraintLayout layout_route_avoids;//Jerry@20220427 add
 
     public RelativeLayout mapLayout;
     private MapView mapView;
@@ -138,6 +141,7 @@ public class InteractiveMapActivity extends BaseActivity {
     protected void initContentContainerView() {
         mapLayout = (RelativeLayout) LayoutInflater.from(this).inflate(R.layout.activity_home, null);
         mContentContainer.addView(mapLayout);
+        layout_route_avoids = (ConstraintLayout) mapLayout.findViewById(R.id.layout_route_avoids);
         initMapView();
     }
 

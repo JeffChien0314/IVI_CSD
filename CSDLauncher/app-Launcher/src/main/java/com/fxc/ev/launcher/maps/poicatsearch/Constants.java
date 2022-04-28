@@ -53,4 +53,6 @@ public class Constants {
     public static final int POI_SEARCH_MESSAGE = 0x001;
     public static final int POI_SEARCH_DELAY_MESSAGE = 0x002;
     public static final int POI_SEARCH_DELAY_MILLIS = 1000;
+
+    public static final String ROUTE_AVOIDS_PREFERENCES = "com.fxc.ev.launcher_preferences";
 }
