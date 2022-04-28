@@ -1979,6 +1979,13 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         }
     }
 
+    //Jerry@20220427 add:setRouteAvoidsLayoutVisibility
+    public void setRouteAvoidsLayoutVisibility(int visibility){
+        if(layout_route_avoids.getVisibility() != visibility) {
+            layout_route_avoids.setVisibility(visibility);
+        }
+    }
+
     //Jerry@20220427 add:routeAvoidsSettings
     private void routeAvoidsSettings(){
         ImageView imageViewAvoid = layout_route_avoids.findViewById(R.id.avoid_start);

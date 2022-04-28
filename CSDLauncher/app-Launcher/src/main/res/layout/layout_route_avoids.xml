@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="180px"
+    android:layout_height="wrap_content"
+    android:paddingBottom="36px"
+    android:background="@drawable/layout_route_avoids"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/avoid_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/icon_avoid_normal"
+        android:background="@drawable/route_avoids_item_unselected_bg"
+        android:visibility="visible"
+        android:onClick="routeAvoids"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/total_avoids"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <ImageView
+            android:id="@+id/toll_avoid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/icon_toll_normal"
+            android:background="@drawable/route_avoids_item_unselected_bg"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/toll_avoid_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/toll_avoid_text"
+            android:textColor="@color/white"
+            android:textSize="22px"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/toll_avoid"
+            app:layout_constraintLeft_toLeftOf="@id/toll_avoid"
+            app:layout_constraintRight_toRightOf="@id/toll_avoid"/>
+
+        <ImageView
+            android:id="@+id/highway_avoid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36px"
+            android:src="@drawable/icon_highway_normal"
+            android:background="@drawable/route_avoids_item_unselected_bg"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:clickable="true"
+            app:layout_constraintTop_toBottomOf="@id/toll_avoid_text"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/highway_avoid_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/highways_avoid_text"
+            android:textColor="@color/white"
+            android:textSize="22px"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/highway_avoid"
+            app:layout_constraintLeft_toLeftOf="@id/highway_avoid"
+            app:layout_constraintRight_toRightOf="@id/highway_avoid"/>
+
+        <ImageView
+            android:id="@+id/ferry_avoid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36px"
+            android:src="@drawable/icon_ferry_normal"
+            android:background="@drawable/route_avoids_item_unselected_bg"
+            app:layout_constraintTop_toBottomOf="@id/highway_avoid_text"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/ferry_avoid_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/ferries_avoid_text"
+            android:textColor="@color/white"
+            android:textSize="22px"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/ferry_avoid"
+            app:layout_constraintLeft_toLeftOf="@id/ferry_avoid"
+            app:layout_constraintRight_toRightOf="@id/ferry_avoid"/>
+
+        <ImageView
+            android:id="@+id/unpaved_avoid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36px"
+            android:src="@drawable/icon_unpaved_normal"
+            android:background="@drawable/route_avoids_item_unselected_bg"
+            app:layout_constraintTop_toBottomOf="@id/ferry_avoid_text"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+        <TextView
+            android:id="@+id/unpaved_avoid_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/unpaved_avoid_text"
+            android:textColor="@color/white"
+            android:textSize="22px"
+            android:gravity="center"
+            app:layout_constraintTop_toBottomOf="@id/unpaved_avoid"
+            app:layout_constraintLeft_toLeftOf="@id/unpaved_avoid"
+            app:layout_constraintRight_toRightOf="@id/unpaved_avoid"/>
+
+        <ImageView
+            android:id="@+id/collapse_arrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36px"
+            android:src="@drawable/icon_collapse_normal"
+            android:background="@drawable/route_avoids_item_unselected_bg"
+            app:layout_constraintTop_toBottomOf="@id/unpaved_avoid_text"
+            app:layout_constraintLeft_toLeftOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
