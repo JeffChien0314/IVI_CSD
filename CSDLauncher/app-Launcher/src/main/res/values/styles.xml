@@ -122,24 +122,21 @@
 
     <style name="NK2Button">
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:maxHeight">48dp</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:gravity">center</item>
         <item name="android:background">@drawable/nk2_btn_round_background</item>
-        <item name="android:padding">4dp</item>
-        <item name="android:elevation">2dp</item>
     </style>
 
     <style name="NK2Button.MapMode">
-        <item name="android:layout_width">48dp</item>
-        <item name="android:src">@drawable/nk2_ic_btn_2d_compass</item>
-        <item name="android:padding">4dp</item>
+        <item name="android:layout_height">72px</item>
+        <item name="android:layout_width">72px</item>
+        <item name="android:foreground">@drawable/icon_compass_normal</item>
     </style>
 
     <style name="NK2Button.Recenter">
-        <item name="android:layout_width">48dp</item>
-        <item name="android:src">@drawable/nk2_ic_btn_recenter</item>
-        <item name="android:padding">4dp</item>
+        <item name="android:layout_height">72px</item>
+        <item name="android:layout_width">72px</item>
+        <item name="android:foreground">@drawable/icon_position_off_normal</item>
     </style>
 
     <style name="NK2Button.Zoom">
@@ -152,15 +149,19 @@
     </style>
 
     <style name="NK2Button.Zoom.In">
-        <item name="android:padding">2dp</item>
+        <item name="android:layout_height">60px</item>
+        <item name="android:layout_width">60px</item>
+        <item name="android:layout_marginTop">6px</item>
+        <item name="android:layout_marginBottom">12px</item>
         <item name="android:background">@drawable/nk2_btn_zoomin</item>
-        <item name="android:src">@drawable/nk2_ic_zoom_in</item>
+        <item name="android:foreground">@drawable/icon_zoom_in_normal</item>
     </style>
 
     <style name="NK2Button.Zoom.Out">
-        <item name="android:padding">2dp</item>
+        <item name="android:layout_height">60px</item>
+        <item name="android:layout_width">60px</item>
         <item name="android:background">@drawable/nk2_btn_zoomout</item>
-        <item name="android:src">@drawable/nk2_ic_zoom_out</item>
+        <item name="android:foreground">@drawable/icon_zoom_out_normal</item>
     </style>
 
     <style name="NK2Button.PlanningMenu">
@@ -171,10 +172,10 @@
     </style>
 
     <style name="NK2ZoomBarView">
-        <item name="android:layout_height">112dp</item>
-        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">144px</item>
+        <item name="android:layout_width">72px</item>
+        <item name="android:gravity">center</item>
         <item name="android:orientation">vertical</item>
-        <item name="android:layout_marginTop">0dp</item>
         <item name="android:background">@drawable/nk2_zoombar</item>
     </style>
 
