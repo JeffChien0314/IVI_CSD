@@ -120,7 +120,8 @@
         android:layout_marginLeft="30px"
         android:text="Steps"
         android:textSize="30px"
-        android:textColor="#ffffff">
+        android:textColor="#ffffff"
+        android:visibility="invisible">
 
     </TextView>
 

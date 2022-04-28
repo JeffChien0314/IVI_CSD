@@ -258,6 +258,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     private Coordinate poiSearchCoordinate;//Jerry@20220415 add
     private double poiSearchScale;//Jerry@20220415 add
+    private Coordinate routeAvoidsCoordinate;//Jerry@20220428 add
 
     //metis@0422 更新route信息到路线规划页面 -->
     private boolean isUpdateInstruction;
@@ -780,7 +781,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 int visibility = View.GONE;
                 if (!instructions.isEmpty()) {
                     //metis@0426 传递instruction数据到路线规划 -->
-                    if (isUpdateInstruction == true && mOnInstructionUpdateListener != null) {
+                    /*if (isUpdateInstruction == true && mOnInstructionUpdateListener != null) {
                         mOnInstructionUpdateListener.OnInstructionUpdate(distanceToInstructionInMeters, instructions);
                         new Handler().postDelayed(new Runnable() {
                             @Override
@@ -788,7 +789,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                                 trip.stopPreview();
                             }
                         }, 1000);
-                    }
+                    }*/
                     //metis@0426 传递instruction数据到路线规划 <--
 
                     getNextInstructionPanelView().update(distanceToInstructionInMeters, instructions);
@@ -976,6 +977,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     //metis@220419 路线规划-->
     public void displayRoutes(Coordinate coordinate) {
+        routeAvoidsCoordinate = coordinate;//Jerry@20220428 add
         MarkerBuilder markerBuilder = new MarkerBuilder();
         markerBuilder.setCoordinate(toMapCoordinate(coordinate))
                 // Equivalent for Michi default route markers configuration
@@ -2066,6 +2068,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     tollAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
+                displayRoutes(routeAvoidsCoordinate);
             }
         });
         highwayAvoid.setOnClickListener(new View.OnClickListener() {
@@ -2083,6 +2086,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     highwayAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
+                displayRoutes(routeAvoidsCoordinate);
             }
         });
         ferryAvoid.setOnClickListener(new View.OnClickListener() {
@@ -2100,6 +2104,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     ferryAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
+                displayRoutes(routeAvoidsCoordinate);
             }
         });
         unpavedAvoid.setOnClickListener(new View.OnClickListener() {
@@ -2117,6 +2122,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     unpavedAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
+                displayRoutes(routeAvoidsCoordinate);
             }
         });
     }

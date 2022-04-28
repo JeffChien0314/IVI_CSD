@@ -153,12 +153,12 @@ public class RoutePreviewFragment extends Fragment {
         mNavDistance = mRootView.findViewById(R.id.nav_distance);
 
         mDirectionRecyclerView = mRootView.findViewById(R.id.direction_recyclerview);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
+        /*LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         SpaceItemDecoration spaceItemDecoration = new SpaceItemDecoration();
         mDirectionRecyclerView.addItemDecoration(spaceItemDecoration);
         mDirectionRecyclerView.setLayoutManager(linearLayoutManager);
         mInstructionAdapter = new InstructionAdapter(launcherActivity, instructionsList);
-        mDirectionRecyclerView.setAdapter(mInstructionAdapter);
+        mDirectionRecyclerView.setAdapter(mInstructionAdapter);*/
     }
 
     private void initRoutes() {
@@ -187,7 +187,7 @@ public class RoutePreviewFragment extends Fragment {
             }
         });
 
-        launcherActivity.setOnInstructionUpdateListener(new LauncherActivity.OnInstructionUpdateListener() {
+        /*launcherActivity.setOnInstructionUpdateListener(new LauncherActivity.OnInstructionUpdateListener() {
             @Override
             public void OnInstructionUpdate(int distanceToInstructionInMeters, List<Instruction> instructionList) {
                 launcherActivity.setUpdateInstruction(false);
@@ -195,7 +195,7 @@ public class RoutePreviewFragment extends Fragment {
                 instructionsList.add(new Instructions(distanceToInstructionInMeters, instructionList.get(0)));
                 mInstructionAdapter.notifyDataSetChanged();
             }
-        });
+        });*/
     }
 
     public void setData(SearchResultItem searchResultItem) {
