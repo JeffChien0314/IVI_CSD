@@ -14,13 +14,13 @@ immediately return or destroy it.
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <solid android:color="@color/darkcharcoal_alpha40"/>
+            <solid android:color="#282828"/>
         </shape>
     </item>
-    <item>
+    <!--<item>
         <shape android:shape="oval">
             <stroke android:color="@color/white"
                 android:width="2dp" />
         </shape>
-    </item>
+    </item>-->
 </layer-list>

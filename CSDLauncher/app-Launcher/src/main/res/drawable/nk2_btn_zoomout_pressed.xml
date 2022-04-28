@@ -15,14 +15,14 @@ immediately return or destroy it.
     <item>
         <shape
             android:shape="rectangle">
-            <corners android:bottomLeftRadius="24dp"
-                android:bottomRightRadius="24dp"
+            <corners android:bottomLeftRadius="30px"
+                android:bottomRightRadius="30px"
                 android:topLeftRadius="0dp"
                 android:topRightRadius="0dp"/>
-            <solid android:color="@color/darkcharcoal_alpha40" />
+            <solid android:color="#282828" />
         </shape>
     </item>
-    <item>
+    <!--<item>
         <shape
             android:shape="rectangle">
             <corners
@@ -34,5 +34,5 @@ immediately return or destroy it.
                 android:width="2dp"
                 android:color="@color/white" />
         </shape>
-    </item>
+    </item>-->
 </layer-list>

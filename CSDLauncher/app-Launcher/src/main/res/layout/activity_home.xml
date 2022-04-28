@@ -32,8 +32,8 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toTopOf="@+id/speedBubble"
-                app:layout_constraintEnd_toStartOf="@+id/zoomBarView"
-                app:layout_constraintStart_toEndOf="@+id/planningMenu_btn"
+                app:layout_constraintEnd_toStartOf="@+id/voiceGuidanceMode"
+                app:layout_constraintStart_toEndOf="@+id/zoomBarView"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <Button
@@ -50,32 +50,13 @@
                 android:id="@+id/launcher_fav_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/search_btn"
                 android:layout_marginLeft="30px"
                 android:layout_marginTop="30px"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/search_btn">
 
             </LinearLayout>
-            
-            <ImageButton
-                android:id="@+id/recenterButton"
-                style="@style/NK2Button.Recenter"
-                android:layout_marginTop="8dp"
-                android:layout_marginBottom="8dp"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/voiceGuidanceMode"
-                app:layout_constraintStart_toStartOf="parent" />
-
-            <com.fxc.ev.launcher.utils.view.ZoomBarView
-                android:id="@id/zoomBarView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12px"
-                android:layout_marginRight="30px"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/mapModeButton" />
 
             <com.fxc.ev.launcher.utils.view.OutlineTextView
                 android:id="@+id/eta"
@@ -110,18 +91,27 @@
             <ImageButton
                 android:id="@+id/mapModeButton"
                 style="@style/NK2Button.MapMode"
-                android:layout_marginTop="30px"
-                android:layout_marginRight="30px"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                android:layout_marginBottom="30px"
+                android:layout_marginLeft="30px"
+                app:layout_constraintBottom_toTopOf="@+id/recenterButton"
+                app:layout_constraintLeft_toRightOf="@+id/search_container" />
 
             <ImageButton
-                android:id="@+id/planningMenu_btn"
-                style="@style/NK2Button.PlanningMenu"
-                android:layout_marginStart="8dp"
-                android:layout_marginBottom="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:id="@+id/recenterButton"
+                style="@style/NK2Button.Recenter"
+                android:layout_marginBottom="30px"
+                android:layout_marginLeft="30px"
+                app:layout_constraintLeft_toRightOf="@+id/search_container"
+                app:layout_constraintBottom_toTopOf="@+id/zoomBarView" />
+
+            <com.fxc.ev.launcher.utils.view.ZoomBarView
+                android:id="@id/zoomBarView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="30px"
+                android:layout_marginLeft="30px"
+                app:layout_constraintLeft_toRightOf="@+id/search_container"
+                app:layout_constraintBottom_toBottomOf="parent" />
 
             <com.fxc.ev.launcher.utils.view.SpeedBubbleView
                 android:id="@id/speedBubble"
@@ -142,7 +132,8 @@
                 android:layout_marginBottom="8dp"
                 android:src="@drawable/nk2_ic_full_voice_guidance_mode"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                android:visibility="invisible"/>
 
             <FrameLayout
                 android:id="@+id/search_container"
@@ -155,22 +146,14 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <include
-                android:id="@+id/layout_route_avoids"
-                layout="@layout/layout_route_avoids"
-                android:layout_width="180px"
-                android:layout_height="match_parent"
-                android:visibility="gone"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <RelativeLayout
             android:id="@+id/widget_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:visibility="gone">
 
             <GridView
                 android:id="@+id/grid_view"

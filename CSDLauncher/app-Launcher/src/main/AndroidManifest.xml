@@ -45,8 +45,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".maps.route.RoutePlanningPreferencesActivity" />
-
         <activity android:name=".activities.InteractiveMapActivity"
             android:launchMode="singleTask" />
         <activity android:name=".activities.BaseActivity"

@@ -215,7 +215,7 @@ public class InteractiveMapActivity extends BaseActivity {
         recenterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                view.setVisibility(View.GONE);
+                //view.setVisibility(View.GONE); //metis@0428 mark
                 cameraStackController.setCurrentCamera(oldCameraType);
             }
         });
@@ -329,7 +329,7 @@ public class InteractiveMapActivity extends BaseActivity {
                         @Override
                         public void run() {
                             if (haveRecenterButton) {
-                                recenterButton.setVisibility(recenterButtonVisibilityStart);
+                                //recenterButton.setVisibility(recenterButtonVisibilityStart); //metis@0428 mark
                             }
                             speedBubbleView.setVisibility(speedBubbleVisibilityStart);
                         }
@@ -338,13 +338,13 @@ public class InteractiveMapActivity extends BaseActivity {
                         @Override
                         public void run() {
                             if (haveRecenterButton) {
-                                recenterButton.setVisibility(recenterButtonVisibilityEnd);
+                                //recenterButton.setVisibility(recenterButtonVisibilityEnd); //metis@0428 mark
                             }
                             speedBubbleView.setVisibility(speedBubbleVisibilityEnd);
                         }
                     });
         } else if (haveRecenterButton) {
-            recenterButton.setVisibility(recenterButtonVisibilityEnd);
+            //recenterButton.setVisibility(recenterButtonVisibilityEnd); //metis@0428 mark
         }
 
         //Jerry@20220412 mark:Drag maps without disappearing

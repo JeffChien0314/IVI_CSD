@@ -66,7 +66,6 @@ import com.fxc.ev.launcher.adapter.HomeWidgetAdapter;
 import com.fxc.ev.launcher.fragment.Frg_WidgetsEdit;
 import com.fxc.ev.launcher.maps.poicatsearch.Constants;
 import com.fxc.ev.launcher.maps.poicatsearch.PoiSearchThread;
-import com.fxc.ev.launcher.maps.route.RoutePlanningPreferencesActivity;
 import com.fxc.ev.launcher.maps.search.FavEditItem;
 import com.fxc.ev.launcher.maps.search.SearchFragment;
 import com.fxc.ev.launcher.utils.ApplicationPreferences;
@@ -231,7 +230,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private String curCountryCode; //metis@0422 add
 
     private ImageButton mapModeButton;
-    private ImageButton planningSettingsButton;
+    //private ImageButton planningSettingsButton;
     private ImageButton voiceGuidanceButton;
     private Button searchButton; //metis@ add
     private FrameLayout searchContainer;
@@ -722,14 +721,14 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });
 
-        planningSettingsButton = findViewById(R.id.planningMenu_btn);
+        /*planningSettingsButton = findViewById(R.id.planningMenu_btn);
         planningSettingsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent myIntent = new Intent(LauncherActivity.this, RoutePlanningPreferencesActivity.class);
                 startActivity(myIntent);
             }
-        });
+        });*/
 
         getCameraStackController().addCameraChangedListener(new CameraStackController.OnCameraChangedListener() {
             @Override
@@ -1016,7 +1015,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 if (trip != null) {
                     trip.removeListener(tripUpdateListener);
                     tripUpdateListener = null;
-                    trip.stopPreview();
+                    //trip.stopPreview();
                     navigation.deleteTrip(trip);
                     trip = null;
                 }
@@ -1046,22 +1045,22 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     if (mOnRouteInfoUpdateListener != null) {
                         mOnRouteInfoUpdateListener.OnRouteInfoUpdate(trip.routeList().get(0));
                     }
-                    navigation.startNavigation(trip);
+                    /*navigation.startNavigation(trip);
                     trip.startPreview(Constants.SPEED_MULTIPLIER);
                     hideEtaPanel();
                     hideNextInstructionPanel();
-                    isUpdateInstruction = true;
+                    isUpdateInstruction = true;*/
                 } else {
                     Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
                     tripRenderer.addClickListener(new TripRendererClickListener() {
                         @Override
                         public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
                             trip.setPreferredRoute(route);
-                            navigation.startNavigation(trip);
+                            /*navigation.startNavigation(trip);
                             trip.startPreview(Constants.SPEED_MULTIPLIER);
                             hideEtaPanel();
                             hideNextInstructionPanel();
-                            isUpdateInstruction = true;
+                            isUpdateInstruction = true;*/
                             if (mOnRouteInfoUpdateListener != null) {
                                 mOnRouteInfoUpdateListener.OnRouteInfoUpdate(route);
                             }
@@ -1106,9 +1105,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         launcherFavLayout.setVisibility(visibility);
 
         //voiceGuidanceButton.setVisibility(visibility);//Jerry@20220318 add:not display
-        planningSettingsButton.setVisibility(visibility);
-        mapModeButton.setVisibility(visibility);
-        getZoomBarView().setVisibility(visibility);
+        //planningSettingsButton.setVisibility(visibility);
+        //mapModeButton.setVisibility(visibility);
+        //getZoomBarView().setVisibility(visibility);
     }
 
     private void setMapWidgetVisibility2(int visibility) {
