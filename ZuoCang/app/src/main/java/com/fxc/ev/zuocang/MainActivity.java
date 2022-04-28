@@ -1,9 +1,10 @@
-package com.example.zuocang;
+package com.fxc.ev.zuocang;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,9 +15,10 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.Switch;
 
-import com.example.zuocang.adapter.MenuListAdapter;
+import com.fxc.ev.zuocang.adapter.MenuListAdapter;
 
 import java.util.ArrayList;
 
@@ -43,7 +45,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isReadingLightROpen = false;
     private boolean isPubbleLightLOpen = false;
     private ArrayList<Integer> images = new ArrayList<>();
-
+    private ScrollView mScrollView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,6 +94,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mReadingLight = findViewById(R.id.reading_light);
         mReadingLightR = findViewById(R.id.reading_light_r);
         mPuddleLight = findViewById(R.id.pubble_light);
+        mScrollView = findViewById(R.id.all_detail_scroll);
         mFrogFrontLight.setEnabled(true);
         mFrogRearLight.setEnabled(true);
         mExteriorLightAuto.setSelected(true);
@@ -122,6 +125,100 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mReadingLightR.setOnClickListener(this);
         mPuddleLight.setOnClickListener(this);
         mMenuListView.setAdapter(mListAdapter);
+        mScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+            @Override
+            public void onScrollChange(View view, int x, int y, int oldX, int oldY) {
+                if(mAmbientDisplayLayout.getVisibility()==View.GONE) {
+                    if(oldY>=0 && y<1189){
+                        mMenuListView.getChildAt(0).setSelected(true);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=1189 && y<2111)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(true);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=2111 && y<2705)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(true);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=2705 && y<3455)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(true);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=3455 && y<4298)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(true);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=4298 && y<5298)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(true);
+                    }
+                }else{
+                    if(oldY>=0 && y<1189){
+                        mMenuListView.getChildAt(0).setSelected(true);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=1189 && y<2761)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(true);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=2761 && y<3355)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(true);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=3355 && y<4105)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(true);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=4105 && y<4988)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(true);
+                        mMenuListView.getChildAt(5).setSelected(false);
+                    }else if((oldY>=4948 && y<5948)){
+                        mMenuListView.getChildAt(0).setSelected(false);
+                        mMenuListView.getChildAt(1).setSelected(false);
+                        mMenuListView.getChildAt(2).setSelected(false);
+                        mMenuListView.getChildAt(3).setSelected(false);
+                        mMenuListView.getChildAt(4).setSelected(false);
+                        mMenuListView.getChildAt(5).setSelected(true);
+                    }
+                }
+            }
+        });
         mMenuListView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -133,6 +230,38 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
                 view.setSelected(true);
+                if(mAmbientDisplayLayout.getVisibility()==View.GONE) {
+                    if(position==0){
+                        mScrollView.scrollTo(60,0);
+                    }else if(position==1){
+                        mScrollView.scrollTo(60,1189);
+                    }else if(position==2){
+                        mScrollView.scrollTo(60, 2111);
+                    }else if(position==3){
+                        mScrollView.scrollTo(60, 2705);
+                        mScrollView.getHeight();
+                    }else if(position==4){
+                        mScrollView.scrollTo(60, 3455);
+                    }else if(position==5){
+                        mScrollView.scrollTo(60, 4298);
+                        mMenuListView.getChildAt(5).setSelected(true);
+                    }
+                }else{
+                    if(position==0){
+                        mScrollView.scrollTo(60,0);
+                    }else if(position==1){
+                        mScrollView.scrollTo(60,1189);
+                    }else if(position==2){
+                        mScrollView.scrollTo(60, 2761);
+                    }else if(position==3){
+                        mScrollView.scrollTo(60, 3355);
+                    }else if(position==4){
+                        mScrollView.scrollTo(60, 4105);
+                    }else if(position==5){
+                        mScrollView.scrollTo(60, 4948);
+                        mMenuListView.getChildAt(5).setSelected(true);
+                    }
+                }
             }
         });
         mAmbientSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {

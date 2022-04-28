@@ -1,4 +1,4 @@
-package com.example.zuocang.adapter;
+package com.fxc.ev.zuocang.adapter;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,13 +9,8 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-
-import com.example.zuocang.R;
-
+import com.fxc.ev.zuocang.R;
 import java.util.ArrayList;
-import java.util.List;
-
 import static android.view.View.GONE;
 
 /**
