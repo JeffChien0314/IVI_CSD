@@ -4,9 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -17,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.Toast;
 
 import com.fxc.ev.zuocang.adapter.MenuListAdapter;
 
@@ -27,7 +30,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     String[] itemName = {"Doors,Windows", "Lights", "Drive Mode", "Seats", "Mirrors", "Steering"};
     private String TAG = "MainActivity";
     private MenuListAdapter mListAdapter;
-    private Switch mAmbientSwitch, mFrontlightSystemSwitch;
+    private Switch mAmbientSwitch, mFrontlightSystemSwitch,mKeyNearDoorAutoUnlockSwitch;
     private LinearLayout mAmbientDisplayLayout;
     private OneButtonDialog oneButtonDialog;
     private Button mDriveModeComfort, mDriveModeNormal, mDriveModeSport;
@@ -44,8 +47,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isReadingLightOpen = false;
     private boolean isReadingLightROpen = false;
     private boolean isPubbleLightLOpen = false;
+    private boolean isWindowLockOpen = false;
+    private boolean isDoorLockOpen = false;
+    private boolean isSunCurtainOpen = false;
+    /*private boolean isFrontLeftUpArrowClick = false;
+    private boolean isFrontLeftDownArrowClick = false;
+    private boolean isRearLeftUpArrowClick = false;
+    private boolean isRearLeftDownArrowClick = false;
+    private boolean isFrontRightUpArrowClick = false;
+    private boolean isFrontRightDownArrowClick = false;
+    private boolean isRearRightUpArrowClick = false;
+    private boolean isRearRightDownArrowClick = false;*/
+    private boolean isLeftFrontDoorLock = false;
+    private boolean isLeftRearDoorLock = false;
+    private boolean isRightFrontDoorLock = false;
+    private boolean isRightRearDoorLock = false;
+    private boolean isRearLuggageTrunkOpen = false;
+    private boolean isChildLockOpen = false;
+    private boolean isRearLuggageTrunkEnable = true;
     private ArrayList<Integer> images = new ArrayList<>();
     private ScrollView mScrollView;
+    private ImageView mWindowFrontLeftUp,mWindowFrontLeft,mWindowFrontLeftDown,mWindowRearLeftUp,mWindowRearLeft,mWindowRearLeftDown;
+    private ImageView mWindowFrontRightUp,mWindowFrontRight,mWindowFrontRightDown,mWindowRearRightUp,mWindowRearRight,mWindowRearRightDown;
+    private ImageView mWindowLock,mDoorLock,mChildLock,mSunCurtain,mLeftChildLockIcon,mRightChildLockIcon;
+    private ImageView mLeftFrontDoorLock,mLeftRearDoorLock,mRightFrontDoorLock,mRightRearDoorLock;
+    private ImageView mRearLuggageTrunk;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +94,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mMenuListView = (ListView) findViewById(R.id.menu_item_list);
         mListAdapter = new MenuListAdapter(this, getImages(), itemName);
         mAmbientSwitch = findViewById(R.id.ambient_switch);
+        mKeyNearDoorAutoUnlockSwitch = findViewById(R.id.key_near_door_auto_unlock_switch);
         mFrontlightSystemSwitch = findViewById(R.id.frontlight_system_switch);
         mAmbientDisplayLayout = findViewById(R.id.ambient_layout);
         mDriveModeComfort = findViewById(R.id.drive_mode_comfort);
@@ -95,6 +122,29 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mReadingLightR = findViewById(R.id.reading_light_r);
         mPuddleLight = findViewById(R.id.pubble_light);
         mScrollView = findViewById(R.id.all_detail_scroll);
+        mWindowLock = findViewById(R.id.window_lock);
+        mDoorLock = findViewById(R.id.door_lock);
+        mChildLock = findViewById(R.id.child_lock);
+        mSunCurtain = findViewById(R.id.sun_curtain);
+        mWindowFrontLeftUp = findViewById(R.id.window_front_left_up);
+        mWindowFrontLeft = findViewById(R.id.window_front_left);
+        mWindowFrontLeftDown = findViewById(R.id.window_front_left_down);
+        mWindowRearLeftUp = findViewById(R.id.window_rear_left_up);
+        mWindowRearLeft = findViewById(R.id.window_rear_left);
+        mWindowRearLeftDown = findViewById(R.id.window_rear_left_down);
+        mWindowFrontRightUp = findViewById(R.id.window_front_right_up);
+        mWindowFrontRight = findViewById(R.id.window_front_right);
+        mWindowFrontRightDown = findViewById(R.id.window_front_right_down);
+        mWindowRearRightUp = findViewById(R.id.window_rear_right_up);
+        mWindowRearRight = findViewById(R.id.window_rear_right);
+        mWindowRearRightDown = findViewById(R.id.window_rear_right_down);
+        mLeftFrontDoorLock = findViewById(R.id.doorlock_left1);
+        mLeftRearDoorLock = findViewById(R.id.doorlock_left2);
+        mRightFrontDoorLock = findViewById(R.id.doorlock_right1);
+        mRightRearDoorLock = findViewById(R.id.doorlock_right2);
+        mRearLuggageTrunk = findViewById(R.id.luggage_trunk);
+        mLeftChildLockIcon = findViewById(R.id.childlock_left);
+        mRightChildLockIcon = findViewById(R.id.childlock_right);
         mFrogFrontLight.setEnabled(true);
         mFrogRearLight.setEnabled(true);
         mExteriorLightAuto.setSelected(true);
@@ -124,6 +174,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mReadingLight.setOnClickListener(this);
         mReadingLightR.setOnClickListener(this);
         mPuddleLight.setOnClickListener(this);
+        mWindowLock.setOnClickListener(this);
+        mDoorLock.setOnClickListener(this);
+        mChildLock.setOnClickListener(this);
+        mSunCurtain.setOnClickListener(this);
+        mWindowFrontLeftUp.setOnClickListener(this);
+        mWindowFrontLeft.setOnClickListener(this);
+        mWindowFrontLeftDown.setOnClickListener(this);
+        mWindowRearLeftUp.setOnClickListener(this);
+        mWindowRearLeft.setOnClickListener(this);
+        mWindowRearLeftDown.setOnClickListener(this);
+        mWindowFrontRightUp.setOnClickListener(this);
+        mWindowFrontRight.setOnClickListener(this);
+        mWindowFrontRightDown.setOnClickListener(this);
+        mWindowRearRightUp.setOnClickListener(this);
+        mWindowRearRight.setOnClickListener(this);
+        mWindowRearRightDown.setOnClickListener(this);
+        mLeftFrontDoorLock.setOnClickListener(this);
+        mLeftRearDoorLock.setOnClickListener(this);
+        mRightFrontDoorLock.setOnClickListener(this);
+        mRightRearDoorLock.setOnClickListener(this);
+        mRearLuggageTrunk.setOnClickListener(this);
+        mRearLuggageTrunk.setActivated(false);
         mMenuListView.setAdapter(mListAdapter);
         mScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
             @Override
@@ -234,31 +306,31 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if(position==0){
                         mScrollView.scrollTo(60,0);
                     }else if(position==1){
-                        mScrollView.scrollTo(60,1189);
+                        mScrollView.scrollTo(60,1195);
                     }else if(position==2){
-                        mScrollView.scrollTo(60, 2111);
+                        mScrollView.scrollTo(60, 2117);
                     }else if(position==3){
-                        mScrollView.scrollTo(60, 2705);
+                        mScrollView.scrollTo(60, 2715);
                         mScrollView.getHeight();
                     }else if(position==4){
-                        mScrollView.scrollTo(60, 3455);
+                        mScrollView.scrollTo(60, 3461);
                     }else if(position==5){
-                        mScrollView.scrollTo(60, 4298);
+                        mScrollView.scrollTo(60, 4304);
                         mMenuListView.getChildAt(5).setSelected(true);
                     }
                 }else{
                     if(position==0){
                         mScrollView.scrollTo(60,0);
                     }else if(position==1){
-                        mScrollView.scrollTo(60,1189);
+                        mScrollView.scrollTo(60,1195);
                     }else if(position==2){
-                        mScrollView.scrollTo(60, 2761);
+                        mScrollView.scrollTo(60, 2767);
                     }else if(position==3){
-                        mScrollView.scrollTo(60, 3355);
+                        mScrollView.scrollTo(60, 3365);
                     }else if(position==4){
-                        mScrollView.scrollTo(60, 4105);
+                        mScrollView.scrollTo(60, 4111);
                     }else if(position==5){
-                        mScrollView.scrollTo(60, 4948);
+                        mScrollView.scrollTo(60, 4954);
                         mMenuListView.getChildAt(5).setSelected(true);
                     }
                 }
@@ -298,12 +370,236 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
+        mKeyNearDoorAutoUnlockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mKeyNearDoorAutoUnlockSwitch.setChecked(true);
+                    oneButtonDialog = new OneButtonDialog(MainActivity.this);
+
+                    oneButtonDialog.setMessage("The car will automatically unlock doors when it recognizes your key(or authorized cell phone) is within range(XX meter).\n" +
+                            "\n" +
+                            "And if none of the doors are opened within two minutes of unlocking, all are locked again automatically");
+                    oneButtonDialog.setYesOnclickListener(new OneButtonDialog.onYesOnclickListener() {
+                        @Override
+                        public void onYesClick() {
+                            oneButtonDialog.dismiss();
+                        }
+                    });
+                    //new Dialog(MainActivity.this).show();
+                    oneButtonDialog.show();
+
+                } else {
+                    mKeyNearDoorAutoUnlockSwitch.setChecked(false);
+                }
+            }
+        });
     }
+
 
     @Override
     public void onClick(View v) {
         int i = v.getId();
-        if (i == mDriveModeComfort.getId()) {
+        if (i == mWindowLock.getId()) {
+            if (isWindowLockOpen == false) {
+                mWindowFrontLeftUp.setEnabled(false);
+                mWindowFrontLeft.setEnabled(false);
+                mWindowFrontLeftDown.setEnabled(false);
+                mWindowRearLeftUp.setEnabled(false);
+                mWindowRearLeft.setEnabled(false);
+                mWindowRearLeftDown.setEnabled(false);
+                mWindowFrontRightUp.setEnabled(false);
+                mWindowFrontRight.setEnabled(false);
+                mWindowFrontRightDown.setEnabled(false);
+                mWindowRearRightUp.setEnabled(false);
+                mWindowRearRight.setEnabled(false);
+                mWindowRearRightDown.setEnabled(false);
+                mWindowLock.setSelected(true);
+                isWindowLockOpen = true;
+            }else{
+                mWindowFrontLeftUp.setEnabled(true);
+                mWindowFrontLeft.setEnabled(true);
+                mWindowFrontLeftDown.setEnabled(true);
+                mWindowRearLeftUp.setEnabled(true);
+                mWindowRearLeft.setEnabled(true);
+                mWindowRearLeftDown.setEnabled(true);
+                mWindowFrontRightUp.setEnabled(true);
+                mWindowFrontRight.setEnabled(true);
+                mWindowFrontRightDown.setEnabled(true);
+                mWindowRearRightUp.setEnabled(true);
+                mWindowRearRight.setEnabled(true);
+                mWindowRearRightDown.setEnabled(true);
+                mWindowLock.setSelected(false);
+                isWindowLockOpen = false;
+            }
+            return;
+        }else if (i == mDoorLock.getId()) {
+            if(isDoorLockOpen==false){
+               mLeftFrontDoorLock.setSelected(true);
+               mLeftRearDoorLock.setSelected(true);
+               mRightFrontDoorLock.setSelected(true);
+               mRightRearDoorLock.setSelected(true);
+               mDoorLock.setSelected(true);
+               isLeftRearDoorLock = true;
+               isLeftFrontDoorLock = true;
+               isRightFrontDoorLock = true;
+               isRightRearDoorLock = true;
+               mRearLuggageTrunk.setActivated(true);
+               isRearLuggageTrunkEnable=false;
+               isDoorLockOpen=true;
+            }else{
+                mLeftFrontDoorLock.setSelected(false);
+                mLeftRearDoorLock.setSelected(false);
+                mRightFrontDoorLock.setSelected(false);
+                mRightRearDoorLock.setSelected(false);
+                isLeftRearDoorLock =false;
+                isLeftFrontDoorLock = false;
+                isRightFrontDoorLock = false;
+                isRightRearDoorLock = false;
+                mRearLuggageTrunk.setActivated(false);
+                mRearLuggageTrunk.setSelected(false);
+                isRearLuggageTrunkEnable=true;
+                mDoorLock.setSelected(false);
+                isDoorLockOpen=false;
+            }
+            return;
+        }else if (i == mLeftFrontDoorLock.getId()) {
+            if(isDoorLockOpen==false) {
+                if (isLeftFrontDoorLock == false) {
+                    mLeftFrontDoorLock.setSelected(true);
+                    isLeftFrontDoorLock =true;
+                    if(isDoorLockOpen()){
+                        mDoorLock.setSelected(true);
+                        isDoorLockOpen=true;
+                        mRearLuggageTrunk.setActivated(true);
+                        isRearLuggageTrunkEnable=false;
+                    }
+                }else{
+                    mLeftFrontDoorLock.setSelected(false);
+                    isLeftFrontDoorLock =false;
+                }
+            }else{
+                mLeftFrontDoorLock.setSelected(false);
+                isLeftFrontDoorLock =false;
+                mDoorLock.setSelected(false);
+                isDoorLockOpen=false;
+                mRearLuggageTrunk.setActivated(false);
+                isRearLuggageTrunkEnable=true;
+            }
+            return;
+        }else if (i == mLeftRearDoorLock.getId()) {
+            if(isDoorLockOpen==false) {
+                if (isLeftRearDoorLock == false) {
+                    mLeftRearDoorLock.setSelected(true);
+                    isLeftRearDoorLock = true;
+                    if(isDoorLockOpen()){
+                        mDoorLock.setSelected(true);
+                        isDoorLockOpen = true;
+                        mRearLuggageTrunk.setActivated(true);
+                        isRearLuggageTrunkEnable=false;
+                    }
+                }else{
+                    mLeftRearDoorLock.setSelected(false);
+                    isLeftRearDoorLock =false;
+                }
+            }else{
+                mLeftRearDoorLock.setSelected(false);
+                isLeftRearDoorLock =false;
+                mDoorLock.setSelected(false);
+                isDoorLockOpen=false;
+                mRearLuggageTrunk.setActivated(false);
+                isRearLuggageTrunkEnable=true;
+            }
+            return;
+        }else if (i == mRightFrontDoorLock.getId()) {
+            if(isDoorLockOpen==false) {
+                if (isRightFrontDoorLock == false) {
+                    mRightFrontDoorLock.setSelected(true);
+                    isRightFrontDoorLock =true;
+                    if(isDoorLockOpen()){
+                        mDoorLock.setSelected(true);
+                        isDoorLockOpen=true;
+                        mRearLuggageTrunk.setActivated(true);
+                        isRearLuggageTrunkEnable=false;
+                    }
+                }else{
+                    mRightFrontDoorLock.setSelected(false);
+                    isRightFrontDoorLock =false;
+                }
+            }else{
+                mRightFrontDoorLock.setSelected(false);
+                isRightFrontDoorLock =false;
+                mDoorLock.setSelected(false);
+                isDoorLockOpen=false;
+                mRearLuggageTrunk.setActivated(false);
+                isRearLuggageTrunkEnable=true;
+            }
+            return;
+        }else if (i == mRightRearDoorLock.getId()) {
+            if(isDoorLockOpen==false) {
+                if (isRightRearDoorLock == false) {
+                    mRightRearDoorLock.setSelected(true);
+                    isRightRearDoorLock =true;
+                    if(isDoorLockOpen()){
+                        mDoorLock.setSelected(true);
+                        isDoorLockOpen=true;
+                        mRearLuggageTrunk.setActivated(true);
+                        isRearLuggageTrunkEnable=false;
+                    }
+                }else{
+                    mRightRearDoorLock.setSelected(false);
+                    isRightRearDoorLock =false;
+                }
+            }else{
+                mRightRearDoorLock.setSelected(false);
+                isRightRearDoorLock =false;
+                mDoorLock.setSelected(false);
+                isDoorLockOpen=false;
+                mRearLuggageTrunk.setActivated(false);
+                isRearLuggageTrunkEnable=true;
+            }
+            return;
+        } else if (i == mRearLuggageTrunk.getId()) {
+            if(isRearLuggageTrunkEnable==false && isRearLuggageTrunkOpen==false){
+                Toast toast=Toast.makeText(MainActivity.this, getString(R.string.rear_luggage_trunk_diable_click_display_message), Toast.LENGTH_LONG);
+                toast.setGravity(Gravity.START| Gravity.CENTER, 60, 80);
+                toast.show();
+               /* ToastUtil toastUtil = new ToastUtil();  //创建toastUtil对象
+                toastUtil.Short(MainActivity.this,getResources().getString(R.string.rear_luggage_trunk_diable_click_display_message))  //调用Short方法传入提示内容
+                        .setToastSize(410,40,10).show();*/
+            }else{
+                if(isRearLuggageTrunkOpen == false ){
+                    mRearLuggageTrunk.setSelected(true);
+                    isRearLuggageTrunkOpen=true;
+                }else{
+                    mRearLuggageTrunk.setSelected(false);
+                    isRearLuggageTrunkOpen=false;
+                }
+            }
+            return;
+        } else if (i == mChildLock.getId()) {
+            if (isChildLockOpen == false) {
+                mChildLock.setSelected(true);
+                isChildLockOpen = true;
+                mLeftChildLockIcon.setVisibility(View.VISIBLE);
+                mRightChildLockIcon.setVisibility(View.VISIBLE);
+            }else{
+                mChildLock.setSelected(false);
+                isChildLockOpen = false;
+                mLeftChildLockIcon.setVisibility(View.GONE);
+                mRightChildLockIcon.setVisibility(View.GONE);
+            }
+            return;
+        } else if (i == mSunCurtain.getId()) {
+            if (isSunCurtainOpen == false) {
+                mSunCurtain.setSelected(true);
+                isSunCurtainOpen = true;
+            }else{
+                mSunCurtain.setSelected(false);
+                isSunCurtainOpen = false;
+            }
+            return;
+        } else if (i == mDriveModeComfort.getId()) {
             mDriveModeComfort.setSelected(true);
             mDriveModeNormal.setSelected(false);
             mDriveModeSport.setSelected(false);
@@ -520,5 +816,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
             return;
         }
+    }
+    public boolean isDoorLockOpen() {
+        if (isLeftFrontDoorLock && isLeftRearDoorLock && isRightFrontDoorLock && isRightRearDoorLock) {
+            return true;
+        }
+        return false;
     }
 }

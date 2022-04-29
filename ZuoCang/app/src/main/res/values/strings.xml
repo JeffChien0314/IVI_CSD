@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ZuoCang</string>
+    <string name="rear_luggage_trunk_diable_click_display_message">Make sure all doors are closed before locking</string>
 </resources>
