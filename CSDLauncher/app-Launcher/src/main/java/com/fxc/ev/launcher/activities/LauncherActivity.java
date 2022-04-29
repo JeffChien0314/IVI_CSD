@@ -1454,10 +1454,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             if (fragmentManager.getBackStackEntryCount() == 1) {
                 setMapWidgetVisibility(View.VISIBLE);
                 //Jerry@20220401 add:Search fragment show,can't click
-                isFragmentShow = false;
-                isFragmentHide = false;
-                setMapViewMove(Constants.MOVE_LEFT);
-                isAlreadyTranslation = false;
+                if(isFragmentShow) {
+                    isFragmentShow = false;
+                    isFragmentHide = false;
+                    setMapViewMove(Constants.MOVE_LEFT);
+                    isAlreadyTranslation = false;
+                }
                 refreshFavoriteContent(); //metis@0423 刷新Home&Office数据
             }
         } else {
