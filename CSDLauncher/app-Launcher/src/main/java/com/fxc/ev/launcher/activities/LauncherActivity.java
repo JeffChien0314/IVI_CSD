@@ -1190,6 +1190,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     public void doReadSettings() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+		prefs.edit().putString(PREFER_ROUTE_PLANNING_ALTERNATIVES, "2").commit();
         numberOfAlternatives = Integer.valueOf(prefs.getString(PREFER_ROUTE_PLANNING_ALTERNATIVES, "0"));
         bordersPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_BORDERS, false)
                 ? Preference.AVOID : Preference.ALLOW;
