@@ -370,14 +370,14 @@ public class InteractiveMapActivity extends BaseActivity {
 
     @Override
     protected void onPause() {
-        mapView.onPause();
+        //mapView.onPause();//Jerry@20220429 mark
         super.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mapView.onResume();
+        //mapView.onResume();//Jerry@20220429 mark
     }
 
     @Override
