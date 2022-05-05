@@ -237,6 +237,11 @@ public class CameraStackController {
         doUpdateCamera(state);
     }
 
+    //metis@0429 add
+    public CameraType getCurrentCamera() {
+        return currentCameraType;
+    }
+
     private boolean shouldUseOverviewCamera() {
         return numTrackedTrips > 0;
     }
