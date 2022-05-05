@@ -86,14 +86,9 @@ public class InteractiveMapActivity extends BaseActivity {
     public boolean isMapAlreadyInit = false;//Jerry@20220415 add for map initialization
 
     private InteractiveMode interactiveMode = InteractiveMode.DISABLED;
-    private CameraType oldCameraType;
 
     protected SpeedBubbleView getSpeedBubbleView() {
         return speedBubbleView;
-    }
-
-    protected ImageButton getRecenterButton() {
-        return recenterButton;
     }
 
     protected NextInstructionPanelView getNextInstructionPanelView() {
@@ -133,12 +128,6 @@ public class InteractiveMapActivity extends BaseActivity {
             // Note - this will not be called for a Service started with Context.BIND_AUTO_CREATE
         }
     };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
 
     @Override
     protected void initContentContainerView() {
@@ -218,14 +207,6 @@ public class InteractiveMapActivity extends BaseActivity {
         speedBubbleView = mapLayout.findViewById(R.id.speedBubble);
         nextInstructionPanelView = mapLayout.findViewById(R.id.nextInstructionContainerView);
         etaTextView = mapLayout.findViewById(R.id.eta);
-        recenterButton = mapLayout.findViewById(R.id.recenterButton);
-        recenterButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //view.setVisibility(View.GONE); //metis@0428 mark
-                cameraStackController.setCurrentCamera(oldCameraType);
-            }
-        });
 
         cameraStackController.addCameraChangedListener(new CameraStackController.OnCameraChangedListener() {
             @Override
@@ -234,10 +215,8 @@ public class InteractiveMapActivity extends BaseActivity {
                 final InteractiveMode oldInteractiveMode = interactiveMode;
 
                 interactiveMode = newInteractiveMode;
-                InteractiveMapActivity.this.oldCameraType = oldCameraType;
 
                 final boolean runInteractiveModeAnimation = !newInteractiveMode.equals(oldInteractiveMode);
-
                 if (runInteractiveModeAnimation) {
                     doEnterExitInteractiveModeAnimation(newInteractiveMode);
                 }
@@ -249,7 +228,7 @@ public class InteractiveMapActivity extends BaseActivity {
         try {
             eventManager.registerListener(new MyEventListener());
         } catch (EventManager.ListenerAlreadyRegistered listenerAlreadyRegistered) {
-            Log.i(TAG, "*EventManager.ListenerAlreadyRegistered*:");
+            //Log.i(TAG, "*EventManager.ListenerAlreadyRegistered*:");
             listenerAlreadyRegistered.printStackTrace();
         }
         //<-Jerry@20220415 add:Map init completion listener
@@ -260,7 +239,7 @@ public class InteractiveMapActivity extends BaseActivity {
         @Override
         public void onEvent(Event event) {
             //super.onEvent(event);
-            Log.i(TAG, "*MyEventListener*event.getType()**:" + event.getType().name());
+            //Log.i(TAG, "*MyEventListener*event.getType()**:" + event.getType().name());
             if (!isMapAlreadyInit) {
                 isMapAlreadyInit = true;
             }

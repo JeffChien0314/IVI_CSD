@@ -230,6 +230,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private String curCountryCode; //metis@0422 add
 
     private ImageButton mapModeButton;
+    private ImageButton recenterButton; //metis@0505 add
+    private CameraType oldCameraType; //metis@0505 add
     //private ImageButton planningSettingsButton;
     private ImageButton voiceGuidanceButton;
     private Button searchButton; //metis@ add
@@ -662,7 +664,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 RouteStop wp = RouteStop.from(new Coordinate(waypoint.getLatitude(), waypoint.getLongitude()));
                 waypoints.add(wp);
                 tripPlan.setWaypoints(waypoints);
-
             }
         });
 
@@ -730,14 +731,36 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             }
         });*/
 
-        getCameraStackController().addCameraChangedListener(new CameraStackController.OnCameraChangedListener() {
+        //metis@0505 modify -->
+        recenterButton = mapLayout.findViewById(R.id.recenterButton);
+        recenterButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onChange(
-                    @SuppressWarnings("unused") CameraStackController.CameraType oldCameraType,
-                    CameraStackController.CameraType newCameraType) {
-                doMapModeButtonAnimation(newCameraType);
+            public void onClick(View view) {
+                if (oldCameraType != CameraType.kManualCamera) {
+                    getCameraStackController().setCurrentCamera(oldCameraType);
+                } else {
+                    getCameraStackController().nextCamera();
+                }
             }
         });
+
+        getCameraStackController().addCameraChangedListener(new CameraStackController.OnCameraChangedListener() {
+            @Override
+            public void onChange(CameraType oldCameraType, CameraType newCameraType) {
+                LauncherActivity.this.oldCameraType = oldCameraType;
+                if (oldCameraType != newCameraType) {
+                    if (getCameraStackController().getCurrentCamera() == CameraType.kFollowRouteCamera) {
+                        recenterButton.setForeground(mContext.getResources().getDrawable(R.drawable.icon_position_lock_normal));
+                    } else if (getCameraStackController().getCurrentCamera() == CameraType.kNorthUpCamera) {
+                        recenterButton.setForeground(mContext.getResources().getDrawable(R.drawable.icon_position_on_normal));
+                    } else if (getCameraStackController().getCurrentCamera() == CameraType.kManualCamera) {
+                        recenterButton.setForeground(mContext.getResources().getDrawable(R.drawable.icon_position_off_normal));
+                    }
+                }
+                //doMapModeButtonAnimation(newCameraType);
+            }
+        });
+        //metis@0505 modify <--
 
         voiceGuidanceButton = findViewById(R.id.voiceGuidanceMode);
         voiceGuidanceButton.setVisibility(View.GONE);//Jerry@20220321 add:not display
