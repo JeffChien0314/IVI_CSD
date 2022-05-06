@@ -95,6 +95,7 @@ import com.tomtom.navkit.map.MarkerLabelBuilder;
 import com.tomtom.navkit.map.Point;
 import com.tomtom.navkit.map.camera.Camera;
 import com.tomtom.navkit.map.camera.CameraListener;
+import com.tomtom.navkit.map.camera.CameraProperties;
 import com.tomtom.navkit.map.extension.positioning.PositioningExtension;
 import com.tomtom.navkit2.MapUpdate;
 import com.tomtom.navkit2.MapUpdateService;
@@ -623,7 +624,6 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 fTransaction.commitAllowingStateLoss();
             }
         });
-
     }
 
     private void initMap() {
@@ -718,7 +718,15 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         mapModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getCameraStackController().nextCamera();
+                //metis@0505 点击指南针回到正北方向 -->
+                CameraProperties cameraProperties = map.getCamera().getProperties();
+                if (cameraProperties.getHeading() != 0.0) {
+                    cameraProperties.setHeading(0.0000);
+                    map.getCamera().setProperties(cameraProperties);
+                    Double d = Double.valueOf(map.getCamera().getProperties().getHeading());
+                    mapModeButton.animate().setDuration(200).rotation(-(d.floatValue()));
+                }
+                //metis@0505 点击指南针回到正北方向 <--
             }
         });
 
@@ -1143,6 +1151,17 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private class MyCameraListener extends CameraListener {
         @Override
         public void onCameraPropertiesChange(Camera camera) {
+            //metis@0505 指南针旋转角度随地图旋转而变化 -->
+            if (camera.getProperties().getHeading() != 0.0) {
+                Double d = Double.valueOf(camera.getProperties().getHeading());
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mapModeButton.animate().setDuration(200).rotation(-(d.floatValue()));
+                    }
+                });
+            }
+            //metis@0505 指南针旋转角度随地图旋转而变化 <--
             //super.onCameraPropertiesChange(camera);
         }
 
@@ -1213,7 +1232,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     public void doReadSettings() {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-		prefs.edit().putString(PREFER_ROUTE_PLANNING_ALTERNATIVES, "2").commit();
+        prefs.edit().putString(PREFER_ROUTE_PLANNING_ALTERNATIVES, "2").commit();
         numberOfAlternatives = Integer.valueOf(prefs.getString(PREFER_ROUTE_PLANNING_ALTERNATIVES, "0"));
         bordersPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_BORDERS, false)
                 ? Preference.AVOID : Preference.ALLOW;
@@ -1477,7 +1496,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             if (fragmentManager.getBackStackEntryCount() == 1) {
                 setMapWidgetVisibility(View.VISIBLE);
                 //Jerry@20220401 add:Search fragment show,can't click
-                if(isFragmentShow) {
+                if (isFragmentShow) {
                     isFragmentShow = false;
                     isFragmentHide = false;
                     setMapViewMove(Constants.MOVE_LEFT);
@@ -2007,11 +2026,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220427 add:setRouteAvoidsLayoutVisibility
-    public void setRouteAvoidsLayoutVisibility(int visibility){
-        if(layout_route_avoids.getVisibility() != visibility) {
+    public void setRouteAvoidsLayoutVisibility(int visibility) {
+        if (layout_route_avoids.getVisibility() != visibility) {
             layout_route_avoids.setVisibility(visibility);
         }
-        if(View.VISIBLE == visibility){
+        if (View.VISIBLE == visibility) {
             imageViewAvoid.setVisibility(visibility);
             totalAvoids.setVisibility(View.GONE);
             layout_route_avoids.setBackgroundResource(R.drawable.transparent);
@@ -2019,7 +2038,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220427 add:routeAvoidsSettings
-    private void routeAvoidsSettings(){
+    private void routeAvoidsSettings() {
         ImageView collapseArrow = layout_route_avoids.findViewById(R.id.collapse_arrow);
 
         ImageView tollAvoid = layout_route_avoids.findViewById(R.id.toll_avoid);
@@ -2035,34 +2054,34 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         TextView unpavedAvoidText = layout_route_avoids.findViewById(R.id.unpaved_avoid_text);
 
         doReadSettings();
-        if(tollsPreference == Preference.AVOID){
+        if (tollsPreference == Preference.AVOID) {
             tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
             tollAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
-        }else if(tollsPreference == Preference.ALLOW){
+        } else if (tollsPreference == Preference.ALLOW) {
             tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
             tollAvoidText.setTextColor(getResources().getColor(R.color.white));
         }
 
-        if(motorwaysPreference == Preference.AVOID){
+        if (motorwaysPreference == Preference.AVOID) {
             highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
             highwayAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
-        }else if(motorwaysPreference == Preference.ALLOW){
+        } else if (motorwaysPreference == Preference.ALLOW) {
             highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
             highwayAvoidText.setTextColor(getResources().getColor(R.color.white));
         }
 
-        if(ferriesPreference == Preference.AVOID){
+        if (ferriesPreference == Preference.AVOID) {
             ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
             ferryAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
-        }else if(ferriesPreference == Preference.ALLOW){
+        } else if (ferriesPreference == Preference.ALLOW) {
             ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
             ferryAvoidText.setTextColor(getResources().getColor(R.color.white));
         }
 
-        if(unpavedPreference == Preference.AVOID){
+        if (unpavedPreference == Preference.AVOID) {
             unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
             unpavedAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
-        }else if(unpavedPreference == Preference.ALLOW){
+        } else if (unpavedPreference == Preference.ALLOW) {
             unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
             unpavedAvoidText.setTextColor(getResources().getColor(R.color.white));
         }
@@ -2089,12 +2108,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
                 tollsPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_TOLLS, false)
                         ? Preference.AVOID : Preference.ALLOW;
-                if(tollsPreference == Preference.AVOID){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_TOLLS,false).commit();
+                if (tollsPreference == Preference.AVOID) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_TOLLS, false).commit();
                     tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
                     tollAvoidText.setTextColor(getResources().getColor(R.color.white));
-                }else if(tollsPreference == Preference.ALLOW){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_TOLLS,true).commit();
+                } else if (tollsPreference == Preference.ALLOW) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_TOLLS, true).commit();
                     tollAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     tollAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
@@ -2107,12 +2126,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
                 motorwaysPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS, false)
                         ? Preference.AVOID : Preference.ALLOW;
-                if(motorwaysPreference == Preference.AVOID){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS,false).commit();
+                if (motorwaysPreference == Preference.AVOID) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS, false).commit();
                     highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
                     highwayAvoidText.setTextColor(getResources().getColor(R.color.white));
-                }else if(motorwaysPreference == Preference.ALLOW){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS,true).commit();
+                } else if (motorwaysPreference == Preference.ALLOW) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_MOTORWAYS, true).commit();
                     highwayAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     highwayAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
@@ -2125,12 +2144,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
                 ferriesPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_FERRIES, false)
                         ? Preference.AVOID : Preference.ALLOW;
-                if(ferriesPreference == Preference.AVOID){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_FERRIES,false).commit();
+                if (ferriesPreference == Preference.AVOID) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_FERRIES, false).commit();
                     ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
                     ferryAvoidText.setTextColor(getResources().getColor(R.color.white));
-                }else if(ferriesPreference == Preference.ALLOW){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_FERRIES,true).commit();
+                } else if (ferriesPreference == Preference.ALLOW) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_FERRIES, true).commit();
                     ferryAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     ferryAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
@@ -2143,12 +2162,12 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(LauncherActivity.this);
                 unpavedPreference = prefs.getBoolean(PREFER_ROUTE_PLANNING_UNPAVED, false)
                         ? Preference.AVOID : Preference.ALLOW;
-                if(unpavedPreference == Preference.AVOID){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_UNPAVED,false).commit();
+                if (unpavedPreference == Preference.AVOID) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_UNPAVED, false).commit();
                     unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_unselected_bg);
                     unpavedAvoidText.setTextColor(getResources().getColor(R.color.white));
-                }else if(unpavedPreference == Preference.ALLOW){
-                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_UNPAVED,true).commit();
+                } else if (unpavedPreference == Preference.ALLOW) {
+                    prefs.edit().putBoolean(PREFER_ROUTE_PLANNING_UNPAVED, true).commit();
                     unpavedAvoid.setBackgroundResource(R.drawable.route_avoids_item_selected_bg);
                     unpavedAvoidText.setTextColor(getResources().getColor(R.color.route_avoids_text_color_418eff));
                 }
