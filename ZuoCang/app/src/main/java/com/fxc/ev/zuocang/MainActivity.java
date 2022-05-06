@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fxc.ev.zuocang.adapter.MenuListAdapter;
@@ -64,6 +65,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isRightRearDoorLock = false;
     private boolean isRearLuggageTrunkOpen = false;
     private boolean isChildLockOpen = false;
+    private boolean isInPCondition = true;
+    private boolean isMirrorOpen = true;
     private boolean isRearLuggageTrunkEnable = true;
     private ArrayList<Integer> images = new ArrayList<>();
     private ScrollView mScrollView;
@@ -71,7 +74,27 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ImageView mWindowFrontRightUp,mWindowFrontRight,mWindowFrontRightDown,mWindowRearRightUp,mWindowRearRight,mWindowRearRightDown;
     private ImageView mWindowLock,mDoorLock,mChildLock,mSunCurtain,mLeftChildLockIcon,mRightChildLockIcon;
     private ImageView mLeftFrontDoorLock,mLeftRearDoorLock,mRightFrontDoorLock,mRightRearDoorLock;
-    private ImageView mRearLuggageTrunk;
+    private ImageView mRearLuggageTrunk,mSteeringWaringIcon,mMirrorFolderDisplayIcon,mSeatsWaringIcon;
+    private TextView mSteeringInstruction,mSteeringWaringInstruction,mSeatsInstruction,mSeatsWaringInstruction;
+    private ImageView mLFallForward,mLFallBackward,mLFallUp,mLFallDown,mLFallHigh,mLFallLow,mLMoveForward,mLMoveBackward,mLSeat;
+    private ImageView mRFallForward,mRFallBackward,mRFallUp,mRFallDown,mRFallHigh,mRFallLow,mRMoveForward,mRMoveBackward,mRSeat;
+/*    private boolean isLFallForwardArrowClick = false;
+    private boolean isLFallBackwardArrowClick = false;
+    private boolean isLFallUpArrowClick = false;
+    private boolean isLFallDownArrowClick = false;
+    private boolean isLFallHighArrowClick = false;
+    private boolean isLFallLowArrowClick = false;
+    private boolean isLMoveForwardArrowClick = false;
+    private boolean isLMoveBackwardArrowClick = false;
+    private boolean isRFallForwardArrowClick = false;
+    private boolean isRFallBackwardArrowClick = false;
+    private boolean isRFallUpArrowClick = false;
+    private boolean isRFallDownArrowClick = false;
+    private boolean isRFallHighArrowClick = false;
+    private boolean isRFallLowArrowClick = false;
+    private boolean isRMoveForwardArrowClick = false;
+    private boolean isRMoveBackwardArrowClick = false;*/
+private ImageView mLLockMask,mRLockMask;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -145,6 +168,55 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mRearLuggageTrunk = findViewById(R.id.luggage_trunk);
         mLeftChildLockIcon = findViewById(R.id.childlock_left);
         mRightChildLockIcon = findViewById(R.id.childlock_right);
+        mSteeringWaringIcon = findViewById(R.id.steering_warning_icon);
+        mSteeringInstruction = findViewById(R.id.steering_instrcution);
+        mSteeringWaringInstruction = findViewById(R.id.steering_warning_instrcution);
+        mSeatsWaringIcon = findViewById(R.id.seats_warning_icon);
+        mSeatsInstruction = findViewById(R.id.seats_instruction);
+        mSeatsWaringInstruction = findViewById(R.id.seats_warning_instrcution);
+        mLFallForward = findViewById(R.id.arrow_l_fall_forward);
+        mLFallBackward = findViewById(R.id.arrow_l_fall_backward);
+        mLFallUp = findViewById(R.id.arrow_l_up);
+        mLFallDown = findViewById(R.id.arrow_l_down);
+        mLFallHigh = findViewById(R.id.arrow_l_higher);
+        mLFallLow = findViewById(R.id.arrow_l_lower);
+        mLSeat = findViewById(R.id.seats_l);
+        mLMoveForward = findViewById(R.id.arrow_l_move_forward);
+        mLMoveBackward = findViewById(R.id.arrow_l_move_backward);
+        mRFallForward = findViewById(R.id.arrow_r_fall_forward);
+        mRFallBackward = findViewById(R.id.arrow_r_fall_backward);
+        mRFallUp = findViewById(R.id.arrow_r_up);
+        mRFallDown = findViewById(R.id.arrow_r_down);
+        mRFallHigh = findViewById(R.id.arrow_r_higher);
+        mRFallLow = findViewById(R.id.arrow_r_lower);
+        mLLockMask = findViewById(R.id.l_lock_mask);
+        mRLockMask = findViewById(R.id.r_lock_mask);
+        mRMoveForward = findViewById(R.id.arrow_r_move_forward);
+        mRMoveBackward = findViewById(R.id.arrow_r_move_backward);
+        mMirrorFolderDisplayIcon = findViewById(R.id.folder);
+        mRSeat = findViewById(R.id.seats_r);
+        resetSeatsToNormal();
+        if(isInPCondition){
+            mSteeringInstruction.setVisibility(View.VISIBLE);
+            mSteeringWaringIcon.setVisibility(View.GONE);
+            mLLockMask.setVisibility(View.GONE);
+            mRLockMask.setVisibility(View.GONE);
+            mSeatsWaringIcon.setVisibility(View.GONE);
+            mSeatsInstruction.setVisibility(View.VISIBLE);
+            mSeatsWaringInstruction.setVisibility(View.GONE);
+            mSteeringWaringInstruction.setVisibility(View.GONE);
+        }else{
+            mSteeringInstruction.setVisibility(View.GONE);
+            mLLockMask.setVisibility(View.VISIBLE);
+            mRLockMask.setVisibility(View.VISIBLE);
+            mSteeringWaringIcon.setVisibility(View.VISIBLE);
+            mSteeringWaringInstruction.setVisibility(View.VISIBLE);
+            mSeatsWaringIcon.setVisibility(View.VISIBLE);
+            mSeatsInstruction.setVisibility(View.GONE);
+            mSeatsWaringInstruction.setVisibility(View.VISIBLE);
+            mLLockMask.setOnClickListener(this);
+            mRLockMask.setOnClickListener(this);
+        }
         mFrogFrontLight.setEnabled(true);
         mFrogRearLight.setEnabled(true);
         mExteriorLightAuto.setSelected(true);
@@ -178,6 +250,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mDoorLock.setOnClickListener(this);
         mChildLock.setOnClickListener(this);
         mSunCurtain.setOnClickListener(this);
+        mMirrorFolderDisplayIcon.setOnClickListener(this);
         mWindowFrontLeftUp.setOnClickListener(this);
         mWindowFrontLeft.setOnClickListener(this);
         mWindowFrontLeftDown.setOnClickListener(this);
@@ -195,6 +268,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mRightFrontDoorLock.setOnClickListener(this);
         mRightRearDoorLock.setOnClickListener(this);
         mRearLuggageTrunk.setOnClickListener(this);
+        mLFallForward.setOnClickListener(this);
+        mLFallBackward.setOnClickListener(this);
+        mLFallUp.setOnClickListener(this);
+        mLFallDown.setOnClickListener(this);
+        mLFallHigh.setOnClickListener(this);
+        mLFallLow.setOnClickListener(this);
+        mLMoveForward.setOnClickListener(this);
+        mLMoveBackward.setOnClickListener(this);
+        mRFallForward.setOnClickListener(this);
+        mRFallBackward.setOnClickListener(this);
+        mRFallUp.setOnClickListener(this);
+        mRFallDown.setOnClickListener(this);
+        mRFallHigh.setOnClickListener(this);
+        mRFallLow.setOnClickListener(this);
+        mRMoveForward.setOnClickListener(this);
+        mRMoveBackward.setOnClickListener(this);
+        mMirrorFolderDisplayIcon.setOnClickListener(this);
         mRearLuggageTrunk.setActivated(false);
         mMenuListView.setAdapter(mListAdapter);
         mScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -215,6 +305,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetSeatsToNormal();
                     }else if((oldY>=2111 && y<2705)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -236,6 +327,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(true);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetSeatsToNormal();
                     }else if((oldY>=4298 && y<5298)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -259,6 +351,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetSeatsToNormal();
                     }else if((oldY>=2761 && y<3355)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -280,6 +373,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(true);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetSeatsToNormal();
                     }else if((oldY>=4948 && y<5948)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -306,6 +400,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if(position==0){
                         mScrollView.scrollTo(60,0);
                     }else if(position==1){
+                        resetSeatsToNormal();
                         mScrollView.scrollTo(60,1195);
                     }else if(position==2){
                         mScrollView.scrollTo(60, 2117);
@@ -314,6 +409,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mScrollView.getHeight();
                     }else if(position==4){
                         mScrollView.scrollTo(60, 3461);
+                        resetSeatsToNormal();
                     }else if(position==5){
                         mScrollView.scrollTo(60, 4304);
                         mMenuListView.getChildAt(5).setSelected(true);
@@ -322,6 +418,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     if(position==0){
                         mScrollView.scrollTo(60,0);
                     }else if(position==1){
+                        resetSeatsToNormal();
                         mScrollView.scrollTo(60,1195);
                     }else if(position==2){
                         mScrollView.scrollTo(60, 2767);
@@ -329,6 +426,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mScrollView.scrollTo(60, 3365);
                     }else if(position==4){
                         mScrollView.scrollTo(60, 4111);
+                        resetSeatsToNormal();
                     }else if(position==5){
                         mScrollView.scrollTo(60, 4954);
                         mMenuListView.getChildAt(5).setSelected(true);
@@ -629,7 +727,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
             return;
         } else if (i == mAmbientModePassion.getId()) {
-            mAmbientModeOriginal.setSelected(true);
+            mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(true);
             mAmbientModeFlowing.setSelected(false);
             mAmbientModeWave.setSelected(false);
@@ -815,6 +913,200 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 isPubbleLightLOpen = false;
             }
             return;
+        }else if (i ==  mPuddleLight.getId()) {
+            if (isPubbleLightLOpen == false) {
+                mPuddleLight.setSelected(true);
+                isPubbleLightLOpen = true;
+            }else{
+                mPuddleLight.setSelected(false);
+                isPubbleLightLOpen = false;
+            }
+            return;
+        }else if (i ==  mLFallForward.getId()) {
+            mLFallForward.setSelected(true);
+            mLFallBackward.setSelected(false);
+            mLFallUp.setSelected(false);
+            mLFallDown.setSelected(false);
+            mLFallHigh.setSelected(false);
+            mLFallLow.setSelected(false);
+            mLMoveForward.setSelected(false);
+            mLMoveBackward.setSelected(false);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_2);
+            return;
+        }else if (i ==  mLFallBackward.getId()) {
+            mLFallForward.setSelected(false);
+            mLFallBackward.setSelected(true);
+            mLFallUp.setSelected(false);
+            mLFallDown.setSelected(false);
+            mLFallHigh.setSelected(false);
+            mLFallLow.setSelected(false);
+            mLMoveForward.setSelected(false);
+            mLMoveBackward.setSelected(false);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_2);
+            return;
+        }else if (i ==  mLFallUp.getId()) {
+            mLFallForward.setSelected(false);
+            mLFallBackward.setSelected(false);
+            mLFallUp.setSelected(true);
+            mLFallDown.setSelected(false);
+            mLFallHigh.setSelected(false);
+            mLFallLow.setSelected(false);
+            mLMoveForward.setSelected(false);
+            mLMoveBackward.setSelected(false);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
+            return;
+        }else if (i ==  mLFallDown.getId()) {
+            mLFallForward.setSelected(false);
+            mLFallBackward.setSelected(false);
+            mLFallUp.setSelected(false);
+            mLFallDown.setSelected(true);
+            mLFallHigh.setSelected(false);
+            mLFallLow.setSelected(false);
+            mLMoveForward.setSelected(false);
+            mLMoveBackward.setSelected(false);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
+            return;
+        }else if (i ==  mLFallHigh.getId()) {
+            mLFallForward.setSelected(false);
+            mLFallBackward.setSelected(false);
+            mLFallUp.setSelected(false);
+            mLFallDown.setSelected(false);
+            mLFallHigh.setSelected(true);
+            mLFallLow.setSelected(false);
+            mLMoveForward.setSelected(false);
+            mLMoveBackward.setSelected(false);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_1);
+            return;
+        }else if (i ==  mLFallLow.getId()) {
+            mLFallForward.setSelected(false);
+            mLFallBackward.setSelected(false);
+            mLFallUp.setSelected(false);
+            mLFallDown.setSelected(false);
+            mLFallHigh.setSelected(false);
+            mLFallLow.setSelected(true);
+            mLMoveForward.setSelected(false);
+            mLMoveBackward.setSelected(false);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_1);
+            return;
+        }else if (i ==  mLMoveForward.getId()) {
+            mLFallForward.setSelected(false);
+            mLFallBackward.setSelected(false);
+            mLFallUp.setSelected(false);
+            mLFallDown.setSelected(false);
+            mLFallHigh.setSelected(false);
+            mLFallLow.setSelected(false);
+            mLMoveForward.setSelected(true);
+            mLMoveBackward.setSelected(false);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
+            return;
+        }else if (i ==  mLMoveBackward.getId()) {
+            mLFallForward.setSelected(false);
+            mLFallBackward.setSelected(false);
+            mLFallUp.setSelected(false);
+            mLFallDown.setSelected(false);
+            mLFallHigh.setSelected(false);
+            mLFallLow.setSelected(false);
+            mLMoveForward.setSelected(false);
+            mLMoveBackward.setSelected(true);
+            mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
+            return;
+        }else if (i ==  mRFallForward.getId()) {
+            mRFallForward.setSelected(true);
+            mRFallBackward.setSelected(false);
+            mRFallUp.setSelected(false);
+            mRFallDown.setSelected(false);
+            mRFallHigh.setSelected(false);
+            mRFallLow.setSelected(false);
+            mRMoveForward.setSelected(false);
+            mRMoveBackward.setSelected(false);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_2);
+            return;
+        }else if (i ==  mRFallBackward.getId()) {
+            mRFallForward.setSelected(false);
+            mRFallBackward.setSelected(true);
+            mRFallUp.setSelected(false);
+            mRFallDown.setSelected(false);
+            mRFallHigh.setSelected(false);
+            mRFallLow.setSelected(false);
+            mRMoveForward.setSelected(false);
+            mRMoveBackward.setSelected(false);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_2);
+            return;
+        }else if (i ==  mRFallUp.getId()) {
+            mRFallForward.setSelected(false);
+            mRFallBackward.setSelected(false);
+            mRFallUp.setSelected(true);
+            mRFallDown.setSelected(false);
+            mRFallHigh.setSelected(false);
+            mRFallLow.setSelected(false);
+            mRMoveForward.setSelected(false);
+            mRMoveBackward.setSelected(false);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
+            return;
+        }else if (i ==  mRFallDown.getId()) {
+            mRFallForward.setSelected(false);
+            mRFallBackward.setSelected(false);
+            mRFallUp.setSelected(false);
+            mRFallDown.setSelected(true);
+            mRFallHigh.setSelected(false);
+            mRFallLow.setSelected(false);
+            mRMoveForward.setSelected(false);
+            mRMoveBackward.setSelected(false);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
+            return;
+        }else if (i ==  mRFallHigh.getId()) {
+            mRFallForward.setSelected(false);
+            mRFallBackward.setSelected(false);
+            mRFallUp.setSelected(false);
+            mRFallDown.setSelected(false);
+            mRFallHigh.setSelected(true);
+            mRFallLow.setSelected(false);
+            mRMoveForward.setSelected(false);
+            mRMoveBackward.setSelected(false);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_1);
+            return;
+        }else if (i ==  mRFallLow.getId()) {
+            mRFallForward.setSelected(false);
+            mRFallBackward.setSelected(false);
+            mRFallUp.setSelected(false);
+            mRFallDown.setSelected(false);
+            mRFallHigh.setSelected(false);
+            mRFallLow.setSelected(true);
+            mRMoveForward.setSelected(false);
+            mRMoveBackward.setSelected(false);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_1);
+            return;
+        }else if (i ==  mRMoveForward.getId()) {
+            mRFallForward.setSelected(false);
+            mRFallBackward.setSelected(false);
+            mRFallUp.setSelected(false);
+            mRFallDown.setSelected(false);
+            mRFallHigh.setSelected(false);
+            mRFallLow.setSelected(false);
+            mRMoveForward.setSelected(true);
+            mRMoveBackward.setSelected(false);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
+            return;
+        }else if (i ==  mRMoveBackward.getId()) {
+            mRFallForward.setSelected(false);
+            mRFallBackward.setSelected(false);
+            mRFallUp.setSelected(false);
+            mRFallDown.setSelected(false);
+            mRFallHigh.setSelected(false);
+            mRFallLow.setSelected(false);
+            mRMoveForward.setSelected(false);
+            mRMoveBackward.setSelected(true);
+            mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
+            return;
+        } else if (i ==  mMirrorFolderDisplayIcon.getId()) {
+            if (isMirrorOpen == false) {
+                mMirrorFolderDisplayIcon.setSelected(true);
+                isMirrorOpen = true;
+            }else{
+                mMirrorFolderDisplayIcon.setSelected(false);
+                isMirrorOpen = false;
+            }
+            return;
         }
     }
     public boolean isDoorLockOpen() {
@@ -822,5 +1114,25 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return true;
         }
         return false;
+    }
+    private void resetSeatsToNormal(){
+        mRFallForward.setSelected(false);
+        mRFallBackward.setSelected(false);
+        mRFallUp.setSelected(false);
+        mRFallDown.setSelected(false);
+        mRFallHigh.setSelected(false);
+        mRFallLow.setSelected(false);
+        mRMoveForward.setSelected(false);
+        mRMoveBackward.setSelected(false);
+        mLFallForward.setSelected(false);
+        mLFallBackward.setSelected(false);
+        mLFallUp.setSelected(false);
+        mLFallDown.setSelected(false);
+        mLFallHigh.setSelected(false);
+        mLFallLow.setSelected(false);
+        mLMoveForward.setSelected(false);
+        mLMoveBackward.setSelected(false);
+        mLSeat.setBackgroundResource(R.drawable.seat_l_normal);
+        mRSeat.setBackgroundResource(R.drawable.seat_r_normal);
     }
 }

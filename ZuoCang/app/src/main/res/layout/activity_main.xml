@@ -306,6 +306,13 @@
                                          android:layout_marginTop="120px"
                                          android:clickable="true"
                                          android:src="@drawable/selector_luggage_trunk" />
+
+                                     <ImageView
+                                         android:id="@+id/exterior_light_off"
+                                         android:layout_width="120px"
+                                         android:layout_height="90px"
+                                         android:clickable="true"
+                                         android:src="@drawable/selector_exterior_light_off" />
                              </LinearLayout>
                              <LinearLayout
                                  android:id="@+id/switch_layout"
@@ -415,7 +422,7 @@
                                          android:layout_width="84px"
                                          android:layout_height="45px"
                                          android:background="@drawable/bg_switch"
-                                         android:id="@+id/door_auto_lock"
+                                         android:id="@+id/door_autoz_lock"
                                          android:thumb="@android:color/transparent">
                                      </Switch>
                                      <TextView
@@ -513,13 +520,8 @@
                                             android:background="#40FFFFFF"
                                             android:gravity="center"
                                             android:layout_marginTop="24px"/>
-                                <ImageView
-                                    android:id="@+id/exterior_light_off"
-                                    android:layout_width="120px"
-                                    android:layout_height="90px"
-                                    android:clickable="true"
-                                    android:src="@drawable/selector_exterior_light_off"/>
-                                </LinearLayout>
+
+                        </LinearLayout>
 
                         <ImageView
                             android:id="@+id/exterior_high_beam_light_auto"
@@ -872,6 +874,8 @@
                                  android:textColor="#FFFFFF"
                                  android:textSize="38px"
                                  android:paddingLeft="60px"
+                                 android:gravity="center_horizontal"
+                                 android:layout_marginBottom="30px"
                                  tools:ignore="MissingConstraints" />
                                  <TextView
                                      android:id="@+id/seats_instruction"
@@ -880,36 +884,84 @@
                                      android:paddingTop="10px"
                                      android:text="Tap the arrows to adjust seats"
                                      android:textColor="#BFFFFFFF"
+                                     android:visibility="gone"
                                      android:textSize="22px"
-                                     app:layout_constraintLeft_toRightOf="@+id/seats_title"
-                                     />
+                                     app:layout_constraintLeft_toRightOf="@+id/seats_title" />
+                                <ImageView
+                                    android:id="@+id/seats_warning_icon"
+                                    android:layout_width="30px"
+                                    android:layout_height="36px"
+                                    android:clickable="true"
+                                    android:layout_marginLeft="30px"
+                                    android:paddingTop="16px"
+                                    android:scaleType="fitCenter"
+                                    android:visibility="visible"
+                                    android:src="@drawable/icon_warning"
+                                    app:layout_constraintLeft_toRightOf="@+id/seats_title" />
+                             <TextView
+                                 android:id="@+id/seats_warning_instrcution"
+                                 android:layout_width="wrap_content"
+                                 android:layout_height="36px"
+                                 android:visibility="visible"
+                                 android:layout_marginLeft="6px"
+                                 android:paddingTop="10px"
+                                 android:gravity="center_horizontal"
+                                 android:text="Adjust driver seat when shifting into Park"
+                                 android:textColor="#EB5545"
+                                 android:textSize="22px"
+                                 app:layout_constraintLeft_toRightOf="@+id/seats_warning_icon" />
+                   <LinearLayout
+                       android:layout_width="wrap_content"
+                       android:layout_height="wrap_content"
+                       android:layout_marginTop="47px"
+                       app:layout_constraintTop_toBottomOf="@+id/seats_instruction"
+                       android:orientation="horizontal">
                    <RelativeLayout
                        android:layout_width="366px"
                        android:layout_height="544px"
-                       android:layout_marginTop="37px"
-                       android:paddingLeft="30px"
-                       android:gravity="center_horizontal"
-                       android:id="@+id/seats_l_layout"
-                       app:layout_constraintTop_toBottomOf="@+id/seats_title">
-                     <ImageView
-                          android:id="@+id/arrow_l_fall_forward"
-                          android:layout_width="60px"
-                          android:layout_height="60px"
-                         android:layout_marginTop="18px"
-                          android:clickable="true"
-                          android:layout_marginLeft="88px"
-                         android:src="@drawable/selector_l_arrow_fall_forward"/>
+                       android:layout_marginLeft="30px"
+                       android:id="@+id/seats_l_layout">
+                           <RelativeLayout
+                               android:layout_width="366px"
+                               android:layout_height="420px"
 
-                   <ImageView
-                       android:id="@+id/arrow_l_fall_backward"
-                       android:layout_width="60px"
-                       android:layout_height="60px"
-                       android:clickable="true"
-                       android:layout_marginTop="18px"
-                       android:layout_marginLeft="4px"
-                       android:layout_marginRight="126px"
-                       android:layout_toRightOf="@+id/arrow_l_fall_forward"
-                       android:src="@drawable/selector_l_arrow_fall_backward"/>
+                               android:id="@+id/seats_l_detail">
+                          <ImageView
+                               android:id="@+id/arrow_l_fall_forward"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:layout_marginTop="18px"
+                               android:clickable="true"
+                               android:layout_marginLeft="88px"
+                               android:src="@drawable/selector_l_arrow_fall_backward"/>
+                           <ImageView
+                               android:id="@+id/arrow_l_fall_backward"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="37px"
+                               android:layout_marginLeft="4px"
+                               android:layout_toRightOf="@+id/arrow_l_fall_forward"
+                               android:src="@drawable/selector_l_arrow_fall_forward"/>
+                           <ImageView
+                               android:id="@+id/arrow_l_up"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="137px"
+                               android:layout_marginLeft="28px"
+                               android:layout_marginRight="14px"
+                               android:src="@drawable/selector_l_arrow_up"/>
+                           <ImageView
+                               android:id="@+id/arrow_l_down"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="18px"
+                               android:layout_marginLeft="28px"
+                               android:layout_marginRight="14px"
+                               android:layout_below="@+id/arrow_l_up"
+                               android:src="@drawable/selector_l_arrow_down"/>
                            <ImageView
                                android:id="@+id/seats_l"
                                android:layout_width="170px"
@@ -918,63 +970,54 @@
                                android:layout_marginTop="6px"
                                android:layout_toRightOf="@+id/arrow_l_up"
                                android:layout_below="@+id/arrow_l_fall_forward"
-                               android:src="@drawable/seat_l_normal"/>
-                   <ImageView
-                       android:id="@+id/arrow_l_up"
-                       android:layout_width="60px"
-                       android:layout_height="60px"
-                       android:clickable="true"
-                       android:layout_marginTop="87px"
-                       android:layout_marginLeft="13px"
-                       android:layout_marginRight="24px"
-                       android:src="@drawable/selector_l_arrow_up"/>
-                   <ImageView
-                       android:id="@+id/arrow_l_down"
-                       android:layout_width="60px"
-                       android:layout_height="60px"
-                       android:clickable="true"
-                       android:layout_marginTop="18px"
-                       android:layout_marginLeft="13px"
-                       android:layout_marginRight="24px"
-                       android:layout_below="@+id/arrow_l_up"
-                       android:src="@drawable/selector_l_arrow_down"/>
-
-
-                   <ImageView
-                       android:id="@+id/arrow_l_higher"
-                       android:layout_width="60px"
-                       android:layout_height="60px"
-                       android:clickable="true"
-                       android:layout_marginTop="176px"
-                       android:layout_marginLeft="2px"
-                       android:layout_toRightOf="@+id/seats_l"
-                       android:src="@drawable/selector_l_arrow_higher"/>
-                   <ImageView
-                       android:id="@+id/arrow_l_lower"
-                       android:layout_width="60px"
-                       android:layout_height="60px"
-                       android:clickable="true"
-                       android:layout_marginTop="6px"
-                       android:layout_toRightOf="@+id/seats_l"
-                       android:layout_below="@+id/arrow_l_higher"
-                       android:src="@drawable/selector_l_arrow_lower"/>
-                   <ImageView
-                       android:id="@+id/arrow_l_move_forward"
-                       android:layout_width="122px"
-                       android:layout_height="47px"
-                       android:clickable="true"
-                       android:layout_marginLeft="26px"
-                       android:layout_marginTop="269px"
-                       android:src="@drawable/selector_l_arrow_move_backward"/>
-                   <ImageView
-                       android:id="@+id/arrow_l_move_backward"
-                       android:layout_width="122px"
-                       android:layout_height="47px"
-                       android:clickable="true"
-                       android:layout_marginTop="301px"
-                       android:layout_toRightOf="@+id/arrow_l_move_forward"
-                       android:src="@drawable/selector_l_arrow_move_forwadr"/>
-
+                               android:background="@drawable/lock_mask"
+                               android:scaleType="fitCenter"/>
+                           <ImageView
+                               android:id="@+id/arrow_l_higher"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="176px"
+                               android:layout_marginLeft="2px"
+                               android:layout_toRightOf="@+id/seats_l"
+                               android:src="@drawable/selector_l_arrow_higher"/>
+                           <ImageView
+                               android:id="@+id/arrow_l_lower"
+                               android:layout_width="60px"
+                               android:layout_height="60px"
+                               android:clickable="true"
+                               android:layout_marginTop="18px"
+                               android:layout_marginLeft="2px"
+                               android:layout_toRightOf="@+id/seats_l"
+                               android:layout_below="@+id/arrow_l_higher"
+                               android:src="@drawable/selector_l_arrow_lower"/>
+                         <ImageView
+                              android:id="@+id/arrow_l_move_forward"
+                              android:layout_width="122px"
+                              android:layout_height="47px"
+                              android:clickable="true"
+                              android:layout_marginLeft="26px"
+                              android:layout_marginTop="227px"
+                              android:layout_below="@+id/arrow_l_fall_forward"
+                              android:src="@drawable/selector_l_arrow_move_backward"/>
+                        <ImageView
+                              android:id="@+id/arrow_l_move_backward"
+                              android:layout_width="122px"
+                              android:layout_height="47px"
+                              android:clickable="true"
+                              android:layout_marginLeft="116px"
+                              android:layout_marginTop="241px"
+                              android:layout_below="@+id/arrow_l_fall_backward"
+                              android:src="@drawable/selector_l_arrow_move_forwadr"/>
+                                   <ImageView
+                                       android:id="@+id/l_lock_mask"
+                                       android:layout_width="366px"
+                                       android:layout_height="420px"
+                                       android:clickable="true"
+                                       android:visibility="gone"
+                                       android:scaleType="centerCrop"
+                                       android:src="@drawable/lock_mask"/>
+                           </RelativeLayout>
                            <TextView
                                android:id="@+id/message_l_title"
                                android:layout_width="wrap_content"
@@ -982,18 +1025,19 @@
                                android:text="Message"
                                android:textColor="#BFFFFFFF"
                                android:textSize="28px"
-                               android:paddingLeft="152px"
-                               android:layout_marginTop="387px" />
+                               android:paddingLeft="132px"
+                               android:layout_marginTop="18px"
+                               android:layout_below="@+id/seats_l_detail"/>
                            <LinearLayout
                                android:id="@+id/message_l_display_layout"
                                android:layout_width="240px"
                                android:layout_height="60px"
                                android:layout_marginTop="12px"
-                               android:layout_marginLeft="83px"
+                               android:layout_marginLeft="63px"
                                android:background="@drawable/bg_window"
                                android:orientation="horizontal"
                                android:layout_below="@+id/message_l_title"
-                               android:gravity="center_horizontal">
+                               android:gravity="center">
 
                                    <Button
                                        android:id="@+id/message_l_reduce"
@@ -1023,149 +1067,158 @@
                                    </Button>
                            </LinearLayout>
                    </RelativeLayout>
-                   <RelativeLayout
-                       android:layout_width="366px"
-                       android:layout_height="544px"
-                       android:layout_marginLeft="20px"
-                       android:id="@+id/seat_r_layout"
-                       app:layout_constraintTop_toBottomOf="@+id/seats_title"
-                       app:layout_constraintLeft_toRightOf="@+id/seats_l_layout">
-
-                           <ImageView
-                               android:id="@+id/arrow_r_fall_farward"
-                               android:layout_width="60px"
-                               android:layout_height="60px"
-                               android:layout_marginTop="37px"
-                               android:clickable="true"
-                               android:layout_marginLeft="125px"
-                               android:src="@drawable/selector_r_arrow_fall_forward"/>
-
-                           <ImageView
-                               android:id="@+id/arrow_r_fall_backward"
-                               android:layout_width="60px"
-                               android:layout_height="60px"
-                               android:clickable="true"
-                               android:layout_marginTop="18px"
-                               android:layout_marginLeft="4px"
-                               android:layout_toRightOf="@+id/arrow_r_fall_farward"
-                               android:src="@drawable/selector_r_arrow_fall_backward"/>
-                           <ImageView
-                               android:id="@+id/seats_r"
-                               android:layout_width="170px"
-                               android:layout_height="234px"
-                               android:clickable="true"
-                               android:layout_marginTop="6px"
-                               android:layout_marginLeft="100px"
-                               android:layout_below="@+id/arrow_r_fall_backward"
-                               android:src="@drawable/seat_r_normal"/>
-
-                           <ImageView
-                               android:id="@+id/arrow_r_up"
-                               android:layout_width="60px"
-                               android:layout_height="60px"
-                               android:layout_marginLeft="24px"
-                               android:layout_marginRight="13px"
-                               android:layout_marginTop="87px"
-                               android:layout_toRightOf="@+id/seats_r"
-                               android:clickable="true"
-                               android:src="@drawable/selector_r_arrow_up" />
-                           <ImageView
-                               android:id="@+id/arrow_r_down"
-                               android:layout_width="60px"
-                               android:layout_height="60px"
-                               android:clickable="true"
-                               android:layout_marginTop="18px"
-                               android:layout_marginLeft="24px"
-                               android:layout_marginRight="13px"
-                               android:layout_toRightOf="@+id/seats_r"
-                               android:layout_below="@+id/arrow_r_up"
-                               android:src="@drawable/selector_r_arrow_down"/>
-
-                           <ImageView
-                               android:id="@+id/arrow_r_higher"
-                               android:layout_width="60px"
-                               android:layout_height="60px"
-                               android:layout_marginTop="207px"
-                               android:layout_marginLeft="42px"
-                               android:layout_toLeftOf="@+id/seats_l_layout"
-                               android:clickable="true"
-                               android:src="@drawable/selector_r_arrow_higher"
-                               tools:ignore="NotSibling" />
-                           <ImageView
-                               android:id="@+id/arrow_r_lower"
-                               android:layout_width="60px"
-                               android:layout_height="60px"
-                               android:clickable="true"
-                               android:layout_marginTop="6px"
-                               android:layout_marginLeft="42px"
-                               android:layout_toLeftOf="@+id/seats_l_layout"
-                               android:layout_below="@+id/arrow_r_higher"
-                               android:src="@drawable/selector_r_arrow_lower"
-                               tools:ignore="NotSibling"/>
-                           <ImageView
-                               android:id="@+id/arrow_r_move_forward"
-                               android:layout_width="122px"
-                               android:layout_height="47px"
-                               android:clickable="true"
-                               android:layout_marginLeft="126px"
-                               android:layout_marginTop="302px"
-                               android:src="@drawable/selector_r_arrow_move_forwadr"/>
-                           <ImageView
-                               android:id="@+id/arrow_r_move_backward"
-                               android:layout_width="122px"
-                               android:layout_height="47px"
-                               android:clickable="true"
-                               android:layout_marginTop="269px"
-                               android:layout_marginLeft="216px"
-                               android:src="@drawable/selector_r_arrow_move_backward"/>
-                           <TextView
-                               android:id="@+id/message_r_title"
-                               android:layout_width="wrap_content"
-                               android:layout_height="46px"
-                               android:text="Message"
-                               android:textColor="#BFFFFFFF"
-                               android:textSize="28px"
-                               android:layout_marginLeft="180px"
-                               android:layout_marginTop="420px" />
-                           <LinearLayout
-                               android:id="@+id/message_r_display_layout"
-                               android:layout_width="240px"
-                               android:layout_height="60px"
-                               android:layout_marginTop="12px"
-                               android:layout_marginLeft="124px"
-                               android:background="@drawable/bg_window"
-                               android:orientation="horizontal"
-                               android:layout_below="@+id/message_r_title"
-                               android:gravity="center_horizontal">
-
-                                   <Button
-                                       android:id="@+id/message_r_reduce"
+                           <RelativeLayout
+                               android:layout_width="366px"
+                               android:layout_height="544px"
+                               android:layout_marginLeft="20px"
+                               android:id="@+id/seats_r_layout">
+                           <RelativeLayout
+                               android:layout_width="366px"
+                               android:layout_height="420px"
+                               android:id="@+id/seats_r_detail">
+                                   <ImageView
+                                       android:id="@+id/arrow_r_fall_forward"
                                        android:layout_width="60px"
                                        android:layout_height="60px"
-                                       android:layout_marginLeft="12px"
-                                       android:layout_marginRight="40px"
+                                       android:layout_marginTop="37px"
                                        android:clickable="true"
-                                       android:background="@drawable/selector_massage_control_reduce">
-
-                                   </Button>
-                                   <TextView
-                                       android:id="@+id/r_message_number"
-                                       android:layout_width="17px"
-                                       android:layout_height="36px"
-                                       android:text="1"
-                                       android:textColor="#FFFFFF"
-                                       android:textSize="30px" />
-                                   <Button
-                                       android:id="@+id/message_r_plus"
+                                       android:layout_marginLeft="127px"
+                                       android:src="@drawable/selector_r_arrow_fall_forward"/>
+                                   <ImageView
+                                       android:id="@+id/arrow_r_fall_backward"
                                        android:layout_width="60px"
                                        android:layout_height="60px"
-                                       android:layout_marginLeft="40px"
-                                       android:layout_marginRight="12px"
-                                       android:background="@drawable/selector_massage_control_plus"
-                                       android:clickable="true">
-                                   </Button>
-                           </LinearLayout>
-                   </RelativeLayout>
+                                       android:clickable="true"
+                                       android:layout_marginTop="18px"
+                                       android:layout_marginLeft="4px"
+                                       android:layout_toRightOf="@+id/arrow_r_fall_forward"
+                                       android:src="@drawable/selector_r_arrow_fall_backward"/>
+
+                                   <ImageView
+                                       android:id="@+id/arrow_r_higher"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:clickable="true"
+                                       android:layout_marginTop="176px"
+                                       android:layout_marginRight="2px"
+                                       android:layout_marginLeft="23px"
+                                       android:src="@drawable/selector_r_arrow_higher"/>
+                                   <ImageView
+                                       android:id="@+id/arrow_r_lower"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:clickable="true"
+                                       android:layout_marginTop="18px"
+                                       android:layout_marginRight="2px"
+                                       android:layout_marginLeft="23px"
+                                       android:layout_below="@+id/arrow_r_higher"
+                                       android:src="@drawable/selector_r_arrow_lower"/>
+                                   <ImageView
+                                       android:id="@+id/seats_r"
+                                       android:layout_width="170px"
+                                       android:layout_height="234px"
+                                       android:clickable="true"
+                                       android:layout_marginTop="6px"
+                                       android:layout_toRightOf="@+id/arrow_r_higher"
+                                       android:layout_below="@+id/arrow_r_fall_forward" />
+                                   <ImageView
+                                       android:id="@+id/arrow_r_up"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:clickable="true"
+                                       android:layout_marginTop="137px"
+                                       android:layout_marginLeft="14px"
+                                       android:layout_toRightOf="@+id/seats_r"
+                                       android:src="@drawable/selector_r_arrow_up"/>
+                                   <ImageView
+                                       android:id="@+id/arrow_r_down"
+                                       android:layout_width="60px"
+                                       android:layout_height="60px"
+                                       android:clickable="true"
+                                       android:layout_marginTop="18px"
+                                       android:layout_marginLeft="14px"
+                                       android:layout_toRightOf="@+id/seats_r"
+                                       android:layout_below="@+id/arrow_r_up"
+                                       android:src="@drawable/selector_r_arrow_down"/>
+
+
+                                   <ImageView
+                                       android:id="@+id/arrow_r_move_forward"
+                                       android:layout_width="122px"
+                                       android:layout_height="47px"
+                                       android:clickable="true"
+                                       android:layout_marginLeft="216px"
+                                       android:layout_marginTop="227px"
+                                       android:layout_below="@+id/arrow_r_fall_backward"
+                                       android:src="@drawable/selector_r_arrow_move_backward"/>
+                                   <ImageView
+                                       android:id="@+id/arrow_r_move_backward"
+                                       android:layout_width="122px"
+                                       android:layout_height="47px"
+                                       android:clickable="true"
+                                       android:layout_marginLeft="116px"
+                                       android:layout_marginTop="241px"
+                                       android:layout_below="@+id/arrow_r_fall_forward"
+                                       android:src="@drawable/selector_r_arrow_move_forwadr"/>
+                                   <ImageView
+                                       android:id="@+id/r_lock_mask"
+                                       android:layout_width="366px"
+                                       android:layout_height="420px"
+                                       android:visibility="gone"
+                                       android:clickable="true"
+                                       android:scaleType="centerCrop"
+                                       android:src="@drawable/lock_mask"/>
+                           </RelativeLayout>
+                                   <TextView
+                                       android:id="@+id/message_r_title"
+                                       android:layout_width="wrap_content"
+                                       android:layout_height="46px"
+                                       android:text="Message"
+                                       android:textColor="#BFFFFFFF"
+                                       android:textSize="28px"
+                                       android:paddingLeft="144px"
+                                       android:layout_marginTop="18px"
+                                       android:layout_below="@+id/seats_r_detail" />
+                                   <LinearLayout
+                                       android:id="@+id/message_r_display_layout"
+                                       android:layout_width="240px"
+                                       android:layout_height="60px"
+                                       android:layout_marginTop="12px"
+                                       android:layout_marginLeft="73px"
+                                       android:background="@drawable/bg_window"
+                                       android:orientation="horizontal"
+                                       android:layout_below="@+id/message_r_title"
+                                       android:gravity="center">
+
+                                           <Button
+                                               android:id="@+id/message_r_reduce"
+                                               android:layout_width="60px"
+                                               android:layout_height="60px"
+                                               android:layout_marginLeft="12px"
+                                               android:layout_marginRight="40px"
+                                               android:clickable="true"
+                                               android:background="@drawable/selector_massage_control_reduce">
+
+                                           </Button>
+                                           <TextView
+                                               android:id="@+id/r_message_number"
+                                               android:layout_width="17px"
+                                               android:layout_height="36px"
+                                               android:text="1"
+                                               android:textColor="#FFFFFF"
+                                               android:textSize="30px" />
+                                           <Button
+                                               android:id="@+id/message_r_plus"
+                                               android:layout_width="60px"
+                                               android:layout_height="60px"
+                                               android:layout_marginLeft="40px"
+                                               android:layout_marginRight="12px"
+                                               android:background="@drawable/selector_massage_control_plus"
+                                               android:clickable="true">
+                                           </Button>
+                                   </LinearLayout>
+                           </RelativeLayout>
+           </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
                 <View
@@ -1423,7 +1476,31 @@
                     android:text="Tap the arrows to adjust steering"
                     android:textColor="#BFFFFFFF"
                     android:textSize="22px"
+                    android:visibility="gone"
                     app:layout_constraintLeft_toRightOf="@+id/steering_title" />
+                        <ImageView
+                            android:id="@+id/steering_warning_icon"
+                            android:layout_width="30px"
+                            android:layout_height="36px"
+                            android:clickable="true"
+                            android:layout_marginLeft="30px"
+                            android:paddingTop="16px"
+                            android:scaleType="fitCenter"
+                            android:visibility="gone"
+                            android:src="@drawable/icon_warning"
+                            app:layout_constraintLeft_toRightOf="@+id/steering_title" />
+                        <TextView
+                            android:id="@+id/steering_warning_instrcution"
+                            android:layout_width="wrap_content"
+                            android:layout_height="36px"
+                            android:visibility="gone"
+                            android:layout_marginLeft="6px"
+                            android:paddingTop="10px"
+                            android:gravity="center_horizontal"
+                            android:text="Adjust the steering when shifting into Park"
+                            android:textColor="#EB5545"
+                            android:textSize="22px"
+                            app:layout_constraintLeft_toRightOf="@+id/steering_warning_icon" />
                         <RelativeLayout
                             android:layout_width="690px"
                             android:layout_height="510px"
