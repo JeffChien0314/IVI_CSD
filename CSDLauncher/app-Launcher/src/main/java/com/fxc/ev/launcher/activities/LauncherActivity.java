@@ -457,6 +457,9 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     public void setCurrentFragment(Fragment currentFragment) {
         setMapWidgetVisibility(View.GONE);
         FragmentTransaction fTransaction = fragmentManager.beginTransaction();
+        if (currentFragment instanceof SearchFragment) {
+            fTransaction.setCustomAnimations(R.anim.from_left, R.anim.out_left, R.anim.from_left, R.anim.out_left);
+        }
         fTransaction.replace(R.id.search_container, currentFragment, "");
         fTransaction.addToBackStack(null);
         fTransaction.commitAllowingStateLoss();
@@ -1131,7 +1134,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
     //metis@220419 路线规划<--
 
-    private void setMapWidgetVisibility(int visibility) {
+    public void setMapWidgetVisibility(int visibility) {
         searchButton.setVisibility(visibility);
         launcherFavLayout.setVisibility(visibility);
 

@@ -98,6 +98,9 @@ public class RoutePreviewFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mRoutePreviewFragment.getFragmentManager().popBackStack();
+                if (mRoutePreviewFragment.getFragmentManager().getBackStackEntryCount() == 1) {
+                    launcherActivity.setMapWidgetVisibility(View.VISIBLE);
+                }
             }
         });
 
