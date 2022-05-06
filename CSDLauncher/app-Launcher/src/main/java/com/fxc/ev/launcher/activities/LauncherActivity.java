@@ -315,21 +315,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         public void onReceive(Context context, Intent intent) {
             Log.d("Jerry", "intent.getAction():" + intent.getAction());
             if (Constants.STOP_NAVIGATION.equals(intent.getAction())) {
-                if (tripRenderer != null) {
-                    getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
-                    tripRenderer.stop();
-                    tripRenderer = null;
-                }
-                if (trip != null) {
-                    trip.removeListener(tripUpdateListener);
-                    tripUpdateListener = null;
-                    hideEtaPanel();
-                    hideNextInstructionPanel();
-                    setMapWidgetVisibility2(View.VISIBLE);
-                    stopPreview();
-                    navigation.deleteTrip(trip);
-                    trip = null;
-                }
+                resetNavigation();
+                setMapWidgetVisibility2(View.VISIBLE);
             } else if (Constants.TTS_CONTROL_TOGGLE.equals(intent.getAction())) {//Jerry@20220321 add
                 isNavigationTTSMute = intent.getBooleanExtra(Constants.TTS_CONTROL_TOGGLE, false);
             }
@@ -939,20 +926,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 waypoints.clear();
                 removeAllMarkers();
 
-                if (tripRenderer != null) {
-                    getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
-                    tripRenderer.stop();
-                    tripRenderer = null;
-                }
-                if (trip != null) {
-                    trip.removeListener(tripUpdateListener);
-                    tripUpdateListener = null;
-                    hideEtaPanel();
-                    hideNextInstructionPanel();
-                    stopPreview();
-                    navigation.deleteTrip(trip);
-                    trip = null;
-                }
+                resetNavigation();
                 trip = result.trip();
 
                 tripUpdateListener = new TripUpdateListener() {
@@ -967,7 +941,13 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
                     @Override
                     public void onTripArrival(Trip trip) {
-                        //setMapWidgetVisibility2(View.VISIBLE);//Jerry@20220314
+                        new Handler().postDelayed(new Runnable() {//Jerry@20220506 add:reset navigation
+                            @Override
+                            public void run() {
+                                resetNavigation();
+                                setMapWidgetVisibility2(View.VISIBLE);
+                            }
+                        },3000);
                         Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
                     }
                 };
@@ -1006,6 +986,24 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 removeAllMarkers();
             }
         });
+    }
+
+    //Jerry@20220506 add:stop and reset navigation
+    private void resetNavigation(){
+        if (tripRenderer != null) {
+            getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
+            tripRenderer.stop();
+            tripRenderer = null;
+        }
+        if (trip != null) {
+            trip.removeListener(tripUpdateListener);
+            tripUpdateListener = null;
+            hideEtaPanel();
+            hideNextInstructionPanel();
+            stopPreview();
+            navigation.deleteTrip(trip);
+            trip = null;
+        }
     }
 
     //metis@220419 路线规划-->
