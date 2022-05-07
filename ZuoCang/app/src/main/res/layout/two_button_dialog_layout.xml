@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="648px"
+    android:layout_height="393px"
+    android:background="@drawable/bg_dialoge"
+    android:orientation="vertical">
+    <ImageView
+        android:id="@+id/dialogue_warning_icon"
+        android:layout_width="60px"
+        android:layout_height="60px"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/modal"/>
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30px"
+        android:textSize="30px"
+        android:textColor="#FFFFFF"
+        android:layout_below="@+id/dialogue_warning_icon"
+        android:layout_gravity="center_horizontal"
+        android:text="信息不完整请完善"
+        android:textStyle="bold"/>
+
+    <LinearLayout
+        android:layout_width="648px"
+        android:layout_height="393px"
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="45px"
+        android:layout_below="@+id/message"
+        android:orientation="horizontal">
+        <Button
+            android:layout_width="180px"
+            android:layout_height="wrap_content"
+            android:text="Cancel"
+            android:id="@+id/cancelButton"
+            android:textSize="30px"
+            android:layout_marginRight="30px"
+            android:textColor="#BFFFFFFF"
+            android:background="#1AFFFFFF"
+            />
+
+        <Button
+            android:layout_width="180px"
+            android:layout_height="wrap_content"
+            android:text="OK"
+            android:id="@+id/okButton"
+            android:textSize="30px"
+            android:textColor="#BFFFFFFF"
+            android:background="#1AFFFFFF"
+            />
+    </LinearLayout>
+
+
+</RelativeLayout>

@@ -1013,6 +1013,7 @@
                                        android:id="@+id/l_lock_mask"
                                        android:layout_width="366px"
                                        android:layout_height="420px"
+                                       android:layout_marginTop="27px"
                                        android:clickable="true"
                                        android:visibility="gone"
                                        android:scaleType="centerCrop"

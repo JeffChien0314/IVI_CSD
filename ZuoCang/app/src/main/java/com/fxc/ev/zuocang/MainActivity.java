@@ -34,6 +34,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private Switch mAmbientSwitch, mFrontlightSystemSwitch,mKeyNearDoorAutoUnlockSwitch;
     private LinearLayout mAmbientDisplayLayout;
     private OneButtonDialog oneButtonDialog;
+    private TwoButtonDialog twoButtonDialog;
     private Button mDriveModeComfort, mDriveModeNormal, mDriveModeSport;
     private ImageView mDriveModeDisplayImage,mAmbientModeOriginal,mAmbientModePassion,mAmbientModeFlowing,mAmbientModeWave;
     private ImageView mAmbientModeDisplayImage,mAmbientModeStars,mAmbientModeRainBow,mAmbientModeRunning,mAmbientModeRhythm;
@@ -65,7 +66,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isRightRearDoorLock = false;
     private boolean isRearLuggageTrunkOpen = false;
     private boolean isChildLockOpen = false;
-    private boolean isInPCondition = true;
+    private boolean isInPCondition = false;
     private boolean isMirrorOpen = true;
     private boolean isRearLuggageTrunkEnable = true;
     private ArrayList<Integer> images = new ArrayList<>();
@@ -75,9 +76,9 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ImageView mWindowLock,mDoorLock,mChildLock,mSunCurtain,mLeftChildLockIcon,mRightChildLockIcon;
     private ImageView mLeftFrontDoorLock,mLeftRearDoorLock,mRightFrontDoorLock,mRightRearDoorLock;
     private ImageView mRearLuggageTrunk,mSteeringWaringIcon,mMirrorFolderDisplayIcon,mSeatsWaringIcon;
-    private TextView mSteeringInstruction,mSteeringWaringInstruction,mSeatsInstruction,mSeatsWaringInstruction;
-    private ImageView mLFallForward,mLFallBackward,mLFallUp,mLFallDown,mLFallHigh,mLFallLow,mLMoveForward,mLMoveBackward,mLSeat;
-    private ImageView mRFallForward,mRFallBackward,mRFallUp,mRFallDown,mRFallHigh,mRFallLow,mRMoveForward,mRMoveBackward,mRSeat;
+    private TextView mSteeringInstruction,mSteeringWaringInstruction,mSeatsInstruction,mSeatsWaringInstruction,mSeatsLMessageNumber,mSeatsRMessageNumber;
+    private ImageView mLSeatsFallForward,mLSeatsFallBackward,mLSeatsFallUp,mLSeatsFallDown,mLSeatsFallHigh,mLSeatsFallLow,mLSeatsMoveForward,mLSeatsMoveBackward,mLSeat;
+    private ImageView mRSeatsFallForward,mRSeatsFallBackward,mRSeatsFallUp,mRSeatsFallDown,mRSeatsFallHigh,mRSeatsFallLow,mRSeatsMoveForward,mRSeatsMoveBackward,mRSeat;
 /*    private boolean isLFallForwardArrowClick = false;
     private boolean isLFallBackwardArrowClick = false;
     private boolean isLFallUpArrowClick = false;
@@ -95,6 +96,10 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isRMoveForwardArrowClick = false;
     private boolean isRMoveBackwardArrowClick = false;*/
 private ImageView mLLockMask,mRLockMask;
+private Button mSeatsLMessageReduce,mSeatsRMessageReduce,mSeatsLMessagePlus,mSeatsRMessagePlus;
+private ImageView mLMirrorUp,mLMirrorDown,mLMirrorLeft,mLMirrorRight,mRMirrorUp,mRMirrorDown,mRMirrorLeft,mRMirrorRight;
+private ImageView mSteerControlArrowUp,mSteerControlArrowDown,mSteerControlArrowForward,mSteerControlArrowBackward;
+private int mLMessageNum,mRMessageNum;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -174,33 +179,52 @@ private ImageView mLLockMask,mRLockMask;
         mSeatsWaringIcon = findViewById(R.id.seats_warning_icon);
         mSeatsInstruction = findViewById(R.id.seats_instruction);
         mSeatsWaringInstruction = findViewById(R.id.seats_warning_instrcution);
-        mLFallForward = findViewById(R.id.arrow_l_fall_forward);
-        mLFallBackward = findViewById(R.id.arrow_l_fall_backward);
-        mLFallUp = findViewById(R.id.arrow_l_up);
-        mLFallDown = findViewById(R.id.arrow_l_down);
-        mLFallHigh = findViewById(R.id.arrow_l_higher);
-        mLFallLow = findViewById(R.id.arrow_l_lower);
+        mLSeatsFallForward = findViewById(R.id.arrow_l_fall_forward);
+        mLSeatsFallBackward = findViewById(R.id.arrow_l_fall_backward);
+        mLSeatsFallUp = findViewById(R.id.arrow_l_up);
+        mLSeatsFallDown = findViewById(R.id.arrow_l_down);
+        mLSeatsFallHigh = findViewById(R.id.arrow_l_higher);
+        mLSeatsFallLow = findViewById(R.id.arrow_l_lower);
         mLSeat = findViewById(R.id.seats_l);
-        mLMoveForward = findViewById(R.id.arrow_l_move_forward);
-        mLMoveBackward = findViewById(R.id.arrow_l_move_backward);
-        mRFallForward = findViewById(R.id.arrow_r_fall_forward);
-        mRFallBackward = findViewById(R.id.arrow_r_fall_backward);
-        mRFallUp = findViewById(R.id.arrow_r_up);
-        mRFallDown = findViewById(R.id.arrow_r_down);
-        mRFallHigh = findViewById(R.id.arrow_r_higher);
-        mRFallLow = findViewById(R.id.arrow_r_lower);
+        mLSeatsMoveForward = findViewById(R.id.arrow_l_move_forward);
+        mLSeatsMoveBackward = findViewById(R.id.arrow_l_move_backward);
+        mRSeatsFallForward = findViewById(R.id.arrow_r_fall_forward);
+        mRSeatsFallBackward = findViewById(R.id.arrow_r_fall_backward);
+        mRSeatsFallUp = findViewById(R.id.arrow_r_up);
+        mRSeatsFallDown = findViewById(R.id.arrow_r_down);
+        mRSeatsFallHigh = findViewById(R.id.arrow_r_higher);
+        mRSeatsFallLow = findViewById(R.id.arrow_r_lower);
         mLLockMask = findViewById(R.id.l_lock_mask);
         mRLockMask = findViewById(R.id.r_lock_mask);
-        mRMoveForward = findViewById(R.id.arrow_r_move_forward);
-        mRMoveBackward = findViewById(R.id.arrow_r_move_backward);
-        mMirrorFolderDisplayIcon = findViewById(R.id.folder);
+        mRSeatsMoveForward = findViewById(R.id.arrow_r_move_forward);
+        mRSeatsMoveBackward = findViewById(R.id.arrow_r_move_backward);
         mRSeat = findViewById(R.id.seats_r);
+        mSeatsLMessageReduce = findViewById(R.id.message_l_reduce);
+        mSeatsRMessageReduce = findViewById(R.id.message_r_reduce);
+        mSeatsLMessagePlus = findViewById(R.id.message_l_plus);
+        mSeatsRMessagePlus = findViewById(R.id.message_r_plus);
+        mSeatsLMessageNumber = findViewById(R.id.l_message_number);
+        mSeatsRMessageNumber = findViewById(R.id.r_message_number);
         resetSeatsToNormal();
+        mMirrorFolderDisplayIcon = findViewById(R.id.folder);
+        mLMirrorUp = findViewById(R.id.mirror_l_up);
+        mLMirrorDown = findViewById(R.id.mirror_l_down);
+        mLMirrorLeft = findViewById(R.id.mirror_l_left);
+        mLMirrorRight = findViewById(R.id.mirror_l_right);
+        mRMirrorUp = findViewById(R.id.mirror_r_up);
+        mRMirrorDown = findViewById(R.id.mirror_r_down);
+        mRMirrorLeft = findViewById(R.id.mirror_r_left);
+        mRMirrorRight = findViewById(R.id.mirror_r_right);
+        mSteerControlArrowUp = findViewById(R.id.steering_control_arrow_up);
+        mSteerControlArrowDown = findViewById(R.id.steering_control_arrow_down);
+        mSteerControlArrowForward = findViewById(R.id.steering_control_arrow_move_forward);
+        mSteerControlArrowBackward = findViewById(R.id.steering_control_arrow_move_backward);
+        resetMirrorToNormal();
         if(isInPCondition){
             mSteeringInstruction.setVisibility(View.VISIBLE);
             mSteeringWaringIcon.setVisibility(View.GONE);
             mLLockMask.setVisibility(View.GONE);
-            mRLockMask.setVisibility(View.GONE);
+            //mRLockMask.setVisibility(View.GONE);
             mSeatsWaringIcon.setVisibility(View.GONE);
             mSeatsInstruction.setVisibility(View.VISIBLE);
             mSeatsWaringInstruction.setVisibility(View.GONE);
@@ -208,14 +232,14 @@ private ImageView mLLockMask,mRLockMask;
         }else{
             mSteeringInstruction.setVisibility(View.GONE);
             mLLockMask.setVisibility(View.VISIBLE);
-            mRLockMask.setVisibility(View.VISIBLE);
+            //mRLockMask.setVisibility(View.VISIBLE);
             mSteeringWaringIcon.setVisibility(View.VISIBLE);
             mSteeringWaringInstruction.setVisibility(View.VISIBLE);
             mSeatsWaringIcon.setVisibility(View.VISIBLE);
             mSeatsInstruction.setVisibility(View.GONE);
             mSeatsWaringInstruction.setVisibility(View.VISIBLE);
             mLLockMask.setOnClickListener(this);
-            mRLockMask.setOnClickListener(this);
+            //mRLockMask.setOnClickListener(this);
         }
         mFrogFrontLight.setEnabled(true);
         mFrogRearLight.setEnabled(true);
@@ -224,6 +248,7 @@ private ImageView mLLockMask,mRLockMask;
         mAmbientModeOriginal.setSelected(true);
         mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
         mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_normal);
+        resetSteeringToNormal();
         mDriveModeSport.setOnClickListener(this);
         mDriveModeComfort.setOnClickListener(this);
         mDriveModeNormal.setOnClickListener(this);
@@ -268,23 +293,39 @@ private ImageView mLLockMask,mRLockMask;
         mRightFrontDoorLock.setOnClickListener(this);
         mRightRearDoorLock.setOnClickListener(this);
         mRearLuggageTrunk.setOnClickListener(this);
-        mLFallForward.setOnClickListener(this);
-        mLFallBackward.setOnClickListener(this);
-        mLFallUp.setOnClickListener(this);
-        mLFallDown.setOnClickListener(this);
-        mLFallHigh.setOnClickListener(this);
-        mLFallLow.setOnClickListener(this);
-        mLMoveForward.setOnClickListener(this);
-        mLMoveBackward.setOnClickListener(this);
-        mRFallForward.setOnClickListener(this);
-        mRFallBackward.setOnClickListener(this);
-        mRFallUp.setOnClickListener(this);
-        mRFallDown.setOnClickListener(this);
-        mRFallHigh.setOnClickListener(this);
-        mRFallLow.setOnClickListener(this);
-        mRMoveForward.setOnClickListener(this);
-        mRMoveBackward.setOnClickListener(this);
+        mLSeatsFallForward.setOnClickListener(this);
+        mLSeatsFallBackward.setOnClickListener(this);
+        mLSeatsFallUp.setOnClickListener(this);
+        mLSeatsFallDown.setOnClickListener(this);
+        mLSeatsFallHigh.setOnClickListener(this);
+        mLSeatsFallLow.setOnClickListener(this);
+        mLSeatsMoveForward.setOnClickListener(this);
+        mLSeatsMoveBackward.setOnClickListener(this);
+        mRSeatsFallForward.setOnClickListener(this);
+        mRSeatsFallBackward.setOnClickListener(this);
+        mRSeatsFallUp.setOnClickListener(this);
+        mRSeatsFallDown.setOnClickListener(this);
+        mRSeatsFallHigh.setOnClickListener(this);
+        mRSeatsFallLow.setOnClickListener(this);
+        mRSeatsMoveForward.setOnClickListener(this);
+        mRSeatsMoveBackward.setOnClickListener(this);
+        mSeatsLMessageReduce.setOnClickListener(this);
+        mSeatsRMessageReduce.setOnClickListener(this);
+        mSeatsLMessagePlus.setOnClickListener(this);
+        mSeatsRMessagePlus.setOnClickListener(this);
         mMirrorFolderDisplayIcon.setOnClickListener(this);
+        mLMirrorUp.setOnClickListener(this);
+        mLMirrorDown.setOnClickListener(this);
+        mLMirrorLeft.setOnClickListener(this);
+        mLMirrorRight.setOnClickListener(this);
+        mRMirrorUp.setOnClickListener(this);
+        mRMirrorDown.setOnClickListener(this);
+        mRMirrorLeft.setOnClickListener(this);
+        mRMirrorRight.setOnClickListener(this);
+        mSteerControlArrowUp.setOnClickListener(this);
+        mSteerControlArrowDown.setOnClickListener(this);
+        mSteerControlArrowForward.setOnClickListener(this);
+        mSteerControlArrowBackward.setOnClickListener(this);
         mRearLuggageTrunk.setActivated(false);
         mMenuListView.setAdapter(mListAdapter);
         mScrollView.setOnScrollChangeListener(new View.OnScrollChangeListener() {
@@ -313,6 +354,7 @@ private ImageView mLLockMask,mRLockMask;
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetMirrorToNormal();
                     }else if((oldY>=2705 && y<3455)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -320,6 +362,7 @@ private ImageView mLLockMask,mRLockMask;
                         mMenuListView.getChildAt(3).setSelected(true);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetSteeringToNormal();
                     }else if((oldY>=3455 && y<4298)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -335,6 +378,7 @@ private ImageView mLLockMask,mRLockMask;
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(true);
+                        resetMirrorToNormal();
                     }
                 }else{
                     if(oldY>=0 && y<1189){
@@ -359,6 +403,7 @@ private ImageView mLLockMask,mRLockMask;
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetMirrorToNormal();
                     }else if((oldY>=3355 && y<4105)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -366,6 +411,7 @@ private ImageView mLLockMask,mRLockMask;
                         mMenuListView.getChildAt(3).setSelected(true);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
+                        resetSteeringToNormal();
                     }else if((oldY>=4105 && y<4988)){
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
@@ -381,6 +427,7 @@ private ImageView mLLockMask,mRLockMask;
                         mMenuListView.getChildAt(3).setSelected(false);
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(true);
+                        resetMirrorToNormal();
                     }
                 }
             }
@@ -404,13 +451,16 @@ private ImageView mLLockMask,mRLockMask;
                         mScrollView.scrollTo(60,1195);
                     }else if(position==2){
                         mScrollView.scrollTo(60, 2117);
+                        resetMirrorToNormal();
                     }else if(position==3){
                         mScrollView.scrollTo(60, 2715);
                         mScrollView.getHeight();
+                        resetSteeringToNormal();
                     }else if(position==4){
                         mScrollView.scrollTo(60, 3461);
                         resetSeatsToNormal();
                     }else if(position==5){
+                        resetMirrorToNormal();
                         mScrollView.scrollTo(60, 4304);
                         mMenuListView.getChildAt(5).setSelected(true);
                     }
@@ -498,6 +548,8 @@ private ImageView mLLockMask,mRLockMask;
     @Override
     public void onClick(View v) {
         int i = v.getId();
+        mLMessageNum=(Integer.parseInt(String.valueOf(mSeatsLMessageNumber.getText())));
+        mRMessageNum=(Integer.parseInt(String.valueOf(mSeatsRMessageNumber.getText())));
         if (i == mWindowLock.getId()) {
             if (isWindowLockOpen == false) {
                 mWindowFrontLeftUp.setEnabled(false);
@@ -922,181 +974,285 @@ private ImageView mLLockMask,mRLockMask;
                 isPubbleLightLOpen = false;
             }
             return;
-        }else if (i ==  mLFallForward.getId()) {
-            mLFallForward.setSelected(true);
-            mLFallBackward.setSelected(false);
-            mLFallUp.setSelected(false);
-            mLFallDown.setSelected(false);
-            mLFallHigh.setSelected(false);
-            mLFallLow.setSelected(false);
-            mLMoveForward.setSelected(false);
-            mLMoveBackward.setSelected(false);
+        }else if (i ==  mLSeatsFallForward.getId()) {
+            mLSeatsFallForward.setSelected(true);
+            mLSeatsFallBackward.setSelected(false);
+            mLSeatsFallUp.setSelected(false);
+            mLSeatsFallDown.setSelected(false);
+            mLSeatsFallHigh.setSelected(false);
+            mLSeatsFallLow.setSelected(false);
+            mLSeatsMoveForward.setSelected(false);
+            mLSeatsMoveBackward.setSelected(false);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_2);
             return;
-        }else if (i ==  mLFallBackward.getId()) {
-            mLFallForward.setSelected(false);
-            mLFallBackward.setSelected(true);
-            mLFallUp.setSelected(false);
-            mLFallDown.setSelected(false);
-            mLFallHigh.setSelected(false);
-            mLFallLow.setSelected(false);
-            mLMoveForward.setSelected(false);
-            mLMoveBackward.setSelected(false);
+        }else if (i ==  mLSeatsFallBackward.getId()) {
+            mLSeatsFallForward.setSelected(false);
+            mLSeatsFallBackward.setSelected(true);
+            mLSeatsFallUp.setSelected(false);
+            mLSeatsFallDown.setSelected(false);
+            mLSeatsFallHigh.setSelected(false);
+            mLSeatsFallLow.setSelected(false);
+            mLSeatsMoveForward.setSelected(false);
+            mLSeatsMoveBackward.setSelected(false);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_2);
             return;
-        }else if (i ==  mLFallUp.getId()) {
-            mLFallForward.setSelected(false);
-            mLFallBackward.setSelected(false);
-            mLFallUp.setSelected(true);
-            mLFallDown.setSelected(false);
-            mLFallHigh.setSelected(false);
-            mLFallLow.setSelected(false);
-            mLMoveForward.setSelected(false);
-            mLMoveBackward.setSelected(false);
+        }else if (i ==  mLSeatsFallUp.getId()) {
+            mLSeatsFallForward.setSelected(false);
+            mLSeatsFallBackward.setSelected(false);
+            mLSeatsFallUp.setSelected(true);
+            mLSeatsFallDown.setSelected(false);
+            mLSeatsFallHigh.setSelected(false);
+            mLSeatsFallLow.setSelected(false);
+            mLSeatsMoveForward.setSelected(false);
+            mLSeatsMoveBackward.setSelected(false);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
             return;
-        }else if (i ==  mLFallDown.getId()) {
-            mLFallForward.setSelected(false);
-            mLFallBackward.setSelected(false);
-            mLFallUp.setSelected(false);
-            mLFallDown.setSelected(true);
-            mLFallHigh.setSelected(false);
-            mLFallLow.setSelected(false);
-            mLMoveForward.setSelected(false);
-            mLMoveBackward.setSelected(false);
+        }else if (i ==  mLSeatsFallDown.getId()) {
+            mLSeatsFallForward.setSelected(false);
+            mLSeatsFallBackward.setSelected(false);
+            mLSeatsFallUp.setSelected(false);
+            mLSeatsFallDown.setSelected(true);
+            mLSeatsFallHigh.setSelected(false);
+            mLSeatsFallLow.setSelected(false);
+            mLSeatsMoveForward.setSelected(false);
+            mLSeatsMoveBackward.setSelected(false);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
             return;
-        }else if (i ==  mLFallHigh.getId()) {
-            mLFallForward.setSelected(false);
-            mLFallBackward.setSelected(false);
-            mLFallUp.setSelected(false);
-            mLFallDown.setSelected(false);
-            mLFallHigh.setSelected(true);
-            mLFallLow.setSelected(false);
-            mLMoveForward.setSelected(false);
-            mLMoveBackward.setSelected(false);
+        }else if (i ==  mLSeatsFallHigh.getId()) {
+            mLSeatsFallForward.setSelected(false);
+            mLSeatsFallBackward.setSelected(false);
+            mLSeatsFallUp.setSelected(false);
+            mLSeatsFallDown.setSelected(false);
+            mLSeatsFallHigh.setSelected(true);
+            mLSeatsFallLow.setSelected(false);
+            mLSeatsMoveForward.setSelected(false);
+            mLSeatsMoveBackward.setSelected(false);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_1);
             return;
-        }else if (i ==  mLFallLow.getId()) {
-            mLFallForward.setSelected(false);
-            mLFallBackward.setSelected(false);
-            mLFallUp.setSelected(false);
-            mLFallDown.setSelected(false);
-            mLFallHigh.setSelected(false);
-            mLFallLow.setSelected(true);
-            mLMoveForward.setSelected(false);
-            mLMoveBackward.setSelected(false);
+        }else if (i ==  mLSeatsFallLow.getId()) {
+            mLSeatsFallForward.setSelected(false);
+            mLSeatsFallBackward.setSelected(false);
+            mLSeatsFallUp.setSelected(false);
+            mLSeatsFallDown.setSelected(false);
+            mLSeatsFallHigh.setSelected(false);
+            mLSeatsFallLow.setSelected(true);
+            mLSeatsMoveForward.setSelected(false);
+            mLSeatsMoveBackward.setSelected(false);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_1);
             return;
-        }else if (i ==  mLMoveForward.getId()) {
-            mLFallForward.setSelected(false);
-            mLFallBackward.setSelected(false);
-            mLFallUp.setSelected(false);
-            mLFallDown.setSelected(false);
-            mLFallHigh.setSelected(false);
-            mLFallLow.setSelected(false);
-            mLMoveForward.setSelected(true);
-            mLMoveBackward.setSelected(false);
+        }else if (i ==  mLSeatsMoveForward.getId()) {
+            mLSeatsFallForward.setSelected(false);
+            mLSeatsFallBackward.setSelected(false);
+            mLSeatsFallUp.setSelected(false);
+            mLSeatsFallDown.setSelected(false);
+            mLSeatsFallHigh.setSelected(false);
+            mLSeatsFallLow.setSelected(false);
+            mLSeatsMoveForward.setSelected(true);
+            mLSeatsMoveBackward.setSelected(false);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
             return;
-        }else if (i ==  mLMoveBackward.getId()) {
-            mLFallForward.setSelected(false);
-            mLFallBackward.setSelected(false);
-            mLFallUp.setSelected(false);
-            mLFallDown.setSelected(false);
-            mLFallHigh.setSelected(false);
-            mLFallLow.setSelected(false);
-            mLMoveForward.setSelected(false);
-            mLMoveBackward.setSelected(true);
+        }else if (i ==  mLSeatsMoveBackward.getId()) {
+            mLSeatsFallForward.setSelected(false);
+            mLSeatsFallBackward.setSelected(false);
+            mLSeatsFallUp.setSelected(false);
+            mLSeatsFallDown.setSelected(false);
+            mLSeatsFallHigh.setSelected(false);
+            mLSeatsFallLow.setSelected(false);
+            mLSeatsMoveForward.setSelected(false);
+            mLSeatsMoveBackward.setSelected(true);
             mLSeat.setBackgroundResource(R.drawable.seat_l_highlight_3);
             return;
-        }else if (i ==  mRFallForward.getId()) {
-            mRFallForward.setSelected(true);
-            mRFallBackward.setSelected(false);
-            mRFallUp.setSelected(false);
-            mRFallDown.setSelected(false);
-            mRFallHigh.setSelected(false);
-            mRFallLow.setSelected(false);
-            mRMoveForward.setSelected(false);
-            mRMoveBackward.setSelected(false);
+        }else if (i ==  mRSeatsFallForward.getId()) {
+            mRSeatsFallForward.setSelected(true);
+            mRSeatsFallBackward.setSelected(false);
+            mRSeatsFallUp.setSelected(false);
+            mRSeatsFallDown.setSelected(false);
+            mRSeatsFallHigh.setSelected(false);
+            mRSeatsFallLow.setSelected(false);
+            mRSeatsMoveForward.setSelected(false);
+            mRSeatsMoveBackward.setSelected(false);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_2);
             return;
-        }else if (i ==  mRFallBackward.getId()) {
-            mRFallForward.setSelected(false);
-            mRFallBackward.setSelected(true);
-            mRFallUp.setSelected(false);
-            mRFallDown.setSelected(false);
-            mRFallHigh.setSelected(false);
-            mRFallLow.setSelected(false);
-            mRMoveForward.setSelected(false);
-            mRMoveBackward.setSelected(false);
+        }else if (i ==  mRSeatsFallBackward.getId()) {
+            mRSeatsFallForward.setSelected(false);
+            mRSeatsFallBackward.setSelected(true);
+            mRSeatsFallUp.setSelected(false);
+            mRSeatsFallDown.setSelected(false);
+            mRSeatsFallHigh.setSelected(false);
+            mRSeatsFallLow.setSelected(false);
+            mRSeatsMoveForward.setSelected(false);
+            mRSeatsMoveBackward.setSelected(false);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_2);
             return;
-        }else if (i ==  mRFallUp.getId()) {
-            mRFallForward.setSelected(false);
-            mRFallBackward.setSelected(false);
-            mRFallUp.setSelected(true);
-            mRFallDown.setSelected(false);
-            mRFallHigh.setSelected(false);
-            mRFallLow.setSelected(false);
-            mRMoveForward.setSelected(false);
-            mRMoveBackward.setSelected(false);
+        }else if (i ==  mRSeatsFallUp.getId()) {
+            mRSeatsFallForward.setSelected(false);
+            mRSeatsFallBackward.setSelected(false);
+            mRSeatsFallUp.setSelected(true);
+            mRSeatsFallDown.setSelected(false);
+            mRSeatsFallHigh.setSelected(false);
+            mRSeatsFallLow.setSelected(false);
+            mRSeatsMoveForward.setSelected(false);
+            mRSeatsMoveBackward.setSelected(false);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
             return;
-        }else if (i ==  mRFallDown.getId()) {
-            mRFallForward.setSelected(false);
-            mRFallBackward.setSelected(false);
-            mRFallUp.setSelected(false);
-            mRFallDown.setSelected(true);
-            mRFallHigh.setSelected(false);
-            mRFallLow.setSelected(false);
-            mRMoveForward.setSelected(false);
-            mRMoveBackward.setSelected(false);
+        }else if (i ==  mRSeatsFallDown.getId()) {
+            mRSeatsFallForward.setSelected(false);
+            mRSeatsFallBackward.setSelected(false);
+            mRSeatsFallUp.setSelected(false);
+            mRSeatsFallDown.setSelected(true);
+            mRSeatsFallHigh.setSelected(false);
+            mRSeatsFallLow.setSelected(false);
+            mRSeatsMoveForward.setSelected(false);
+            mRSeatsMoveBackward.setSelected(false);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
             return;
-        }else if (i ==  mRFallHigh.getId()) {
-            mRFallForward.setSelected(false);
-            mRFallBackward.setSelected(false);
-            mRFallUp.setSelected(false);
-            mRFallDown.setSelected(false);
-            mRFallHigh.setSelected(true);
-            mRFallLow.setSelected(false);
-            mRMoveForward.setSelected(false);
-            mRMoveBackward.setSelected(false);
+        }else if (i ==  mRSeatsFallHigh.getId()) {
+            mRSeatsFallForward.setSelected(false);
+            mRSeatsFallBackward.setSelected(false);
+            mRSeatsFallUp.setSelected(false);
+            mRSeatsFallDown.setSelected(false);
+            mRSeatsFallHigh.setSelected(true);
+            mRSeatsFallLow.setSelected(false);
+            mRSeatsMoveForward.setSelected(false);
+            mRSeatsMoveBackward.setSelected(false);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_1);
             return;
-        }else if (i ==  mRFallLow.getId()) {
-            mRFallForward.setSelected(false);
-            mRFallBackward.setSelected(false);
-            mRFallUp.setSelected(false);
-            mRFallDown.setSelected(false);
-            mRFallHigh.setSelected(false);
-            mRFallLow.setSelected(true);
-            mRMoveForward.setSelected(false);
-            mRMoveBackward.setSelected(false);
+        }else if (i ==  mRSeatsFallLow.getId()) {
+            mRSeatsFallForward.setSelected(false);
+            mRSeatsFallBackward.setSelected(false);
+            mRSeatsFallUp.setSelected(false);
+            mRSeatsFallDown.setSelected(false);
+            mRSeatsFallHigh.setSelected(false);
+            mRSeatsFallLow.setSelected(true);
+            mRSeatsMoveForward.setSelected(false);
+            mRSeatsMoveBackward.setSelected(false);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_1);
             return;
-        }else if (i ==  mRMoveForward.getId()) {
-            mRFallForward.setSelected(false);
-            mRFallBackward.setSelected(false);
-            mRFallUp.setSelected(false);
-            mRFallDown.setSelected(false);
-            mRFallHigh.setSelected(false);
-            mRFallLow.setSelected(false);
-            mRMoveForward.setSelected(true);
-            mRMoveBackward.setSelected(false);
+        }else if (i ==  mRSeatsMoveForward.getId()) {
+            mRSeatsFallForward.setSelected(false);
+            mRSeatsFallBackward.setSelected(false);
+            mRSeatsFallUp.setSelected(false);
+            mRSeatsFallDown.setSelected(false);
+            mRSeatsFallHigh.setSelected(false);
+            mRSeatsFallLow.setSelected(false);
+            mRSeatsMoveForward.setSelected(true);
+            mRSeatsMoveBackward.setSelected(false);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
             return;
-        }else if (i ==  mRMoveBackward.getId()) {
-            mRFallForward.setSelected(false);
-            mRFallBackward.setSelected(false);
-            mRFallUp.setSelected(false);
-            mRFallDown.setSelected(false);
-            mRFallHigh.setSelected(false);
-            mRFallLow.setSelected(false);
-            mRMoveForward.setSelected(false);
-            mRMoveBackward.setSelected(true);
+        }else if (i ==  mRSeatsMoveBackward.getId()) {
+            mRSeatsFallForward.setSelected(false);
+            mRSeatsFallBackward.setSelected(false);
+            mRSeatsFallUp.setSelected(false);
+            mRSeatsFallDown.setSelected(false);
+            mRSeatsFallHigh.setSelected(false);
+            mRSeatsFallLow.setSelected(false);
+            mRSeatsMoveForward.setSelected(false);
+            mRSeatsMoveBackward.setSelected(true);
             mRSeat.setBackgroundResource(R.drawable.seat_r_highlight_3);
+            return;
+        }else if (i ==   mSeatsLMessageReduce.getId()) {
+            if ( mLMessageNum > 0) {
+                mSeatsLMessageNumber.setText(Integer.toString(mLMessageNum-1));
+            }else{
+
+                mSeatsLMessageNumber.setText("0");
+            }
+            return;
+        }else if (i ==   mSeatsLMessagePlus.getId()) {
+            if (mLMessageNum < 7) {
+                mSeatsLMessageNumber.setText( Integer.toString(mLMessageNum+1));
+            }else{
+
+                mSeatsLMessageNumber.setText("7");
+            }
+            return;
+        }else if (i ==   mSeatsRMessageReduce.getId()) {
+            if ( mRMessageNum > 0) {
+                mSeatsRMessageNumber.setText(Integer.toString(mRMessageNum-1));
+            }else{
+
+                mSeatsRMessageNumber.setText("0");
+            }
+            return;
+        }else if (i ==   mSeatsRMessagePlus.getId()) {
+            if (mRMessageNum < 7) {
+                mSeatsRMessageNumber.setText( Integer.toString(mRMessageNum+1));
+            }else{
+
+                mSeatsRMessageNumber.setText("7");
+            }
+            return;
+        }else if (i == mLLockMask.getId()) {
+            twoButtonDialog = new TwoButtonDialog(MainActivity.this);
+            twoButtonDialog.setMessage("DO NOT adjust the driver seat while driving. You may lose control of the vehicle. Are you sure still want to unlock this function?");
+            twoButtonDialog.setYesOnclickListener(new TwoButtonDialog.onYesOnclickListener() {
+                @Override
+                public void onYesClick() {
+                    twoButtonDialog.dismiss();
+                    mLLockMask.setVisibility(View.GONE);
+                    //mRLockMask.setVisibility(View.GONE);
+                    mSeatsWaringIcon.setVisibility(View.GONE);
+                    mSeatsInstruction.setVisibility(View.VISIBLE);
+                    mSeatsWaringInstruction.setVisibility(View.GONE);
+                }
+            });
+            twoButtonDialog.setCancelOnclickListener(new TwoButtonDialog.onCancelOnclickListener() {
+                @Override
+                public void onCancelClick() {
+                    twoButtonDialog.dismiss();
+                }
+            });
+            //new Dialog(MainActivity.this).show();
+            twoButtonDialog.show();
+            return;
+        }
+        else if (i ==  mLMirrorUp.getId()) {
+            mLMirrorUp.setSelected(true);
+            mLMirrorDown.setSelected(false);
+            mLMirrorLeft.setSelected(false);
+            mLMirrorRight.setSelected(false);
+            return;
+        }else if (i ==  mLMirrorDown.getId()) {
+            mLMirrorUp.setSelected(false);
+            mLMirrorDown.setSelected(true);
+            mLMirrorLeft.setSelected(false);
+            mLMirrorRight.setSelected(false);
+            return;
+        }else if (i ==  mLMirrorLeft.getId()) {
+            mLMirrorUp.setSelected(false);
+            mLMirrorDown.setSelected(false);
+            mLMirrorLeft.setSelected(true);
+            mLMirrorRight.setSelected(false);
+            return;
+        }else if (i ==  mLMirrorRight.getId()) {
+            mLMirrorUp.setSelected(false);
+            mLMirrorDown.setSelected(false);
+            mLMirrorLeft.setSelected(false);
+            mLMirrorRight.setSelected(true);
+            return;
+        }else if (i ==  mRMirrorUp.getId()) {
+            mRMirrorUp.setSelected(true);
+            mRMirrorDown.setSelected(false);
+            mRMirrorLeft.setSelected(false);
+            mRMirrorRight.setSelected(false);
+            return;
+        }else if (i ==  mRMirrorDown.getId()) {
+            mRMirrorUp.setSelected(false);
+            mRMirrorDown.setSelected(true);
+            mRMirrorLeft.setSelected(false);
+            mRMirrorRight.setSelected(false);
+            return;
+        }else if (i ==  mRMirrorLeft.getId()) {
+            mRMirrorUp.setSelected(false);
+            mRMirrorDown.setSelected(false);
+            mRMirrorLeft.setSelected(true);
+            mRMirrorRight.setSelected(false);
+            return;
+        }else if (i ==  mRMirrorRight.getId()) {
+            mRMirrorUp.setSelected(false);
+            mRMirrorDown.setSelected(false);
+            mRMirrorLeft.setSelected(false);
+            mRMirrorRight.setSelected(true);
             return;
         } else if (i ==  mMirrorFolderDisplayIcon.getId()) {
             if (isMirrorOpen == false) {
@@ -1107,6 +1263,30 @@ private ImageView mLLockMask,mRLockMask;
                 isMirrorOpen = false;
             }
             return;
+        }else if (i ==  mSteerControlArrowUp.getId()) {
+            mSteerControlArrowUp.setSelected(true);
+            mSteerControlArrowDown.setSelected(false);
+            mSteerControlArrowForward.setSelected(false);
+            mSteerControlArrowBackward.setSelected(false);
+            return;
+        }else if (i == mSteerControlArrowDown.getId()) {
+            mSteerControlArrowUp.setSelected(false);
+            mSteerControlArrowDown.setSelected(true);
+            mSteerControlArrowForward.setSelected(false);
+            mSteerControlArrowBackward.setSelected(false);
+            return;
+        }else if (i == mSteerControlArrowForward.getId()) {
+            mSteerControlArrowUp.setSelected(false);
+            mSteerControlArrowDown.setSelected(false);
+            mSteerControlArrowForward.setSelected(true);
+            mSteerControlArrowBackward.setSelected(false);
+            return;
+        }else if (i == mSteerControlArrowBackward.getId()) {
+            mSteerControlArrowUp.setSelected(false);
+            mSteerControlArrowDown.setSelected(false);
+            mSteerControlArrowForward.setSelected(false);
+            mSteerControlArrowBackward.setSelected(true);
+            return;
         }
     }
     public boolean isDoorLockOpen() {
@@ -1116,23 +1296,39 @@ private ImageView mLLockMask,mRLockMask;
         return false;
     }
     private void resetSeatsToNormal(){
-        mRFallForward.setSelected(false);
-        mRFallBackward.setSelected(false);
-        mRFallUp.setSelected(false);
-        mRFallDown.setSelected(false);
-        mRFallHigh.setSelected(false);
-        mRFallLow.setSelected(false);
-        mRMoveForward.setSelected(false);
-        mRMoveBackward.setSelected(false);
-        mLFallForward.setSelected(false);
-        mLFallBackward.setSelected(false);
-        mLFallUp.setSelected(false);
-        mLFallDown.setSelected(false);
-        mLFallHigh.setSelected(false);
-        mLFallLow.setSelected(false);
-        mLMoveForward.setSelected(false);
-        mLMoveBackward.setSelected(false);
+        mRSeatsFallForward.setSelected(false);
+        mRSeatsFallBackward.setSelected(false);
+        mRSeatsFallUp.setSelected(false);
+        mRSeatsFallDown.setSelected(false);
+        mRSeatsFallHigh.setSelected(false);
+        mRSeatsFallLow.setSelected(false);
+        mRSeatsMoveForward.setSelected(false);
+        mRSeatsMoveBackward.setSelected(false);
+        mLSeatsFallForward.setSelected(false);
+        mLSeatsFallBackward.setSelected(false);
+        mLSeatsFallUp.setSelected(false);
+        mLSeatsFallDown.setSelected(false);
+        mLSeatsFallHigh.setSelected(false);
+        mLSeatsFallLow.setSelected(false);
+        mLSeatsMoveForward.setSelected(false);
+        mLSeatsMoveBackward.setSelected(false);
         mLSeat.setBackgroundResource(R.drawable.seat_l_normal);
         mRSeat.setBackgroundResource(R.drawable.seat_r_normal);
+    }
+    private void resetMirrorToNormal(){
+        mLMirrorUp.setSelected(false);
+        mLMirrorDown.setSelected(false);
+        mLMirrorLeft.setSelected(false);
+        mLMirrorRight.setSelected(false);
+        mRMirrorUp.setSelected(false);
+        mRMirrorDown.setSelected(false);
+        mRMirrorLeft.setSelected(false);
+        mRMirrorRight.setSelected(false);
+    }
+    private void resetSteeringToNormal(){
+        mSteerControlArrowUp.setSelected(false);
+        mSteerControlArrowDown.setSelected(false);
+        mSteerControlArrowForward.setSelected(false);
+        mSteerControlArrowBackward.setSelected(false);
     }
 }

@@ -9,19 +9,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 
-/**
- * 一个按钮的dialog
- * Created by wangshuai on 2017/10/31 0031.
- */
 
-public class OneButtonDialog extends Dialog {
+public class TwoButtonDialog extends Dialog {
 
-    private Button yes;//确定按钮
+    private Button yes,cancel;//确定按钮
     private TextView messageTv;//消息提示文本
     private String messageStr;//从外界设置的消息文本
     //确定文本和取消文本的显示内容
     private String yesStr;
     private onYesOnclickListener yesOnclickListener;//确定按钮被点击了的监听器
+    private onCancelOnclickListener cancelOnclickListener;//确定按钮被点击了的监听器
 
     /**
      * 设置确定按钮的显示内容和监听
@@ -32,15 +29,17 @@ public class OneButtonDialog extends Dialog {
     public void setYesOnclickListener(onYesOnclickListener onYesOnclickListener) {
         this.yesOnclickListener = onYesOnclickListener;
     }
-
-    public OneButtonDialog(Context context) {
+    public void setCancelOnclickListener(onCancelOnclickListener onCancelOnclickListener) {
+        this.cancelOnclickListener = onCancelOnclickListener;
+    }
+    public TwoButtonDialog(Context context) {
         super(context, R.style.MyDialog);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.one_button_dialog_layout);
+        setContentView(R.layout.two_button_dialog_layout);
         //按空白处不能取消动画
         setCanceledOnTouchOutside(false);
 
@@ -66,6 +65,14 @@ public class OneButtonDialog extends Dialog {
                 }
             }
         });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cancelOnclickListener != null) {
+                    cancelOnclickListener.onCancelClick();
+                }
+            }
+        });
     }
 
     /**
@@ -85,6 +92,7 @@ public class OneButtonDialog extends Dialog {
     private void initView() {
         messageTv = (TextView) findViewById(R.id.message);
         yes = (Button) findViewById(R.id.okButton);
+       cancel = (Button) findViewById(R.id.cancelButton);
         //yes.setBackgroundColor(Color.parseColor("#1AFFFFFF"));
     }
 
@@ -102,5 +110,8 @@ public class OneButtonDialog extends Dialog {
      */
     public interface onYesOnclickListener {
         public void onYesClick();
+    }
+    public interface onCancelOnclickListener {
+        public void onCancelClick();
     }
 }
