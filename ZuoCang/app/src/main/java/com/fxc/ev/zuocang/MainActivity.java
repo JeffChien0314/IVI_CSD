@@ -7,6 +7,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -68,6 +69,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isChildLockOpen = false;
     private boolean isInPCondition = false;
     private boolean isMirrorOpen = true;
+    private boolean isDoorOpen = false;
     private boolean isRearLuggageTrunkEnable = true;
     private ArrayList<Integer> images = new ArrayList<>();
     private ScrollView mScrollView;
@@ -76,7 +78,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ImageView mWindowLock,mDoorLock,mChildLock,mSunCurtain,mLeftChildLockIcon,mRightChildLockIcon;
     private ImageView mLeftFrontDoorLock,mLeftRearDoorLock,mRightFrontDoorLock,mRightRearDoorLock;
     private ImageView mRearLuggageTrunk,mSteeringWaringIcon,mMirrorFolderDisplayIcon,mSeatsWaringIcon;
-    private TextView mSteeringInstruction,mSteeringWaringInstruction,mSeatsInstruction,mSeatsWaringInstruction,mSeatsLMessageNumber,mSeatsRMessageNumber;
+    private TextView mSteeringInstruction,mSteeringWaringInstruction,mSeatsInstruction,mSeatsWaringInstruction,mSeatsLMessageNumber,mSeatsRMessageNumber,mToastContent;
     private ImageView mLSeatsFallForward,mLSeatsFallBackward,mLSeatsFallUp,mLSeatsFallDown,mLSeatsFallHigh,mLSeatsFallLow,mLSeatsMoveForward,mLSeatsMoveBackward,mLSeat;
     private ImageView mRSeatsFallForward,mRSeatsFallBackward,mRSeatsFallUp,mRSeatsFallDown,mRSeatsFallHigh,mRSeatsFallLow,mRSeatsMoveForward,mRSeatsMoveBackward,mRSeat;
 /*    private boolean isLFallForwardArrowClick = false;
@@ -100,6 +102,7 @@ private Button mSeatsLMessageReduce,mSeatsRMessageReduce,mSeatsLMessagePlus,mSea
 private ImageView mLMirrorUp,mLMirrorDown,mLMirrorLeft,mLMirrorRight,mRMirrorUp,mRMirrorDown,mRMirrorLeft,mRMirrorRight;
 private ImageView mSteerControlArrowUp,mSteerControlArrowDown,mSteerControlArrowForward,mSteerControlArrowBackward;
 private int mLMessageNum,mRMessageNum;
+private Handler handler = new Handler();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -141,7 +144,8 @@ private int mLMessageNum,mRMessageNum;
         mExteriorLightAuto=findViewById(R.id.exterior_light_auto);
         mExteriorHighBeamLight=findViewById(R.id.exterior_light_high_beam);
         mExteriorLowBeamLight = findViewById(R.id.exterior_light_low_beam);
-        mExteriorLightOff = findViewById(R.id.exterior_light_off);
+        mToastContent = findViewById(R.id.toast_content);
+        //mExteriorLightOff = findViewById(R.id.exterior_light_off);
         mHighBeamLightAuto = findViewById(R.id.exterior_high_beam_light_auto);
         mFrogFrontLight = findViewById(R.id.frog_front_light);
         mFrogRearLight = findViewById(R.id.frog_rear_light);
@@ -263,7 +267,7 @@ private int mLMessageNum,mRMessageNum;
         mExteriorLightAuto.setOnClickListener(this);
         mExteriorHighBeamLight.setOnClickListener(this);
         mExteriorLowBeamLight.setOnClickListener(this);
-        mExteriorLightOff.setOnClickListener(this);
+        //mExteriorLightOff.setOnClickListener(this);
         mHighBeamLightAuto.setOnClickListener(this);
         mFrogFrontLight.setOnClickListener(this);
         mFrogRearLight.setOnClickListener(this);
@@ -584,33 +588,41 @@ private int mLMessageNum,mRMessageNum;
             }
             return;
         }else if (i == mDoorLock.getId()) {
-            if(isDoorLockOpen==false){
-               mLeftFrontDoorLock.setSelected(true);
-               mLeftRearDoorLock.setSelected(true);
-               mRightFrontDoorLock.setSelected(true);
-               mRightRearDoorLock.setSelected(true);
-               mDoorLock.setSelected(true);
-               isLeftRearDoorLock = true;
-               isLeftFrontDoorLock = true;
-               isRightFrontDoorLock = true;
-               isRightRearDoorLock = true;
-               mRearLuggageTrunk.setActivated(true);
-               isRearLuggageTrunkEnable=false;
-               isDoorLockOpen=true;
+            if(isDoorOpen==false) {
+                mDoorLock.setEnabled(true);
+                if (isDoorLockOpen == false) {
+                    mLeftFrontDoorLock.setSelected(true);
+                    mLeftRearDoorLock.setSelected(true);
+                    mRightFrontDoorLock.setSelected(true);
+                    mRightRearDoorLock.setSelected(true);
+                    mDoorLock.setSelected(true);
+                    isLeftRearDoorLock = true;
+                    isLeftFrontDoorLock = true;
+                    isRightFrontDoorLock = true;
+                    isRightRearDoorLock = true;
+                    mRearLuggageTrunk.setActivated(true);
+                    isRearLuggageTrunkEnable = false;
+                    isDoorLockOpen = true;
+                } else {
+                    mLeftFrontDoorLock.setSelected(false);
+                    mLeftRearDoorLock.setSelected(false);
+                    mRightFrontDoorLock.setSelected(false);
+                    mRightRearDoorLock.setSelected(false);
+                    isLeftRearDoorLock = false;
+                    isLeftFrontDoorLock = false;
+                    isRightFrontDoorLock = false;
+                    isRightRearDoorLock = false;
+                    mRearLuggageTrunk.setActivated(false);
+                    mRearLuggageTrunk.setSelected(false);
+                    isRearLuggageTrunkEnable = true;
+                    mDoorLock.setSelected(false);
+                    isDoorLockOpen = false;
+                }
             }else{
-                mLeftFrontDoorLock.setSelected(false);
-                mLeftRearDoorLock.setSelected(false);
-                mRightFrontDoorLock.setSelected(false);
-                mRightRearDoorLock.setSelected(false);
-                isLeftRearDoorLock =false;
-                isLeftFrontDoorLock = false;
-                isRightFrontDoorLock = false;
-                isRightRearDoorLock = false;
-                mRearLuggageTrunk.setActivated(false);
-                mRearLuggageTrunk.setSelected(false);
-                isRearLuggageTrunkEnable=true;
-                mDoorLock.setSelected(false);
-                isDoorLockOpen=false;
+                mDoorLock.setEnabled(false);
+                mToastContent.setText("Make sure all doors are closed before locking");
+                mToastContent.setVisibility(View.VISIBLE);
+                handler.postDelayed(runnable, 3000);
             }
             return;
         }else if (i == mLeftFrontDoorLock.getId()) {
@@ -711,12 +723,9 @@ private int mLMessageNum,mRMessageNum;
             return;
         } else if (i == mRearLuggageTrunk.getId()) {
             if(isRearLuggageTrunkEnable==false && isRearLuggageTrunkOpen==false){
-                Toast toast=Toast.makeText(MainActivity.this, getString(R.string.rear_luggage_trunk_diable_click_display_message), Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.START| Gravity.CENTER, 60, 80);
-                toast.show();
-               /* ToastUtil toastUtil = new ToastUtil();  //创建toastUtil对象
-                toastUtil.Short(MainActivity.this,getResources().getString(R.string.rear_luggage_trunk_diable_click_display_message))  //调用Short方法传入提示内容
-                        .setToastSize(410,40,10).show();*/
+              mToastContent.setText("Unlock before you open the door or the trunk");
+              mToastContent.setVisibility(View.VISIBLE);
+              handler.postDelayed(runnable, 3000);
             }else{
                 if(isRearLuggageTrunkOpen == false ){
                     mRearLuggageTrunk.setSelected(true);
@@ -860,7 +869,7 @@ private int mLMessageNum,mRMessageNum;
                 mExteriorLightAuto.setSelected(true);
                 mExteriorHighBeamLight.setSelected(false);
                 mExteriorLowBeamLight.setSelected(false);
-                mExteriorLightOff.setSelected(false);
+               // mExteriorLightOff.setSelected(false);
                 mExteriorHighBeamLight.setEnabled(true);
                 mExteriorLowBeamLight.setEnabled(true);
                 mFrogFrontLight.setEnabled(true);
@@ -877,7 +886,7 @@ private int mLMessageNum,mRMessageNum;
             mExteriorLightAuto.setSelected(false);
             mExteriorHighBeamLight.setSelected(true);
             mExteriorLowBeamLight.setSelected(false);
-            mExteriorLightOff.setSelected(false);
+            //mExteriorLightOff.setSelected(false);
             mFrogFrontLight.setEnabled(true);
             mFrogRearLight.setEnabled(true);
             isExteriorLightAutoOpen=true;
@@ -886,12 +895,12 @@ private int mLMessageNum,mRMessageNum;
             mExteriorLightAuto.setSelected(false);
             mExteriorHighBeamLight.setSelected(false);
             mExteriorLowBeamLight.setSelected(true);
-            mExteriorLightOff.setSelected(false);
+            //mExteriorLightOff.setSelected(false);
             mFrogFrontLight.setEnabled(true);
             mFrogRearLight.setEnabled(true);
             isExteriorLightAutoOpen=true;
             return;
-        } else if (i ==  mExteriorLightOff.getId()) {
+        } /*else if (i ==  mExteriorLightOff.getId()) {
             mExteriorLightAuto.setSelected(false);
             mExteriorHighBeamLight.setSelected(false);
             mExteriorLowBeamLight.setSelected(false);
@@ -902,7 +911,7 @@ private int mLMessageNum,mRMessageNum;
             mFrogRearLight.setEnabled(false);
             isExteriorLightAutoOpen=true;
             return;
-        }else if (i ==  mHighBeamLightAuto.getId()) {
+        }*/else if (i ==  mHighBeamLightAuto.getId()) {
             if (isHighBeamAutoOpen == false) {
                 mHighBeamLightAuto.setSelected(true);
                 isHighBeamAutoOpen = true;
@@ -1331,4 +1340,14 @@ private int mLMessageNum,mRMessageNum;
         mSteerControlArrowForward.setSelected(false);
         mSteerControlArrowBackward.setSelected(false);
     }
+    Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            try {
+                mToastContent.setVisibility(View.GONE);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }
