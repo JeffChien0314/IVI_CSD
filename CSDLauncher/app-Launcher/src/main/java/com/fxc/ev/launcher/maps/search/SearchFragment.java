@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -180,17 +181,6 @@ public class SearchFragment extends Fragment {
         }
     }
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.v(TAG, "onResume");
-    }
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -272,14 +262,14 @@ public class SearchFragment extends Fragment {
                                 hideSoftInput();
                             } else if (mSourceType.equals(FROM_FAV_EDIT_PAGE)) {
                                 //FavoritesEditFragment favoritesEditFragment = new FavoritesEditFragment();
-                                launcherActivity.setCurrentFragment(mFavoritesEditFragment);
+                                launcherActivity.setCurrentFragment(mFavoritesEditFragment, false);
                             } else if (mSourceType.equals(FROM_MAIN_PAGE)) {
                                 launcherActivity.getSupportFragmentManager().popBackStack();
                                 launcherActivity.refreshFavoriteContent();
                             }
                         } else {
                             RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
-                            launcherActivity.setCurrentFragment(routePreviewFragment);
+                            launcherActivity.setCurrentFragment(routePreviewFragment, false);
                             routePreviewFragment.setData(searchResultItem);
 
                             updateRecentItemData(searchResultItem);
@@ -304,7 +294,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mFavoritesEditFragment = new FavoritesEditFragment(mSearchFragment);
-                launcherActivity.setCurrentFragment(mFavoritesEditFragment);
+                launcherActivity.setCurrentFragment(mFavoritesEditFragment, false);
             }
         });
 
@@ -312,7 +302,7 @@ public class SearchFragment extends Fragment {
         mInterestMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launcherActivity.setCurrentFragment(new InterestEditFragment(mSearchFragment));
+                launcherActivity.setCurrentFragment(new InterestEditFragment(mSearchFragment), false);
             }
         });
 
@@ -388,7 +378,7 @@ public class SearchFragment extends Fragment {
                         searchResultItem.setSearchType(TYPE_FAVORITE);
 
                         RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
-                        launcherActivity.setCurrentFragment(routePreviewFragment);
+                        launcherActivity.setCurrentFragment(routePreviewFragment, false);
                         routePreviewFragment.setData(searchResultItem);
 
                         curFavEditItem = favEditItem;
@@ -465,7 +455,7 @@ public class SearchFragment extends Fragment {
                 searchResultItem.setDistance(favEditItem.getDistance());
 
                 RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
-                launcherActivity.setCurrentFragment(routePreviewFragment);
+                launcherActivity.setCurrentFragment(routePreviewFragment, false);
                 routePreviewFragment.setData(searchResultItem);
 
                 curFavEditItem = favEditItem;

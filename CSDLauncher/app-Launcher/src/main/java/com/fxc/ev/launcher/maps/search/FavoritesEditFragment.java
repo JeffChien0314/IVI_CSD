@@ -23,6 +23,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -97,7 +98,8 @@ public class FavoritesEditFragment extends Fragment {
                         Log.v(TAG, "isFocusable:" + v.isFocusable());
                         if (v.isFocusable()) {
                             if (TextUtils.isEmpty(favEditItem.getCoordinate())) {
-                                launcherActivity.setCurrentFragment(mSearchFragment);
+                                launcherActivity.getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                                launcherActivity.setCurrentFragment(mSearchFragment, false);
                                 new Handler().post(new Runnable() {
                                     @Override
                                     public void run() {
@@ -113,7 +115,7 @@ public class FavoritesEditFragment extends Fragment {
                                 searchResultItem.setSearchType(Constants.TYPE_FAVORITE);
 
                                 RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
-                                launcherActivity.setCurrentFragment(routePreviewFragment);
+                                launcherActivity.setCurrentFragment(routePreviewFragment, false);
                                 routePreviewFragment.setData(searchResultItem);
 
                                 mSearchFragment.saveData2Recent(searchResultItem, favEditItem);

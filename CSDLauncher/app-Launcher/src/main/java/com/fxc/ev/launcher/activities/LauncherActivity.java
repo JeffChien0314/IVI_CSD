@@ -441,11 +441,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         return curCountryCode;
     }
 
-    public void setCurrentFragment(Fragment currentFragment) {
+    public void setCurrentFragment(Fragment currentFragment, boolean isAnim) {
         setMapWidgetVisibility(View.GONE);
         FragmentTransaction fTransaction = fragmentManager.beginTransaction();
-        if (currentFragment instanceof SearchFragment) {
-            fTransaction.setCustomAnimations(R.anim.from_left, R.anim.out_left, R.anim.from_left, R.anim.out_left);
+        if (isAnim) {
+            fTransaction.setCustomAnimations(R.anim.from_left, R.anim.out_left);
         }
         fTransaction.replace(R.id.search_container, currentFragment, "");
         fTransaction.addToBackStack(null);
@@ -852,7 +852,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                setCurrentFragment(new SearchFragment());
+                setCurrentFragment(new SearchFragment(), true);
                 //Jerry@20220401 add:Search fragment show,can't click
                 isFragmentShow = true;
                 isFragmentHide = false;

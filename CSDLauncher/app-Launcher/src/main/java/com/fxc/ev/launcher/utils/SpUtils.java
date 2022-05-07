@@ -137,7 +137,7 @@ public class SpUtils {
                 public void onClick(View v) {
                     if (TextUtils.isEmpty(favEditItem.getCoordinate())) {
                         SearchFragment searchFragment = new SearchFragment();
-                        launcherActivity.setCurrentFragment(searchFragment);
+                        launcherActivity.setCurrentFragment(searchFragment, true);
                         new Handler().post(new Runnable() {
                             @Override
                             public void run() {
@@ -153,7 +153,7 @@ public class SpUtils {
                         searchResultItem.setSearchType(TYPE_FAVORITE);
 
                         RoutePreviewFragment routePreviewFragment = new RoutePreviewFragment();
-                        launcherActivity.setCurrentFragment(routePreviewFragment);
+                        launcherActivity.setCurrentFragment(routePreviewFragment, true);
                         routePreviewFragment.setData(searchResultItem);
 
                         List<FavEditItem> recentList = getDataList(launcherActivity, "recent_list", "recent", FavEditItem.class);

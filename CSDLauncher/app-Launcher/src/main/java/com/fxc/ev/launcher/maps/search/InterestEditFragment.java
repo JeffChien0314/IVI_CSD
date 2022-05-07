@@ -13,6 +13,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,8 +74,8 @@ public class InterestEditFragment extends Fragment {
                     case ITEM:
                         Log.v(TAG, "isFocusable:" + v.isFocusable());
                         if (v.isFocusable()) {
-                            launcherActivity.setCurrentFragment(mSearchFragment);
-
+                            launcherActivity.getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                            launcherActivity.setCurrentFragment(mSearchFragment, false);
                             new Handler().post(new Runnable() {
                                 @Override
                                 public void run() {
@@ -126,7 +127,8 @@ public class InterestEditFragment extends Fragment {
         interestIconBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                interestEditFragment.getFragmentManager().popBackStack();
+                //interestEditFragment.getFragmentManager().popBackStack();
+                launcherActivity.getSupportFragmentManager().popBackStack();
             }
         });
 
