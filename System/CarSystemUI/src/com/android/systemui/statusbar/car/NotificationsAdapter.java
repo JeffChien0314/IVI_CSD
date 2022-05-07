@@ -1,16 +1,21 @@
 package com.android.systemui.statusbar.car;
 
 import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import java.lang.ref.WeakReference;
@@ -23,9 +28,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.android.systemui.R;
 import com.android.car.notification.template.CarNotificationBaseViewHolder;
 import com.android.car.notification.NotificationClickHandlerFactory;
+import com.fxc.libCanWrapperNDK.IMyAidlInterface2;
 
 class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
+    private static final String TAG = "NotificationsAdapter";
     private Context mContext;
     private NotificationClickHandlerFactory notificationClickHandlerFactory; 
 
@@ -54,10 +60,9 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private ImageView windowRearRightUp;
     private ImageView windowRearRightDown;
 
-    private RadioButton offLight;
+    private RadioGroup lightRadio;
 
     private List<ImageView> recentApps=new ArrayList<>();
-
 
     private int frontFogLightFlag=1; //0:normal;1:active;-1:disable
     private int rearFogLightFlag;
@@ -80,15 +85,43 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private boolean sunCurtainFlag;
     private boolean closeScreenFlag;
 
+    private IMyAidlInterface2 iMyAidlInterface2;
+    /*private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG, "onServiceConnected");
+            iMyAidlInterface2 = IMyAidlInterface2.Stub.asInterface(iBinder);
+            Log.d(TAG, "onServiceConnected: "+(iMyAidlInterface2==null));
+        }
 
-    public NotificationsAdapter(Context context,NotificationClickHandlerFactory mNotificationClickHandlerFactory) {
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d(TAG, "onServiceDisconnected");
+            iMyAidlInterface2 = null;
+        }
+    };
+
+    private void startAndConnectService(){
+        Intent intent = new Intent();
+        intent.setPackage("com.fxc.libCanWrapper");
+        intent.setAction("com.fxc.libCanWrapperNDK.MyService");
+        mContext.bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    }*/
+
+
+    public NotificationsAdapter(Context context, NotificationClickHandlerFactory mNotificationClickHandlerFactory, IMyAidlInterface2 mIMyAidlInterface2) {
+        Log.d(TAG, "NotificationsAdapter start");
         this.mContext = context;
-        this.notificationClickHandlerFactory=mNotificationClickHandlerFactory;
+        this.notificationClickHandlerFactory = mNotificationClickHandlerFactory;
+        this.iMyAidlInterface2 = mIMyAidlInterface2;
+        Log.d(TAG, "NotificationsAdapter start: " + (iMyAidlInterface2 == null));
+        //startAndConnectService();
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        Log.d(TAG, "onCreateViewHolder"); 
         MainViewHolder viewHolder = new MainViewHolder(LayoutInflater.from(mContext).inflate(R.layout.notifications_detail, parent, false));
         viewHolder.setNotificationsAdapter(this);
         return viewHolder;
@@ -192,7 +225,7 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         windowRearRightUp = itemView.findViewById(R.id.window_rear_right_up);
         windowRearRightDown = itemView.findViewById(R.id.window_rear_right_down);
 
-        offLight = itemView.findViewById(R.id.light_radio4);
+        lightRadio=itemView.findViewById(R.id.exterior_lights);
 
         recentApps.add(itemView.findViewById(R.id.recent_app1));
         recentApps.add(itemView.findViewById(R.id.recent_app2));
@@ -200,7 +233,7 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         recentApps.add(itemView.findViewById(R.id.recent_app4));
         recentApps.add(itemView.findViewById(R.id.recent_app5));
         recentApps.add(itemView.findViewById(R.id.recent_app6));
-
+        Log.d(TAG, "loadCurrentSetting");
         loadCurrentSetting();
 
         processRecentTasks();
@@ -208,6 +241,60 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     }
 
     private void loadCurrentSetting() {
+        if (iMyAidlInterface2 != null) {
+            String doorLockDrive = getDoorLockSeparateStatus(1);
+            if (doorLockDrive.equals("Locked")) {
+                doorLockLeft1Flag = 1;
+            } else if (doorLockDrive.equals("Unlocked")) {
+                doorLockLeft1Flag = 0;
+            } else {
+                doorLockLeft1Flag = -1;
+            }
+            String doorLockRL = getDoorLockSeparateStatus(2);
+            if (doorLockRL.equals("Locked")) {
+                doorLockLeft2Flag = 1;
+            } else if (doorLockRL.equals("Unlocked")) {
+                doorLockLeft2Flag = 0;
+            } else {
+                doorLockLeft2Flag = -1;
+            }
+            String doorLockPassenger = getDoorLockSeparateStatus(3);
+            if (doorLockPassenger.equals("Locked")) {
+                doorLockRight1Flag = 1;
+            } else if (doorLockPassenger.equals("Unlocked")) {
+                doorLockRight1Flag = 0;
+            } else {
+                doorLockRight1Flag = -1;
+            }
+            String doorLockRR = getDoorLockSeparateStatus(4);
+            if (doorLockRR.equals("Locked")) {
+                doorLockRight2Flag = 1;
+            } else if (doorLockRR.equals("Unlocked")) {
+                doorLockRight2Flag = 0;
+            } else {
+                doorLockRight2Flag = -1;
+            }
+
+            String rearViewMirror = getRearViewMirrorStatus();
+            if (rearViewMirror.equals("Opened")) {
+                rearviewMirrorFlag = true;
+            } else if (rearViewMirror.equals("Closed")) {
+                rearviewMirrorFlag = false;
+            }
+
+            processHeadLampStatus(); //大灯
+        }
+
+
+        if (doorLockLeft1Flag == 1 && doorLockLeft2Flag == 1 && doorLockRight1Flag == 1 && doorLockRight2Flag == 1) {
+            doorLockFlag = 1;
+            luggageTrunkFlag = -1;
+        } else if (doorLockLeft1Flag == -1 || doorLockLeft2Flag == -1 || doorLockRight1Flag == -1 || doorLockRight2Flag == -1) {
+            doorLockFlag = -1;
+        } else {
+            doorLockFlag = 0;
+        }
+
         if (frontFogLightFlag == -1) {
             frontFogLight.setEnabled(false);
         } else if (frontFogLightFlag == 0) {
@@ -309,8 +396,19 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             @Override
             public void onClick(View v) {
                 rearviewMirrorFlag = !rearviewMirrorFlag;
-                if (rearviewMirrorFlag) rearviewMirror.setSelected(true);
-                else rearviewMirror.setSelected(false);
+                try {
+                    if (rearviewMirrorFlag) {
+                        rearviewMirror.setSelected(true);
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("TWO,IVI_RearMirrorOpen_Req,Open");
+                    } else {
+                        rearviewMirror.setSelected(false);
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("TWO,IVI_RearMirrorOpen_Req,Close");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -318,8 +416,19 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             @Override
             public void onClick(View v) {
-                if (doorLockLeft1Flag == 1) doorLockLeft1Flag = 0;
-                else if (doorLockLeft1Flag == 0) doorLockLeft1Flag = 1;
+                try {
+                    if (doorLockLeft1Flag == 1) {
+                        doorLockLeft1Flag = 0;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Unlock");
+                    } else if (doorLockLeft1Flag == 0) {
+                        doorLockLeft1Flag = 1;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Lock");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
                 if (doorLockLeft1Flag == 0) {
                     doorLockLeft1.setSelected(false);
@@ -347,8 +456,19 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             @Override
             public void onClick(View v) {
-                if (doorLockLeft2Flag == 1) doorLockLeft2Flag = 0;
-                else if (doorLockLeft2Flag == 0) doorLockLeft2Flag = 1;
+                try {
+                    if (doorLockLeft2Flag == 1) {
+                        doorLockLeft2Flag = 0;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Unlock");
+                    } else if (doorLockLeft2Flag == 0) {
+                        doorLockLeft2Flag = 1;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Lock");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
                 if (doorLockLeft2Flag == 0) {
                     doorLockLeft2.setSelected(false);
@@ -376,8 +496,19 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             @Override
             public void onClick(View v) {
-                if (doorLockRight1Flag == 1) doorLockRight1Flag = 0;
-                else if (doorLockRight1Flag == 0) doorLockRight1Flag = 1;
+                try {
+                    if (doorLockRight1Flag == 1) {
+                        doorLockRight1Flag = 0;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Unlock");
+                    } else if (doorLockRight1Flag == 0) {
+                        doorLockRight1Flag = 1;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Lock");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
                 if (doorLockRight1Flag == 0) {
                     doorLockRight1.setSelected(false);
@@ -405,8 +536,19 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
             @Override
             public void onClick(View v) {
-                if (doorLockRight2Flag == 1) doorLockRight2Flag = 0;
-                else if (doorLockRight2Flag == 0) doorLockRight2Flag = 1;
+                try {
+                    if (doorLockRight2Flag == 1) {
+                        doorLockRight2Flag = 0;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Unlock");
+                    } else if (doorLockRight2Flag == 0) {
+                        doorLockRight2Flag = 1;
+                        if (iMyAidlInterface2 != null)
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Lock");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
 
                 if (doorLockRight2Flag == 0) {
                     doorLockRight2.setSelected(false);
@@ -483,10 +625,136 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                 windowLockFlag = !windowLockFlag;
                 if (windowLockFlag) {
                     windowLock.setSelected(true);
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerDrive_Req,Disable");
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRL_Req,Disable");
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerPassenger_Req,Disable");
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRR_Req,Disable");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
                 } else {
                     windowLock.setSelected(false);
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerDrive_Req,Enable");
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRL_Req,Enable");
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerPassenger_Req,Enable");
+                            iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRR_Req,Enable");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
                 syncWindowAdjustBehavior();
+            }
+        });
+
+        windowFrontLeftUp.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowDrive_Req,Close");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        windowFrontLeftDown.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowDrive_Req,Open");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        windowRearLeftUp.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowRL_Req,Close");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        windowRearLeftDown.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowRL_Req,Open");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        windowFrontRightUp.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPassenger_Req,Close");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        windowFrontRightDown.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPassenger_Req,Open");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        windowRearRightUp.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowRR_Req,Close");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+        windowRearRightDown.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowRR_Req,Open");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         });
 
@@ -510,6 +778,16 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     doorLockLeft2Flag = 0;
                     doorLockRight1Flag = 0;
                     doorLockRight2Flag = 0;
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Unlock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Unlock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Unlock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Unlock");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     syncDoorLockSeparateBehavior(1);
                     syncDoorLockSeparateBehavior(2);
                     syncDoorLockSeparateBehavior(3);
@@ -523,6 +801,16 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
                     doorLockLeft2Flag = 1;
                     doorLockRight1Flag = 1;
                     doorLockRight2Flag = 1;
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Lock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Lock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Lock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Lock");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     syncDoorLockSeparateBehavior(1);
                     syncDoorLockSeparateBehavior(2);
                     syncDoorLockSeparateBehavior(3);
@@ -555,24 +843,150 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             }
         });
 
-        offLight.setOnCheckedChangeListener(
-                (buttonView, isChecked) -> {
-                    if (isChecked) {
-                        frontFogLight.setEnabled(false);
-                        rearFogLight.setEnabled(false);
-                        frontFogLightFlag = -1;
-                        rearFogLightFlag = -1;
-                    } else {
-                        frontFogLight.setEnabled(true);
-                        frontFogLight.setSelected(false);
-                        rearFogLight.setEnabled(true);
-                        rearFogLight.setSelected(false);
-                        frontFogLightFlag = 0;
-                        rearFogLightFlag = 0;
+        lightRadio.setOnCheckedChangeListener((group, checkedId) -> {
+            switch (checkedId) {
+                case R.id.light_radio1:
+                    //雾灯相关
+                    frontFogLight.setEnabled(true);
+                    frontFogLight.setSelected(false);
+                    rearFogLight.setEnabled(true);
+                    rearFogLight.setSelected(false);
+                    frontFogLightFlag = 0;
+                    rearFogLightFlag = 0;
+                    break;
+                case R.id.light_radio2:
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("TWO,IVI_HeadLampPower_Req,Open");
+                            iMyAidlInterface2.setCanData("TWO,IVI_HighBeamPower_Req,Close");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
                     }
-                });
+                    //雾灯相关
+                    frontFogLight.setEnabled(true);
+                    frontFogLight.setSelected(false);
+                    rearFogLight.setEnabled(true);
+                    rearFogLight.setSelected(false);
+                    frontFogLightFlag = 0;
+                    rearFogLightFlag = 0;
+                    break;
+                case R.id.light_radio3:
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("TWO,IVI_HeadLampPower_Req,Open");
+                            iMyAidlInterface2.setCanData("TWO,IVI_HighBeamPower_Req,Open");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //雾灯相关
+                    frontFogLight.setEnabled(true);
+                    frontFogLight.setSelected(false);
+                    rearFogLight.setEnabled(true);
+                    rearFogLight.setSelected(false);
+                    frontFogLightFlag = 0;
+                    rearFogLightFlag = 0;
+                    break;
+                case R.id.light_radio4:
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("TWO,IVI_HeadLampPower_Req,Close");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    //雾灯相关
+                    frontFogLight.setEnabled(false);
+                    rearFogLight.setEnabled(false);
+                    frontFogLightFlag = -1;
+                    rearFogLightFlag = -1;
+                    break;
+                default:
+                    break;
+            }
+        });
+
+    }
 
 
+    private void processHeadLampStatus() {
+        String getCanData1 = "";
+        String getCanData2 = "";
+        try {
+            getCanData1 = iMyAidlInterface2.getReqCanData("TWO,ZGW_HeadLampPower_St");
+            getCanData2 = iMyAidlInterface2.getReqCanData("TWO,ZGW_HighBeamPower_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "processHeadLampStatus1: " + getCanData1);
+        Log.d(TAG, "processHeadLampStatus2: " + getCanData2);
+        if (getCanData1.equals("Closed")) {
+            ((RadioButton) lightRadio.findViewById(R.id.light_radio4)).setChecked(true);
+            frontFogLightFlag = 0;
+            rearFogLightFlag = 0;
+        } else if (getCanData1.equals("Opened") && getCanData2.equals("Closed")) {
+            ((RadioButton) lightRadio.findViewById(R.id.light_radio2)).setChecked(true);
+            frontFogLightFlag = 0;
+            rearFogLightFlag = 0;
+        } else if (getCanData1.equals("Opened") && getCanData2.equals("Opened")) {
+            ((RadioButton) lightRadio.findViewById(R.id.light_radio3)).setChecked(true);
+            frontFogLightFlag = 0;
+            rearFogLightFlag = 0;
+        } else {
+            ((RadioButton) lightRadio.findViewById(R.id.light_radio1)).setChecked(true);
+            frontFogLightFlag = -1;
+            rearFogLightFlag = -1;
+        }
+    }
+
+    private String getRearViewMirrorStatus() {
+        String getCanData = "";
+        try {
+            getCanData = iMyAidlInterface2.getReqCanData("TWO,ZGW_RearMirrorOpen_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "getRearViewMirrorStatus: " + getCanData);
+        return getCanData;
+    }
+
+    private String getDoorLockSeparateStatus(int whichDoor) { //左前门：1；左后门：2；右前门：3；右后门：4
+        String getCanData = "";
+        switch (whichDoor) {
+            case 1:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockDrive_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 2:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockRL_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 3:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockPassenger_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 4:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockRR_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                break;
+        }
+        Log.d(TAG, "getDoorLockSeparateStatus: " + getCanData);
+        return getCanData;
     }
 
     private void syncDoorLockSeparateBehavior(int whichDoor) { //左前门：1；左后门：2；右前门：3；右后门：4

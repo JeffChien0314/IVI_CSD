@@ -304,26 +304,25 @@
 
             <ImageView
                 android:id="@+id/window_front_left_up"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="33px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_up" />
 
             <ImageView
-                android:layout_width="40px"
-                android:layout_height="36px"
-                android:layout_marginTop="57px"
+                android:layout_width="60px"
+                android:layout_height="60px"
+                android:layout_marginTop="21px"
+                android:layout_marginBottom="21px"
                 android:clickable="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/selector_window_control" />
 
             <ImageView
                 android:id="@+id/window_front_left_down"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="57px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_down" />
@@ -343,26 +342,25 @@
 
             <ImageView
                 android:id="@+id/window_rear_left_up"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="33px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_up" />
 
             <ImageView
-                android:layout_width="40px"
-                android:layout_height="36px"
-                android:layout_marginTop="57px"
+                android:layout_width="60px"
+                android:layout_height="60px"
+                android:layout_marginTop="21px"
+                android:layout_marginBottom="21px"
                 android:clickable="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/selector_window_control" />
 
             <ImageView
                 android:id="@+id/window_rear_left_down"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="57px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_down" />
@@ -418,26 +416,25 @@
 
             <ImageView
                 android:id="@+id/window_front_right_up"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="33px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_up" />
 
             <ImageView
-                android:layout_width="40px"
-                android:layout_height="36px"
-                android:layout_marginTop="57px"
+                android:layout_width="60px"
+                android:layout_height="60px"
+                android:layout_marginTop="21px"
+                android:layout_marginBottom="21px"
                 android:clickable="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/selector_window_control" />
 
             <ImageView
                 android:id="@+id/window_front_right_down"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="57px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_down" />
@@ -457,26 +454,25 @@
 
             <ImageView
                 android:id="@+id/window_rear_right_up"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="33px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_up" />
 
             <ImageView
-                android:layout_width="40px"
-                android:layout_height="36px"
-                android:layout_marginTop="57px"
+                android:layout_width="60px"
+                android:layout_height="60px"
+                android:layout_marginTop="21px"
+                android:layout_marginBottom="21px"
                 android:clickable="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/selector_window_control" />
 
             <ImageView
                 android:id="@+id/window_rear_right_down"
-                android:layout_width="28px"
-                android:layout_height="12px"
-                android:layout_marginTop="57px"
+                android:layout_width="90px"
+                android:layout_height="69px"
                 android:clickable="true"
                 android:scaleType="center"
                 android:src="@drawable/selector_window_down" />
@@ -517,7 +513,7 @@
             android:layout_marginBottom="60px"
             android:src="@drawable/icon_childlock"
             app:layout_constraintBottom_toBottomOf="@+id/dooropen_right_layout"
-            app:layout_constraintLeft_toRightOf="@+id/dooropen_right_layout" />
+            app:layout_constraintRight_toLeftOf="@+id/dooropen_right_layout" />
 
         <ImageView
             android:id="@+id/car_image"

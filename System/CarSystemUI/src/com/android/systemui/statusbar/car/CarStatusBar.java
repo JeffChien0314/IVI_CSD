@@ -26,10 +26,14 @@ import android.car.Car;
 import android.car.drivingstate.CarDrivingStateEvent;
 import android.car.drivingstate.CarUxRestrictionsManager;
 import android.car.hardware.power.CarPowerManager.CarPowerStateListener;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
+import android.os.IBinder;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
@@ -77,6 +81,7 @@ import com.android.systemui.statusbar.phone.StatusBar;
 import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
+import com.fxc.libCanWrapperNDK.IMyAidlInterface2;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -136,6 +141,7 @@ public class CarStatusBar extends StatusBar implements
     private CarNotificationView mNotificationView;
     private RecyclerView mNotificationList;
     private NotificationsAdapter mNotificationsAdapter;
+    private IMyAidlInterface2 iMyAidlInterface2;
     // The handler bar view at the bottom of notification shade.
     private View mHandleBar;
     // The controller for the notification view.
@@ -171,6 +177,38 @@ public class CarStatusBar extends StatusBar implements
     // Whether heads-up notifications should be shown when shade is open.
     private boolean mEnableHeadsUpNotificationWhenNotificationShadeOpen;
 
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG, "onServiceConnected");
+            iMyAidlInterface2 = IMyAidlInterface2.Stub.asInterface(iBinder);
+            Log.d(TAG, "onServiceConnected: " + (iMyAidlInterface2 == null));
+            if (mNotificationList != null) { //self-defined NotificationList(不确定谁快)
+                mNotificationsAdapter = new NotificationsAdapter(mContext, mNotificationClickHandlerFactory, iMyAidlInterface2);
+                mNotificationList.setLayoutManager(new LinearLayoutManager(mContext));
+                mNotificationList.setAdapter(mNotificationsAdapter);
+            }
+
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.d(TAG, "onServiceDisconnected");
+            iMyAidlInterface2 = null;
+            if (mNotificationList != null) { //self-defined NotificationList(不确定谁快)
+                mNotificationsAdapter = new NotificationsAdapter(mContext, mNotificationClickHandlerFactory, iMyAidlInterface2);
+                mNotificationList.setLayoutManager(new LinearLayoutManager(mContext));
+                mNotificationList.setAdapter(mNotificationsAdapter);
+            }
+        }
+    };
+    private void startAndConnectService(){
+        Intent intent = new Intent();
+        intent.setPackage("com.fxc.libCanWrapper");
+        intent.setAction("com.fxc.libCanWrapperNDK.MyService");
+        mContext.bindService(intent, conn, Context.BIND_AUTO_CREATE);
+    }
+
     private final CarPowerStateListener mCarPowerStateListener =
             (int state) -> {
                 // When the car powers on, clear all notifications and mute/unread states.
@@ -187,6 +225,7 @@ public class CarStatusBar extends StatusBar implements
 
     @Override
     public void start() {
+        startAndConnectService(); //连接快捷功能服务 
         // get the provisioned state before calling the parent class since it's that flow that
         // builds the nav bar
         mDeviceProvisionedController = Dependency.get(DeviceProvisionedController.class);
@@ -350,7 +389,7 @@ public class CarStatusBar extends StatusBar implements
         CarSystemUIFactory factory = SystemUIFactory.getInstance();
         mCarFacetButtonController = factory.getCarDependencyComponent()
                 .getCarFacetButtonController();
-		mCarFacetButtonController.registerReceiver();
+        mCarFacetButtonController.registerReceiver();
         mNotificationPanelBackground = getDefaultWallpaper();
         mScrimController.setScrimBehindDrawable(mNotificationPanelBackground);
 
@@ -506,9 +545,12 @@ public class CarStatusBar extends StatusBar implements
         });
 
         mNotificationList = mNotificationView.findViewById(R.id.notifications);
-        mNotificationsAdapter = new NotificationsAdapter(mContext,mNotificationClickHandlerFactory); //self-defined NotificationList
-        mNotificationList.setLayoutManager(new LinearLayoutManager(mContext));
-        mNotificationList.setAdapter(mNotificationsAdapter);
+        Log.d(TAG, "new NotificationsAdapter: "+(iMyAidlInterface2==null));
+        if (iMyAidlInterface2 != null) { //self-defined NotificationList(不确定谁快)
+            mNotificationsAdapter = new NotificationsAdapter(mContext, mNotificationClickHandlerFactory, iMyAidlInterface2);
+            mNotificationList.setLayoutManager(new LinearLayoutManager(mContext));
+            mNotificationList.setAdapter(mNotificationsAdapter);
+        }
 
         mNotificationList.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override

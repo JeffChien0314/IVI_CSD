@@ -568,8 +568,13 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             widgetList.add(3, widget4);
         }
 
-        homeWidgetAdapter = new HomeWidgetAdapter(mContext, widgetList);
-        gridView.setAdapter(homeWidgetAdapter);
+		if (homeWidgetAdapter == null) {
+            homeWidgetAdapter = new HomeWidgetAdapter(mContext, widgetList);
+            gridView.setAdapter(homeWidgetAdapter);
+        } else {
+            homeWidgetAdapter = new HomeWidgetAdapter(mContext, widgetList);
+            homeWidgetAdapter.notifyDataSetChanged();
+        }
     }
 
     private void doBindAppWidgetId(int AppWidgetId, AppWidgetProviderInfo widgetInfo) {
