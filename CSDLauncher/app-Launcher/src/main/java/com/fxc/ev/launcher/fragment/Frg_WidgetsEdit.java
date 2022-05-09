@@ -45,17 +45,6 @@ public class Frg_WidgetsEdit extends Fragment {
     private void initAllWidgetList() {
         pakageModList.add(new PakageMod(null, "Music", getResources().getDrawable(R.drawable.icon_widget_edit_music), null));
         pakageModList.add(new PakageMod(null, "my test widget", getResources().getDrawable(R.drawable.icon_widget_edit_recents), null));
-        pakageModList.add(new PakageMod(null, "widget1", null, null));
-        pakageModList.add(new PakageMod(null, "widget2", null, null));
-        pakageModList.add(new PakageMod(null, "widget3", null, null));
-        pakageModList.add(new PakageMod(null, "widget4", null, null));
-        pakageModList.add(new PakageMod(null, "widget5", null, null));
-        pakageModList.add(new PakageMod(null, "widget6", null, null));
-        pakageModList.add(new PakageMod(null, "widget7", null, null));
-        pakageModList.add(new PakageMod(null, "widget8", null, null));
-        pakageModList.add(new PakageMod(null, "widget9", null, null));
-        pakageModList.add(new PakageMod(null, "widget10", null, null));
-        pakageModList.add(new PakageMod(null, "widget11", null, null));
 
         List<String> mAllWidgetLabelList = new ArrayList<>();
         for (PakageMod p : pakageModList) {
