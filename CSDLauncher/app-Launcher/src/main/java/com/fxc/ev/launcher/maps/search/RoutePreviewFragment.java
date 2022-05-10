@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,6 +27,7 @@ import com.fxc.ev.launcher.utils.DistanceConversions;
 import com.fxc.ev.launcher.utils.NavigationTimeParser;
 import com.fxc.ev.launcher.utils.SpUtils;
 import com.fxc.ev.launcher.utils.SpaceItemDecoration;
+import com.fxc.ev.launcher.utils.Toaster;
 import com.tomtom.navkit2.guidance.Instruction;
 import com.tomtom.navkit2.guidance.InstructionBuilder;
 import com.tomtom.navkit2.guidance.RoadInformation;
@@ -97,6 +99,7 @@ public class RoutePreviewFragment extends Fragment {
         mRoutePreviewBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                launcherActivity.hideRoutes();
                 mRoutePreviewFragment.getFragmentManager().popBackStack();
                 if (mRoutePreviewFragment.getFragmentManager().getBackStackEntryCount() == 1) {
                     launcherActivity.setMapWidgetVisibility(View.VISIBLE);
@@ -136,8 +139,12 @@ public class RoutePreviewFragment extends Fragment {
         mIconGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                launcherActivity.startNavigation(launcherActivity.toMapCoordinate(mCoordinate));
-                launcherActivity.getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                if (mTrip != null) {
+                    launcherActivity.startNavigation(mTrip);
+                    launcherActivity.getSupportFragmentManager().popBackStackImmediate(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                } else {
+                    Toaster.show(launcherActivity.getApplicationContext(), R.string.navigation_experience_select_route_message);
+                }
             }
         });
 
@@ -174,7 +181,8 @@ public class RoutePreviewFragment extends Fragment {
         });
         launcherActivity.setOnRouteInfoUpdateListener(new LauncherActivity.OnRouteInfoUpdateListener() {
             @Override
-            public void OnRouteInfoUpdate(Route route) {
+            public void OnRouteInfoUpdate(Trip trip, Route route) {
+                mTrip = trip;
                 String countryCode = launcherActivity.getCurrentCountryCode();
                 RouteProgress routeProgress = route.snapshot().progress();
                 GregorianCalendar eta = routeProgress.eta();
@@ -267,7 +275,8 @@ public class RoutePreviewFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         Log.v(TAG, "onDestroy");
-        launcherActivity.hideRoutes();
+        mTrip = null;
+        //launcherActivity.hideRoutes();
         launcherActivity.setRouteAvoidsLayoutVisibility(View.GONE);//Jerry@20220428 add:hide route avoids ui
     }
 

@@ -272,7 +272,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private OnRouteInfoUpdateListener mOnRouteInfoUpdateListener;
 
     public interface OnRouteInfoUpdateListener {
-        void OnRouteInfoUpdate(Route route);
+        void OnRouteInfoUpdate(Trip trip, Route route);
     }
 
     public void setOnRouteInfoUpdateListener(OnRouteInfoUpdateListener onRouteInfoUpdateListener) {
@@ -568,7 +568,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             widgetList.add(3, widget4);
         }
 
-		if (homeWidgetAdapter == null) {
+        if (homeWidgetAdapter == null) {
             homeWidgetAdapter = new HomeWidgetAdapter(mContext, widgetList);
             gridView.setAdapter(homeWidgetAdapter);
         } else {
@@ -750,6 +750,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         getCameraStackController().addCameraChangedListener(new CameraStackController.OnCameraChangedListener() {
             @Override
             public void onChange(CameraType oldCameraType, CameraType newCameraType) {
+                Log.v(TAG, "oldCameraType: " + oldCameraType + ", newCameraType: " + newCameraType);
                 LauncherActivity.this.oldCameraType = oldCameraType;
                 if (oldCameraType != newCameraType) {
                     if (getCameraStackController().getCurrentCamera() == CameraType.kFollowRouteCamera) {
@@ -952,7 +953,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                                 resetNavigation();
                                 setMapWidgetVisibility2(View.VISIBLE);
                             }
-                        },3000);
+                        }, 3000);
                         Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
                     }
                 };
@@ -994,15 +995,17 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     }
 
     //Jerry@20220506 add:stop and reset navigation
-    private void resetNavigation(){
+    private void resetNavigation() {
         if (tripRenderer != null) {
             getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
             tripRenderer.stop();
             tripRenderer = null;
         }
         if (trip != null) {
-            trip.removeListener(tripUpdateListener);
-            tripUpdateListener = null;
+            if (tripUpdateListener != null) {
+                trip.removeListener(tripUpdateListener);
+                tripUpdateListener = null;
+            }
             hideEtaPanel();
             hideNextInstructionPanel();
             stopPreview();
@@ -1043,63 +1046,25 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             public void onTripPlanned(TripPlanResult tripPlanResult) {
                 waypoints.clear();
                 removeAllMarkers();
+                resetNavigation();
 
-                if (tripRenderer != null) {
-                    getCameraStackController().removeTripFromOverviewCamera(tripRenderer);
-                    tripRenderer.stop();
-                    tripRenderer = null;
-                }
-                if (trip != null) {
-                    trip.removeListener(tripUpdateListener);
-                    tripUpdateListener = null;
-                    //trip.stopPreview();
-                    navigation.deleteTrip(trip);
-                    trip = null;
-                }
                 trip = tripPlanResult.trip();
-
-                tripUpdateListener = new TripUpdateListener() {
-                    @Override
-                    public void onRoutesChange(Trip trip) {
-
-                    }
-
-                    @Override
-                    public void onStateChange(Trip trip) {
-                    }
-
-                    @Override
-                    public void onTripArrival(Trip trip) {
-                        Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
-                    }
-                };
-                trip.addListener(tripUpdateListener);
 
                 trafficRenderer.setTrafficMarkerVisibility(false);
                 tripRenderer = TripRenderer.create(trip, getMapHolder().getMap(), trafficConfiguration);
                 getCameraStackController().addTripToOverviewCamera(tripRenderer);
                 if (trip.routeList().size() <= 1) {
                     if (mOnRouteInfoUpdateListener != null) {
-                        mOnRouteInfoUpdateListener.OnRouteInfoUpdate(trip.routeList().get(0));
+                        mOnRouteInfoUpdateListener.OnRouteInfoUpdate(trip, trip.routeList().get(0));
                     }
-                    /*navigation.startNavigation(trip);
-                    trip.startPreview(Constants.SPEED_MULTIPLIER);
-                    hideEtaPanel();
-                    hideNextInstructionPanel();
-                    isUpdateInstruction = true;*/
                 } else {
                     Toaster.show(getApplicationContext(), R.string.navigation_experience_select_route_message);
                     tripRenderer.addClickListener(new TripRendererClickListener() {
                         @Override
                         public void onRouteClicked(Route route, ClickCoordinates clickCoordinates) {
                             trip.setPreferredRoute(route);
-                            /*navigation.startNavigation(trip);
-                            trip.startPreview(Constants.SPEED_MULTIPLIER);
-                            hideEtaPanel();
-                            hideNextInstructionPanel();
-                            isUpdateInstruction = true;*/
                             if (mOnRouteInfoUpdateListener != null) {
-                                mOnRouteInfoUpdateListener.OnRouteInfoUpdate(route);
+                                mOnRouteInfoUpdateListener.OnRouteInfoUpdate(trip, route);
                             }
                         }
                     });
@@ -1116,6 +1081,41 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         });
     }
 
+    public void startNavigation(Trip trip) {
+        if (oldCameraType != CameraType.kManualCamera) {
+            getCameraStackController().setCurrentCamera(oldCameraType);
+        }
+        tripUpdateListener = new TripUpdateListener() {
+            @Override
+            public void onRoutesChange(Trip trip) {
+                updateEtaPanelForRoutesOnTrip(trip);
+            }
+
+            @Override
+            public void onStateChange(Trip trip) {
+            }
+
+            @Override
+            public void onTripArrival(Trip trip) {
+                new Handler().postDelayed(new Runnable() {//Jerry@20220506 add:reset navigation
+                    @Override
+                    public void run() {
+                        resetNavigation();
+                        setMapWidgetVisibility2(View.VISIBLE);
+                    }
+                }, 3000);
+                Toast.makeText(mContext, getString(R.string.navigation_experience_destination_reached_message), Toast.LENGTH_LONG).show();
+            }
+        };
+        trip.addListener(tripUpdateListener);
+
+        updateEtaPanelForRoutesOnTrip(trip);
+        navigation.startNavigation(trip);
+        if (Constants.IS_DEMO) {
+            startDemo();
+        }
+    }
+
     public void hideRoutes() {
         /*waypoints.clear();
         removeAllMarkers();*/
@@ -1129,11 +1129,14 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
         Log.v("RoutePreviewFragment", "trip:" + trip);
         if (trip != null) {
-            trip.removeListener(tripUpdateListener);
-            tripUpdateListener = null;
+            if (tripUpdateListener != null) {
+                trip.removeListener(tripUpdateListener);
+                tripUpdateListener = null;
+            }
             navigation.deleteTrip(trip);
             trip = null;
         }
+        navigation.cancelTripPlanning();
     }
     //metis@220419 路线规划<--
 
@@ -1919,7 +1922,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
     //Jerry@20220402 add:setMapView move
     private void setMapViewMove(String moveDirection) {
-        int moveOffset = map.getViewport().getBottomRight().getX() / 2;
+        int moveOffset = map.getViewport().getBottomRight().getX() / 4;
         switch (moveDirection) {
             case Constants.MOVE_RIGHT:
                 Point rightBegin = new Point(0, 0);

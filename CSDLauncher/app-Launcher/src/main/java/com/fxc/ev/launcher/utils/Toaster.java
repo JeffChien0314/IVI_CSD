@@ -41,7 +41,7 @@ public final class Toaster {
     if (toast != null) {
       toast.cancel();
     }
-    toast = Toast.makeText(context, resid, Toast.LENGTH_LONG);
+        toast = Toast.makeText(context, resid, Toast.LENGTH_SHORT);
     toast.show();
   }
 }
