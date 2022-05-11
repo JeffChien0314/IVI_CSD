@@ -1,29 +1,28 @@
 package com.fxc.ev.zuocang;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.Activity;
-import android.app.Dialog;
-import android.graphics.Color;
-import android.graphics.Rect;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.IBinder;
+import android.os.RemoteException;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fxc.ev.zuocang.adapter.MenuListAdapter;
+import com.fxc.libCanWrapperNDK.IMyAidlInterface2;
 
 import java.util.ArrayList;
 
@@ -43,71 +42,103 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private ImageView mFrogFrontLight,mFrogRearLight;
     private ImageView mReadingLightl,mReadingLight,mReadingLightR,mPuddleLight;
     private boolean isHighBeamAutoOpen = false;
-    private boolean isFrogFrontLightOpen = false;
-    private boolean isFrogRearLightOpen = false;
-    private boolean isExteriorLightAutoOpen = true;
+    //private boolean isFrogFrontLightOpen = false;
+   // private boolean isFrogRearLightOpen = false;
+    //private boolean isExteriorLightAutoOpen = true;
     private boolean isReadingLightLOpen = false;
     private boolean isReadingLightOpen = false;
     private boolean isReadingLightROpen = false;
     private boolean isPubbleLightLOpen = false;
-    private boolean isWindowLockOpen = false;
-    private boolean isDoorLockOpen = false;
+
+    /*public boolean isWindowLockOpen() {
+        return isWindowLockOpen;
+    }
+
+    public void setWindowLockOpen(boolean windowLockOpen) {
+        isWindowLockOpen = windowLockOpen;
+    }*/
+
+    private boolean isWindowLockOpen;
     private boolean isSunCurtainOpen = false;
-    /*private boolean isFrontLeftUpArrowClick = false;
-    private boolean isFrontLeftDownArrowClick = false;
-    private boolean isRearLeftUpArrowClick = false;
-    private boolean isRearLeftDownArrowClick = false;
-    private boolean isFrontRightUpArrowClick = false;
-    private boolean isFrontRightDownArrowClick = false;
-    private boolean isRearRightUpArrowClick = false;
-    private boolean isRearRightDownArrowClick = false;*/
-    private boolean isLeftFrontDoorLock = false;
-    private boolean isLeftRearDoorLock = false;
-    private boolean isRightFrontDoorLock = false;
-    private boolean isRightRearDoorLock = false;
-    private boolean isRearLuggageTrunkOpen = false;
+    private int frontFogLightFlag=0; //0:normal;1:active;-1:disable
+    private int rearFogLightFlag;
+    private int doorLockLeft1Flag;
+    private int doorLockLeft2Flag;
+    private int doorLockRight1Flag;
+    private int doorLockRight2Flag;
+    private int luggageTrunkFlag;
+    private int doorLockFlag;
     private boolean isChildLockOpen = false;
     private boolean isInPCondition = false;
     private boolean isMirrorOpen = true;
     private boolean isDoorOpen = false;
-    private boolean isRearLuggageTrunkEnable = true;
+    private boolean isLuggageFrunkClick = false;
+    private boolean isLuggageDormerClick = false;
+    //private boolean isRearLuggageTrunkEnable = true;
     private ArrayList<Integer> images = new ArrayList<>();
     private ScrollView mScrollView;
     private ImageView mWindowFrontLeftUp,mWindowFrontLeft,mWindowFrontLeftDown,mWindowRearLeftUp,mWindowRearLeft,mWindowRearLeftDown;
     private ImageView mWindowFrontRightUp,mWindowFrontRight,mWindowFrontRightDown,mWindowRearRightUp,mWindowRearRight,mWindowRearRightDown;
     private ImageView mWindowLock,mDoorLock,mChildLock,mSunCurtain,mLeftChildLockIcon,mRightChildLockIcon;
     private ImageView mLeftFrontDoorLock,mLeftRearDoorLock,mRightFrontDoorLock,mRightRearDoorLock;
-    private ImageView mRearLuggageTrunk,mSteeringWaringIcon,mMirrorFolderDisplayIcon,mSeatsWaringIcon;
+    private ImageView mRearLuggageTrunk,mLuggageFrunk,mLuggagedormer,mSteeringWaringIcon,mMirrorFolderDisplayIcon,mSeatsWaringIcon;
     private TextView mSteeringInstruction,mSteeringWaringInstruction,mSeatsInstruction,mSeatsWaringInstruction,mSeatsLMessageNumber,mSeatsRMessageNumber,mToastContent;
     private ImageView mLSeatsFallForward,mLSeatsFallBackward,mLSeatsFallUp,mLSeatsFallDown,mLSeatsFallHigh,mLSeatsFallLow,mLSeatsMoveForward,mLSeatsMoveBackward,mLSeat;
     private ImageView mRSeatsFallForward,mRSeatsFallBackward,mRSeatsFallUp,mRSeatsFallDown,mRSeatsFallHigh,mRSeatsFallLow,mRSeatsMoveForward,mRSeatsMoveBackward,mRSeat;
-/*    private boolean isLFallForwardArrowClick = false;
-    private boolean isLFallBackwardArrowClick = false;
-    private boolean isLFallUpArrowClick = false;
-    private boolean isLFallDownArrowClick = false;
-    private boolean isLFallHighArrowClick = false;
-    private boolean isLFallLowArrowClick = false;
-    private boolean isLMoveForwardArrowClick = false;
-    private boolean isLMoveBackwardArrowClick = false;
-    private boolean isRFallForwardArrowClick = false;
-    private boolean isRFallBackwardArrowClick = false;
-    private boolean isRFallUpArrowClick = false;
-    private boolean isRFallDownArrowClick = false;
-    private boolean isRFallHighArrowClick = false;
-    private boolean isRFallLowArrowClick = false;
-    private boolean isRMoveForwardArrowClick = false;
-    private boolean isRMoveBackwardArrowClick = false;*/
-private ImageView mLLockMask,mRLockMask;
-private Button mSeatsLMessageReduce,mSeatsRMessageReduce,mSeatsLMessagePlus,mSeatsRMessagePlus;
-private ImageView mLMirrorUp,mLMirrorDown,mLMirrorLeft,mLMirrorRight,mRMirrorUp,mRMirrorDown,mRMirrorLeft,mRMirrorRight;
-private ImageView mSteerControlArrowUp,mSteerControlArrowDown,mSteerControlArrowForward,mSteerControlArrowBackward;
-private int mLMessageNum,mRMessageNum;
-private Handler handler = new Handler();
+   private ImageView mLLockMask,mRLockMask;
+   private Button mSeatsLMessageReduce,mSeatsRMessageReduce,mSeatsLMessagePlus,mSeatsRMessagePlus;
+   private ImageView mLMirrorUp,mLMirrorDown,mLMirrorLeft,mLMirrorRight,mRMirrorUp,mRMirrorDown,mRMirrorLeft,mRMirrorRight;
+   private ImageView mSteerControlArrowUp,mSteerControlArrowDown,mSteerControlArrowForward,mSteerControlArrowBackward;
+   private int mLMessageNum,mRMessageNum;
+  private LinearLayout mServiceBindInfo;
+   private Handler handler = new Handler();
+   private IMyAidlInterface2 iMyAidlInterface2;
+   private Boolean isServiceConnectedOk = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        startAndConnectService();
         setContentView(R.layout.activity_main);
         initView();
+        mServiceBindInfo = findViewById(R.id.service_bind_information);
+        mServiceBindInfo.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mServiceBindInfo.setVisibility(View.GONE);
+                loadCurrentSetting();
+            }
+        }, 2500);
+        loadCurrentSetting();
+
+    }
+    private ServiceConnection conn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.d(TAG, "onServiceConnected");
+            iMyAidlInterface2 = IMyAidlInterface2.Stub.asInterface(iBinder);
+           // loadCurrentSetting();
+
+            /*try{
+                iMyAidlInterface2.register(iCanStCallback);
+            } catch (RemoteException e){
+                e.printStackTrace();
+            }*/
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            iMyAidlInterface2 = null;
+            System.out.println("iMyAidlInterface2 Disconnected");
+
+        }
+    };
+
+    private void startAndConnectService(){
+        Log.d(TAG, "startAndConnectService");
+        Intent intent = new Intent();
+        intent.setPackage("com.fxc.libCanWrapper");
+        intent.setAction("com.fxc.libCanWrapperNDK.MyService");
+        bindService(intent, conn, Context.BIND_AUTO_CREATE);
     }
 
     public ArrayList<Integer> getImages() {
@@ -145,7 +176,7 @@ private Handler handler = new Handler();
         mExteriorHighBeamLight=findViewById(R.id.exterior_light_high_beam);
         mExteriorLowBeamLight = findViewById(R.id.exterior_light_low_beam);
         mToastContent = findViewById(R.id.toast_content);
-        //mExteriorLightOff = findViewById(R.id.exterior_light_off);
+        mExteriorLightOff = findViewById(R.id.exterior_light_off);
         mHighBeamLightAuto = findViewById(R.id.exterior_high_beam_light_auto);
         mFrogFrontLight = findViewById(R.id.frog_front_light);
         mFrogRearLight = findViewById(R.id.frog_rear_light);
@@ -177,6 +208,8 @@ private Handler handler = new Handler();
         mRearLuggageTrunk = findViewById(R.id.luggage_trunk);
         mLeftChildLockIcon = findViewById(R.id.childlock_left);
         mRightChildLockIcon = findViewById(R.id.childlock_right);
+        mLuggageFrunk = findViewById(R.id.luggage_frunk);
+        mLuggagedormer = findViewById(R.id.luggage_dormer);
         mSteeringWaringIcon = findViewById(R.id.steering_warning_icon);
         mSteeringInstruction = findViewById(R.id.steering_instrcution);
         mSteeringWaringInstruction = findViewById(R.id.steering_warning_instrcution);
@@ -267,7 +300,7 @@ private Handler handler = new Handler();
         mExteriorLightAuto.setOnClickListener(this);
         mExteriorHighBeamLight.setOnClickListener(this);
         mExteriorLowBeamLight.setOnClickListener(this);
-        //mExteriorLightOff.setOnClickListener(this);
+        mExteriorLightOff.setOnClickListener(this);
         mHighBeamLightAuto.setOnClickListener(this);
         mFrogFrontLight.setOnClickListener(this);
         mFrogRearLight.setOnClickListener(this);
@@ -279,6 +312,8 @@ private Handler handler = new Handler();
         mDoorLock.setOnClickListener(this);
         mChildLock.setOnClickListener(this);
         mSunCurtain.setOnClickListener(this);
+        mLuggageFrunk.setOnClickListener(this);
+        mLuggagedormer.setOnClickListener(this);
         mMirrorFolderDisplayIcon.setOnClickListener(this);
         mWindowFrontLeftUp.setOnClickListener(this);
         mWindowFrontLeft.setOnClickListener(this);
@@ -546,7 +581,138 @@ private Handler handler = new Handler();
                 }
             }
         });
+
+
     }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "onResume");
+        if (doorLockLeft1Flag == 1 && doorLockLeft2Flag == 1 && doorLockRight1Flag == 1 && doorLockRight2Flag == 1) {
+            doorLockFlag = 1;
+            luggageTrunkFlag = -1;
+        } else if (doorLockLeft1Flag == -1 || doorLockLeft2Flag == -1 || doorLockRight1Flag == -1 || doorLockRight2Flag == -1) {
+            doorLockFlag = -1;
+        } else {
+            doorLockFlag = 0;
+        }
+        syncDoorLockBehavior();
+        syncLuggageTrunkBehavior();
+        Log.d(TAG, "loadCurrentSetting"+isWindowLockOpen);
+        if(isWindowLockOpen) mWindowLock.setSelected(true);
+        else mWindowLock.setSelected(false);
+        if(isChildLockOpen) mChildLock.setSelected(true);
+        else mChildLock.setSelected(false);
+        if(isSunCurtainOpen) mSunCurtain.setSelected(true);
+        else mSunCurtain.setSelected(false);
+        if(isLuggageFrunkClick) mLuggageFrunk.setSelected(true);
+        else mLuggageFrunk.setSelected(false);
+        if(isLuggageDormerClick) mLuggagedormer.setSelected(true);
+        else mLuggagedormer.setSelected(false);
+        if (frontFogLightFlag == -1) {
+            mFrogFrontLight.setEnabled(false);
+            mFrogFrontLight.setSelected(false);
+        } else if (frontFogLightFlag == 0) {
+            mFrogFrontLight.setEnabled(true);
+            mFrogFrontLight.setSelected(false);
+        } else if (frontFogLightFlag == 1) {
+            mFrogFrontLight.setEnabled(true);
+            mFrogFrontLight.setSelected(true);
+        }
+
+        if (rearFogLightFlag == -1) {
+            mFrogRearLight.setEnabled(false);
+            mFrogRearLight.setSelected(false);
+        } else if (rearFogLightFlag == 0) {
+            mFrogRearLight.setEnabled(true);
+            mFrogRearLight.setSelected(false);
+        } else if (rearFogLightFlag == 1) {
+            mFrogRearLight.setEnabled(true);
+            mFrogRearLight.setSelected(true);
+        }
+        if (isReadingLightOpen) mReadingLight.setSelected(true);
+        else mReadingLight.setSelected(false);
+        if (isReadingLightLOpen) mReadingLightl.setSelected(true);
+        else mReadingLightl.setSelected(false);
+        if (isReadingLightROpen) mReadingLightR.setSelected(true);
+        else mReadingLightR.setSelected(false);
+        if (isMirrorOpen) mMirrorFolderDisplayIcon.setSelected(true);
+        else mMirrorFolderDisplayIcon.setSelected(false);
+
+    }
+    private void loadCurrentSetting() {
+        Log.d(TAG, "loadCurrentSetting"+iMyAidlInterface2);
+
+            if (iMyAidlInterface2 != null) {
+                String doorLockDrive = getDoorLockSeparateStatus(1);
+                if (doorLockDrive.equals("Locked")) {
+                    doorLockLeft1Flag = 1;
+                } else if (doorLockDrive.equals("Unlocked")) {
+                    doorLockLeft1Flag = 0;
+                } else {
+                    doorLockLeft1Flag = -1;
+                }
+                String doorLockRL = getDoorLockSeparateStatus(2);
+                if (doorLockRL.equals("Locked")) {
+                    doorLockLeft2Flag = 1;
+                } else if (doorLockRL.equals("Unlocked")) {
+                    doorLockLeft2Flag = 0;
+                } else {
+                    doorLockLeft2Flag = -1;
+                }
+                String doorLockPassenger = getDoorLockSeparateStatus(3);
+                if (doorLockPassenger.equals("Locked")) {
+                    doorLockRight1Flag = 1;
+                } else if (doorLockPassenger.equals("Unlocked")) {
+                    doorLockRight1Flag = 0;
+                } else {
+                    doorLockRight1Flag = -1;
+                }
+                String doorLockRR = getDoorLockSeparateStatus(4);
+                if (doorLockRR.equals("Locked")) {
+                    doorLockRight2Flag = 1;
+                } else if (doorLockRR.equals("Unlocked")) {
+                    doorLockRight2Flag = 0;
+                } else {
+                    doorLockRight2Flag = -1;
+                }
+                String rearLuggageTrunk = getDoorLockSeparateStatus(5);
+                if (rearLuggageTrunk.equals("Locked")) {
+                    luggageTrunkFlag = 1;
+                } else if (rearLuggageTrunk.equals("Unlocked")) {
+                    luggageTrunkFlag = 0;
+                } else {
+                    luggageTrunkFlag = -1;
+                }
+
+               String rearViewMirror = getRearViewMirrorStatus();
+               if (rearViewMirror.equals("Opened")) {
+               isMirrorOpen = true;
+                } else if (rearViewMirror.equals("Closed")) {
+                isMirrorOpen = false;
+                }
+                String mLReadingLight = getLReadLightStatus();
+                if (mLReadingLight.equals("Opened")) {
+                    isReadingLightLOpen = true;
+                } else if (mLReadingLight.equals("Closed")) {
+                    isReadingLightLOpen = false;
+                }
+                String mReadingLight = getReadLightStatus();
+                if (mReadingLight.equals("Opened")) {
+                    isReadingLightOpen = true;
+                } else if (mReadingLight.equals("Closed")) {
+                    isReadingLightOpen = false;
+                }
+                String mRReadingLight = getLReadLightStatus();
+                if (mRReadingLight.equals("Opened")) {
+                    isReadingLightROpen = true;
+                } else if (mRReadingLight.equals("Closed")) {
+                    isReadingLightROpen = false;
+                }
+              processHeadLampStatus();
+            }
+    }
+
 
 
     @Override
@@ -555,7 +721,8 @@ private Handler handler = new Handler();
         mLMessageNum=(Integer.parseInt(String.valueOf(mSeatsLMessageNumber.getText())));
         mRMessageNum=(Integer.parseInt(String.valueOf(mSeatsRMessageNumber.getText())));
         if (i == mWindowLock.getId()) {
-            if (isWindowLockOpen == false) {
+            isWindowLockOpen = !isWindowLockOpen;
+            if (isWindowLockOpen) {
                 mWindowFrontLeftUp.setEnabled(false);
                 mWindowFrontLeft.setEnabled(false);
                 mWindowFrontLeftDown.setEnabled(false);
@@ -568,8 +735,17 @@ private Handler handler = new Handler();
                 mWindowRearRightUp.setEnabled(false);
                 mWindowRearRight.setEnabled(false);
                 mWindowRearRightDown.setEnabled(false);
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerDrive_Req,Disable");
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRL_Req,Disable");
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerPassenger_Req,Disable");
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRR_Req,Disable");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mWindowLock.setSelected(true);
-                isWindowLockOpen = true;
             }else{
                 mWindowFrontLeftUp.setEnabled(true);
                 mWindowFrontLeft.setEnabled(true);
@@ -583,42 +759,150 @@ private Handler handler = new Handler();
                 mWindowRearRightUp.setEnabled(true);
                 mWindowRearRight.setEnabled(true);
                 mWindowRearRightDown.setEnabled(true);
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerDrive_Req,Enable");
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRL_Req,Enable");
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerPassenger_Req,Enable");
+                        iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerRR_Req,Enable");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mWindowLock.setSelected(false);
-                isWindowLockOpen = false;
             }
             return;
-        }else if (i == mDoorLock.getId()) {
+        }else if (i == mWindowFrontLeftUp.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowDrive_Req,Close");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }else if (i == mWindowFrontLeftDown.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowDrive_Req,Open");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }else if (i == mWindowRearLeftUp.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowRL_Req,Close");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }else if (i == mWindowRearLeftDown.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowRL_Req,Open");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }else if (i == mWindowFrontRightUp.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowPassenger_Req,Close");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }else if (i == mWindowFrontRightDown.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowPassenger_Req,Open");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }else if (i == mWindowRearRightUp.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowRR_Req,Close");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }else if (i == mWindowRearRightDown.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_WindowRR_Req,Open");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+            return;
+        }
+        else if (i == mDoorLock.getId()) {
             if(isDoorOpen==false) {
                 mDoorLock.setEnabled(true);
-                if (isDoorLockOpen == false) {
-                    mLeftFrontDoorLock.setSelected(true);
-                    mLeftRearDoorLock.setSelected(true);
-                    mRightFrontDoorLock.setSelected(true);
-                    mRightRearDoorLock.setSelected(true);
-                    mDoorLock.setSelected(true);
-                    isLeftRearDoorLock = true;
-                    isLeftFrontDoorLock = true;
-                    isRightFrontDoorLock = true;
-                    isRightRearDoorLock = true;
-                    mRearLuggageTrunk.setActivated(true);
-                    isRearLuggageTrunkEnable = false;
-                    isDoorLockOpen = true;
-                } else {
-                    mLeftFrontDoorLock.setSelected(false);
-                    mLeftRearDoorLock.setSelected(false);
-                    mRightFrontDoorLock.setSelected(false);
-                    mRightRearDoorLock.setSelected(false);
-                    isLeftRearDoorLock = false;
-                    isLeftFrontDoorLock = false;
-                    isRightFrontDoorLock = false;
-                    isRightRearDoorLock = false;
-                    mRearLuggageTrunk.setActivated(false);
-                    mRearLuggageTrunk.setSelected(false);
-                    isRearLuggageTrunkEnable = true;
-                    mDoorLock.setSelected(false);
-                    isDoorLockOpen = false;
+                if (doorLockFlag == 1) {
+                    doorLockFlag = 0;
+                    syncDoorLockBehavior();
+                } else if (doorLockFlag == 0) {
+                    doorLockFlag = 1;
+                    syncDoorLockBehavior();
                 }
-            }else{
+                if (doorLockFlag == 0) {
+                    doorLockLeft1Flag = 0;
+                    doorLockLeft2Flag = 0;
+                    doorLockRight1Flag = 0;
+                    doorLockRight2Flag = 0;
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Unlock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Unlock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Unlock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Unlock");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    syncDoorLockSeparateBehavior(1);
+                    syncDoorLockSeparateBehavior(2);
+                    syncDoorLockSeparateBehavior(3);
+                    syncDoorLockSeparateBehavior(4);
+
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = 0;
+                    syncLuggageTrunkBehavior();
+                } else if (doorLockFlag == 1) {
+                    doorLockLeft1Flag = 1;
+                    doorLockLeft2Flag = 1;
+                    doorLockRight1Flag = 1;
+                    doorLockRight2Flag = 1;
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Lock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Lock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Lock");
+                            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Lock");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    syncDoorLockSeparateBehavior(1);
+                    syncDoorLockSeparateBehavior(2);
+                    syncDoorLockSeparateBehavior(3);
+                    syncDoorLockSeparateBehavior(4);
+
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = -1;
+                    syncLuggageTrunkBehavior();
+                }
+            } else{
                 mDoorLock.setEnabled(false);
                 mToastContent.setText("Make sure all doors are closed before locking");
                 mToastContent.setVisibility(View.VISIBLE);
@@ -626,103 +910,166 @@ private Handler handler = new Handler();
             }
             return;
         }else if (i == mLeftFrontDoorLock.getId()) {
-            if(isDoorLockOpen==false) {
-                if (isLeftFrontDoorLock == false) {
-                    mLeftFrontDoorLock.setSelected(true);
-                    isLeftFrontDoorLock =true;
-                    if(isDoorLockOpen()){
-                        mDoorLock.setSelected(true);
-                        isDoorLockOpen=true;
-                        mRearLuggageTrunk.setActivated(true);
-                        isRearLuggageTrunkEnable=false;
-                    }
-                }else{
-                    mLeftFrontDoorLock.setSelected(false);
-                    isLeftFrontDoorLock =false;
+            try {
+                if (doorLockLeft1Flag == 1) {
+                    doorLockLeft1Flag = 0;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Unlock");
+                } else if (doorLockLeft1Flag == 0) {
+                    doorLockLeft1Flag = 1;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,Lock");
                 }
-            }else{
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            if (doorLockLeft1Flag == 0) {
                 mLeftFrontDoorLock.setSelected(false);
-                isLeftFrontDoorLock =false;
-                mDoorLock.setSelected(false);
-                isDoorLockOpen=false;
-                mRearLuggageTrunk.setActivated(false);
-                isRearLuggageTrunkEnable=true;
+                if (doorLockFlag == 1) {
+                    doorLockFlag = 0;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = 0;
+                    syncLuggageTrunkBehavior();
+                }
+            } else if (doorLockLeft1Flag == 1) {
+                mLeftFrontDoorLock.setSelected(true);
+                if (doorLockLeft2Flag == 1 && doorLockRight1Flag == 1 && doorLockRight2Flag == 1 && doorLockFlag == 0) {
+                    doorLockFlag = 1;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = -1;
+                    syncLuggageTrunkBehavior();
+                }
             }
             return;
+
         }else if (i == mLeftRearDoorLock.getId()) {
-            if(isDoorLockOpen==false) {
-                if (isLeftRearDoorLock == false) {
-                    mLeftRearDoorLock.setSelected(true);
-                    isLeftRearDoorLock = true;
-                    if(isDoorLockOpen()){
-                        mDoorLock.setSelected(true);
-                        isDoorLockOpen = true;
-                        mRearLuggageTrunk.setActivated(true);
-                        isRearLuggageTrunkEnable=false;
-                    }
-                }else{
-                    mLeftRearDoorLock.setSelected(false);
-                    isLeftRearDoorLock =false;
+            try {
+                if (doorLockLeft2Flag == 1) {
+                    doorLockLeft2Flag = 0;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Unlock");
+                } else if (doorLockLeft2Flag == 0) {
+                    doorLockLeft2Flag = 1;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRL_Req,Lock");
                 }
-            }else{
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            if (doorLockLeft2Flag == 0) {
                 mLeftRearDoorLock.setSelected(false);
-                isLeftRearDoorLock =false;
-                mDoorLock.setSelected(false);
-                isDoorLockOpen=false;
-                mRearLuggageTrunk.setActivated(false);
-                isRearLuggageTrunkEnable=true;
+                if (doorLockFlag == 1) {
+                    doorLockFlag = 0;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = 0;
+                    syncLuggageTrunkBehavior();
+                }
+            } else if (doorLockLeft2Flag == 1) {
+                mLeftRearDoorLock.setSelected(true);
+                if (doorLockLeft1Flag == 1 && doorLockRight1Flag == 1 && doorLockRight2Flag == 1 && doorLockFlag == 0) {
+                    doorLockFlag = 1;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag =-1;
+                    syncLuggageTrunkBehavior();
+                }
             }
             return;
         }else if (i == mRightFrontDoorLock.getId()) {
-            if(isDoorLockOpen==false) {
-                if (isRightFrontDoorLock == false) {
-                    mRightFrontDoorLock.setSelected(true);
-                    isRightFrontDoorLock =true;
-                    if(isDoorLockOpen()){
-                        mDoorLock.setSelected(true);
-                        isDoorLockOpen=true;
-                        mRearLuggageTrunk.setActivated(true);
-                        isRearLuggageTrunkEnable=false;
-                    }
-                }else{
-                    mRightFrontDoorLock.setSelected(false);
-                    isRightFrontDoorLock =false;
+            try {
+                if (doorLockRight1Flag == 1) {
+                    doorLockRight1Flag = 0;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Unlock");
+                } else if (doorLockRight1Flag == 0) {
+                    doorLockRight1Flag = 1;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockPassenger_Req,Lock");
                 }
-            }else{
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            if (doorLockRight1Flag == 0) {
                 mRightFrontDoorLock.setSelected(false);
-                isRightFrontDoorLock =false;
-                mDoorLock.setSelected(false);
-                isDoorLockOpen=false;
-                mRearLuggageTrunk.setActivated(false);
-                isRearLuggageTrunkEnable=true;
+                if (doorLockFlag == 1) {
+                    doorLockFlag = 0;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = 0;
+                    syncLuggageTrunkBehavior();
+                }
+            } else if (doorLockRight1Flag == 1) {
+                mRightFrontDoorLock.setSelected(true);
+                if (doorLockLeft1Flag == 1 && doorLockLeft2Flag == 1 && doorLockRight2Flag == 1 && doorLockFlag == 0) {
+                    doorLockFlag = 1;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = -1;
+                    syncLuggageTrunkBehavior();
+                }
             }
             return;
         }else if (i == mRightRearDoorLock.getId()) {
-            if(isDoorLockOpen==false) {
-                if (isRightRearDoorLock == false) {
-                    mRightRearDoorLock.setSelected(true);
-                    isRightRearDoorLock =true;
-                    if(isDoorLockOpen()){
-                        mDoorLock.setSelected(true);
-                        isDoorLockOpen=true;
-                        mRearLuggageTrunk.setActivated(true);
-                        isRearLuggageTrunkEnable=false;
-                    }
-                }else{
-                    mRightRearDoorLock.setSelected(false);
-                    isRightRearDoorLock =false;
+            try {
+                if (doorLockRight2Flag == 1) {
+                    doorLockRight2Flag = 0;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Unlock");
+                } else if (doorLockRight2Flag == 0) {
+                    doorLockRight2Flag = 1;
+                    if (iMyAidlInterface2 != null)
+                        iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Lock");
                 }
-            }else{
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            if (doorLockRight2Flag == 0) {
                 mRightRearDoorLock.setSelected(false);
-                isRightRearDoorLock =false;
-                mDoorLock.setSelected(false);
-                isDoorLockOpen=false;
-                mRearLuggageTrunk.setActivated(false);
-                isRearLuggageTrunkEnable=true;
+                if (doorLockFlag == 1) {
+                    doorLockFlag = 0;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = 0;
+                    syncLuggageTrunkBehavior();
+                }
+            } else if (doorLockRight2Flag == 1) {
+                mRightRearDoorLock.setSelected(true);
+                if (doorLockLeft1Flag == 1 && doorLockLeft2Flag == 1 && doorLockRight1Flag == 1 && doorLockFlag == 0) {
+                    doorLockFlag = 1;
+                    syncDoorLockBehavior();
+                    //TODO:需判断后车厢是否是开着的
+                    luggageTrunkFlag = -1;
+                    syncLuggageTrunkBehavior();
+                }
+            }
+            return;
+        } else if (i == mLuggageFrunk.getId()) {
+            if (isLuggageFrunkClick == false) {
+                mLuggageFrunk.setSelected(true);
+                isLuggageFrunkClick = true;
+            }else{
+                mLuggageFrunk.setSelected(false);
+                isLuggageFrunkClick = false;
+            }
+            return;
+        }else if (i == mLuggagedormer.getId()) {
+            if (isLuggageDormerClick == false) {
+                mLuggagedormer.setSelected(true);
+                isLuggageDormerClick = true;
+            }else{
+                mLuggagedormer.setSelected(false);
+                isLuggageDormerClick = false;
             }
             return;
         } else if (i == mRearLuggageTrunk.getId()) {
-            if(isRearLuggageTrunkEnable==false && isRearLuggageTrunkOpen==false){
+       /*     if(isRearLuggageTrunkEnable==false && isRearLuggageTrunkOpen==false){
               mToastContent.setText("Unlock before you open the door or the trunk");
               mToastContent.setVisibility(View.VISIBLE);
               handler.postDelayed(runnable, 3000);
@@ -734,6 +1081,17 @@ private Handler handler = new Handler();
                     mRearLuggageTrunk.setSelected(false);
                     isRearLuggageTrunkOpen=false;
                 }
+            }*/
+            if (luggageTrunkFlag == 1) {
+                luggageTrunkFlag = 0;
+                syncLuggageTrunkBehavior();
+            } else if (luggageTrunkFlag == 0) {
+                luggageTrunkFlag = 1;
+                syncLuggageTrunkBehavior();
+            } else {
+                mToastContent.setText("Unlock before you open the door or the trunk");
+                mToastContent.setVisibility(View.VISIBLE);
+                handler.postDelayed(runnable, 3000);
             }
             return;
         } else if (i == mChildLock.getId()) {
@@ -865,53 +1223,77 @@ private Handler handler = new Handler();
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
             return;
         } else if (i == mExteriorLightAuto.getId()) {
-            if(isExteriorLightAutoOpen) {
+            //if(isExteriorLightAutoOpen) {
                 mExteriorLightAuto.setSelected(true);
                 mExteriorHighBeamLight.setSelected(false);
                 mExteriorLowBeamLight.setSelected(false);
-               // mExteriorLightOff.setSelected(false);
-                mExteriorHighBeamLight.setEnabled(true);
-                mExteriorLowBeamLight.setEnabled(true);
+                mExteriorLightOff.setSelected(false);
                 mFrogFrontLight.setEnabled(true);
                 mFrogRearLight.setEnabled(true);
-                isExteriorLightAutoOpen=false;
-            }else{
-                mExteriorLightAuto.setSelected(false);
-                mFrogFrontLight.setSelected(false);
-                mFrogRearLight.setSelected(false);
-                isExteriorLightAutoOpen=true;
-            }
+                rearFogLightFlag=0;
+                frontFogLightFlag=0;
+                //isExteriorLightAutoOpen=false;
+            //}
             return;
         } else if (i == mExteriorHighBeamLight.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_HeadLampPower_Req,Open");
+                    iMyAidlInterface2.setCanData("TWO,IVI_HighBeamPower_Req,Open");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mExteriorLightAuto.setSelected(false);
             mExteriorHighBeamLight.setSelected(true);
             mExteriorLowBeamLight.setSelected(false);
-            //mExteriorLightOff.setSelected(false);
+            mExteriorLightOff.setSelected(false);
             mFrogFrontLight.setEnabled(true);
             mFrogRearLight.setEnabled(true);
-            isExteriorLightAutoOpen=true;
+            rearFogLightFlag=0;
+            frontFogLightFlag=0;
+            //isExteriorLightAutoOpen=true;
             return;
         } else if (i == mExteriorLowBeamLight.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_HeadLampPower_Req,Open");
+                    iMyAidlInterface2.setCanData("TWO,IVI_HighBeamPower_Req,Close");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mExteriorLightAuto.setSelected(false);
             mExteriorHighBeamLight.setSelected(false);
             mExteriorLowBeamLight.setSelected(true);
-            //mExteriorLightOff.setSelected(false);
+            mExteriorLightOff.setSelected(false);
             mFrogFrontLight.setEnabled(true);
             mFrogRearLight.setEnabled(true);
-            isExteriorLightAutoOpen=true;
+            rearFogLightFlag=0;
+            frontFogLightFlag=0;
+            //isExteriorLightAutoOpen=true;
             return;
-        } /*else if (i ==  mExteriorLightOff.getId()) {
+        } else if (i ==  mExteriorLightOff.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_HeadLampPower_Req,Close");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mExteriorLightAuto.setSelected(false);
             mExteriorHighBeamLight.setSelected(false);
             mExteriorLowBeamLight.setSelected(false);
-            mExteriorHighBeamLight.setEnabled(false);
-            mExteriorLowBeamLight.setEnabled(false);
             mExteriorLightOff.setSelected(true);
             mFrogFrontLight.setEnabled(false);
             mFrogRearLight.setEnabled(false);
-            isExteriorLightAutoOpen=true;
+            mFrogFrontLight.setSelected(false);
+            mFrogRearLight.setSelected(false);
+            rearFogLightFlag=-1;
+            frontFogLightFlag=-1;
+            //isExteriorLightAutoOpen=true;
             return;
-        }*/else if (i ==  mHighBeamLightAuto.getId()) {
+        }else if (i ==  mHighBeamLightAuto.getId()) {
             if (isHighBeamAutoOpen == false) {
                 mHighBeamLightAuto.setSelected(true);
                 isHighBeamAutoOpen = true;
@@ -921,46 +1303,90 @@ private Handler handler = new Handler();
             }
             return;
         }else if (i ==  mFrogFrontLight.getId()) {
-            if (isFrogFrontLightOpen == false) {
-                mFrogFrontLight.setSelected(true);
-                isFrogFrontLightOpen = true;
-            }else{
+            if (frontFogLightFlag == 1) frontFogLightFlag = 0;
+            else if (frontFogLightFlag == 0) frontFogLightFlag = 1;
+
+            if (frontFogLightFlag == 0) {
                 mFrogFrontLight.setSelected(false);
-                isFrogFrontLightOpen = false;
+            } else if (frontFogLightFlag == 1) {
+                mFrogFrontLight.setSelected(true);
             }
             return;
         }else if (i ==  mFrogRearLight.getId()) {
-            if (isFrogRearLightOpen == false) {
-                mFrogRearLight.setSelected(true);
-                isFrogRearLightOpen = true;
-            }else{
+            if (rearFogLightFlag == 1) rearFogLightFlag = 0;
+            else if (rearFogLightFlag == 0) rearFogLightFlag = 1;
+
+            if (rearFogLightFlag == 0) {
                 mFrogRearLight.setSelected(false);
-                isFrogRearLightOpen = false;
+            } else if (rearFogLightFlag == 1) {
+                mFrogRearLight.setSelected(true);
             }
             return;
         }else if (i ==  mReadingLightl.getId()) {
             if (isReadingLightLOpen == false) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("TWO,IVI_LeftMapLamp_Req,Open");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mReadingLightl.setSelected(true);
                 isReadingLightLOpen = true;
             }else{
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("TWO,IVI_LeftMapLamp_Req,Close");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mReadingLightl.setSelected(false);
                 isReadingLightLOpen = false;
             }
             return;
         }else if (i ==  mReadingLight.getId()) {
             if (isReadingLightOpen == false) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("TWO,IVI_RoomLamp_Req,Open");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mReadingLight.setSelected(true);
                 isReadingLightOpen = true;
             }else{
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("TWO,IVI_RoomLamp_Req,Close");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mReadingLight.setSelected(false);
                 isReadingLightOpen = false;
             }
             return;
         }else if (i ==  mReadingLightR.getId()) {
             if (isReadingLightROpen == false) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("TWO,IVI_RightMapLamp_Req,Close");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mReadingLightR.setSelected(true);
                 isReadingLightROpen = true;
             }else{
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("TWO,IVI_RightMapLamp_Req,Open");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
                 mReadingLightR.setSelected(false);
                 isReadingLightROpen = false;
             }
@@ -1298,12 +1724,12 @@ private Handler handler = new Handler();
             return;
         }
     }
-    public boolean isDoorLockOpen() {
+    /*public boolean isDoorLockOpen() {
         if (isLeftFrontDoorLock && isLeftRearDoorLock && isRightFrontDoorLock && isRightRearDoorLock) {
             return true;
         }
         return false;
-    }
+    }*/
     private void resetSeatsToNormal(){
         mRSeatsFallForward.setSelected(false);
         mRSeatsFallBackward.setSelected(false);
@@ -1350,4 +1776,197 @@ private Handler handler = new Handler();
             }
         }
     };
+    private String getDoorLockSeparateStatus(int whichDoor) { //左前门：1；左后门：2；右前门：3；右后门：4；后备箱：5
+        String getCanData = "";
+        Log.d(TAG, "getDoorLockSeparateStatus1: " + getCanData);
+        switch (whichDoor) {
+            case 1:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockDrive_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 2:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockRL_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 3:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockPassenger_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 4:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_DoorLockRR_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            case 5:
+                try {
+                    getCanData = iMyAidlInterface2.getReqCanData("ONE,ZGW_TrunkDoor_St");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+                break;
+            default:
+                break;
+        }
+        Log.d(TAG, "getDoorLockSeparateStatus: " + getCanData);
+        return getCanData;
+    }
+    private void syncDoorLockBehavior() {
+        if (doorLockFlag == -1) {
+            mDoorLock.setEnabled(false);
+        } else if (doorLockFlag == 0) {
+            mDoorLock.setEnabled(true);
+            mDoorLock.setSelected(false);
+        } else if (doorLockFlag == 1) {
+            mDoorLock.setEnabled(true);
+            mDoorLock.setSelected(true);
+        }
+    }
+
+    private void syncLuggageTrunkBehavior() {
+        if (luggageTrunkFlag == -1) {
+            //luggageTrunk.setEnabled(false);
+            mRearLuggageTrunk.setActivated(false);
+        } else if (luggageTrunkFlag == 0) {
+            //luggageTrunk.setEnabled(true);
+            mRearLuggageTrunk.setActivated(true);
+            mRearLuggageTrunk.setSelected(false);
+        } else if (luggageTrunkFlag == 1) {
+            //luggageTrunk.setEnabled(true);
+            mRearLuggageTrunk.setActivated(true);
+            mRearLuggageTrunk.setSelected(true);
+        }
+    }
+    private void syncDoorLockSeparateBehavior(int whichDoor) { //左前门：1；左后门：2；右前门：3；右后门：4
+        switch (whichDoor) {
+            case 1:
+                if (doorLockLeft1Flag == -1) {
+                    mLeftFrontDoorLock.setEnabled(false);
+                } else if (doorLockLeft1Flag == 0) {
+                    mLeftFrontDoorLock.setEnabled(true);
+                    mLeftFrontDoorLock.setSelected(false);
+                } else if (doorLockLeft1Flag == 1) {
+                    mLeftFrontDoorLock.setEnabled(true);
+                    mLeftFrontDoorLock.setSelected(true);
+                }
+                break;
+            case 2:
+                if (doorLockLeft2Flag == -1) {
+                    mLeftRearDoorLock.setEnabled(false);
+                } else if (doorLockLeft2Flag == 0) {
+                    mLeftRearDoorLock.setEnabled(true);
+                    mLeftRearDoorLock.setSelected(false);
+                } else if (doorLockLeft2Flag == 1) {
+                    mLeftRearDoorLock.setEnabled(true);
+                    mLeftRearDoorLock.setSelected(true);
+                }
+                break;
+            case 3:
+                if (doorLockRight1Flag == -1) {
+                    mRightFrontDoorLock.setEnabled(false);
+                } else if (doorLockRight1Flag == 0) {
+                    mRightFrontDoorLock.setEnabled(true);
+                    mRightFrontDoorLock.setSelected(false);
+                } else if (doorLockRight1Flag == 1) {
+                    mRightFrontDoorLock.setEnabled(true);
+                    mRightFrontDoorLock.setSelected(true);
+                }
+                break;
+            case 4:
+                if (doorLockRight2Flag == -1) {
+                    mRightRearDoorLock.setEnabled(false);
+                } else if (doorLockRight2Flag == 0) {
+                    mRightRearDoorLock.setEnabled(true);
+                    mRightRearDoorLock.setSelected(false);
+                } else if (doorLockRight2Flag == 1) {
+                    mRightRearDoorLock.setEnabled(true);
+                    mRightRearDoorLock.setSelected(true);
+                }
+                break;
+            default:
+                break;
+
+        }
+
+    }
+    private void processHeadLampStatus() {
+        String getCanData1 = "";
+        String getCanData2 = "";
+        try {
+            getCanData1 = iMyAidlInterface2.getReqCanData("TWO,ZGW_HeadLampPower_St");
+            getCanData2 = iMyAidlInterface2.getReqCanData("TWO,ZGW_HighBeamPower_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "processHeadLampStatus1: " + getCanData1);
+        Log.d(TAG, "processHeadLampStatus2: " + getCanData2);
+        if (getCanData1.equals("Closed")) {
+           mExteriorLightOff.setSelected(true);
+            frontFogLightFlag = -1;
+            rearFogLightFlag = -1;
+        } else if (getCanData1.equals("Opened") && getCanData2.equals("Closed")) {
+            mExteriorLowBeamLight.setSelected(true);
+            frontFogLightFlag = 0;
+            rearFogLightFlag = 0;
+        } else if (getCanData1.equals("Opened") && getCanData2.equals("Opened")) {
+           mExteriorHighBeamLight.setSelected(true);
+            frontFogLightFlag = 0;
+            rearFogLightFlag = 0;
+        } else {
+            mExteriorLightAuto.setSelected(true);
+            frontFogLightFlag = 0;
+            rearFogLightFlag = 0;
+        }
+    }
+    private String getRearViewMirrorStatus() {
+        String getCanData = "";
+        try {
+            getCanData = iMyAidlInterface2.getReqCanData("TWO,ZGW_RearMirrorOpen_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "getRearViewMirrorStatus: " + getCanData);
+        return getCanData;
+    }
+    private String getLReadLightStatus() {
+        String getCanData = "";
+        try {
+            getCanData = iMyAidlInterface2.getReqCanData("TWO,ZGW_LeftMapLamp_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "getLReadLightStatus: " + getCanData);
+        return getCanData;
+    }
+    private String getReadLightStatus() {
+        String getCanData = "";
+        try {
+            getCanData = iMyAidlInterface2.getReqCanData("TWO,ZGW_RoomLamp_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "getReadLightStatus: " + getCanData);
+        return getCanData;
+    }
+    private String getRReadLightStatus() {
+        String getCanData = "";
+        try {
+            getCanData = iMyAidlInterface2.getReqCanData("TWO,ZGW_RightMapLamp_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "getRReadLightStatus: " + getCanData);
+        return getCanData;
+    }
+
 }
