@@ -48,7 +48,6 @@ import com.tomtom.navkit.map.Margins;
 import com.tomtom.navkit.map.camera.Camera;
 import com.tomtom.navkit.map.camera.CameraUpdate;
 import com.tomtom.navkit.map.sdk.MapView;
-import com.tomtom.navkit2.mapdisplay.MapDisplayService;
 
 import java.io.File;
 import java.io.IOException;
@@ -76,8 +75,6 @@ public class InteractiveMapActivity extends BaseActivity {
     private View safeRect;
     private MapHolder mapHolder;
     private Map map;
-    private MapDisplayService service;
-    private boolean mapDisplayServiceBound = false;
     private CameraStackController cameraStackController;
     private static final Camera.Interpolation ZOOM_INTERPOLATION = Camera.Interpolation.kLinear;
     private static final long ZOOM_DURATION = 250l;
@@ -115,19 +112,6 @@ public class InteractiveMapActivity extends BaseActivity {
         ENABLED, // User is interacting with the map
         DISABLED // Use is not interacting with the map
     }
-
-    private ServiceConnection connection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            // this is a Local service - access via cast of IBinder
-            service = ((MapDisplayService.LocalBinder) binder).getService();
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            // Note - this will not be called for a Service started with Context.BIND_AUTO_CREATE
-        }
-    };
 
     @Override
     protected void initContentContainerView() {
@@ -197,12 +181,6 @@ public class InteractiveMapActivity extends BaseActivity {
         });
 
         cameraStackController = new CameraStackController(map.getCameraOperatorStack());
-        // create and bind the MapDisplay Service
-        final Bundle bundle = makeMapDisplayServiceBundle();
-
-        final Intent intent = new Intent(this, MapDisplayService.class);
-        intent.putExtra(MapDisplayService.CONFIGURATION, bundle);
-        mapDisplayServiceBound = bindService(intent, connection, Context.BIND_AUTO_CREATE);
 
         speedBubbleView = mapLayout.findViewById(R.id.speedBubble);
         nextInstructionPanelView = mapLayout.findViewById(R.id.nextInstructionContainerView);
@@ -244,27 +222,6 @@ public class InteractiveMapActivity extends BaseActivity {
                 isMapAlreadyInit = true;
             }
         }
-    }
-
-    private Bundle makeMapDisplayServiceBundle() {
-        final Bundle bundle = new Bundle();
-        bundle.putString(MapDisplayService.AUTH_TOKEN_KEY, BuildConfig.API_KEY);
-        //Jerry@20220408 add for onboard map->
-        // ONBOARD
-        String storageLocation;
-        if (Constants.IS_STORAGE_DOWNLOAD) {
-            storageLocation = Environment.getExternalStoragePublicDirectory(Constants.NDS_MAP_STORAGE_PATH).getAbsolutePath();
-        }else{
-            storageLocation = getExternalFilesDir(null).getAbsolutePath();
-        }
-        onboardMapPath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_ROOT_RELATIVE_PATH;
-        onboardKeystorePath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_KEYSTORE_RELATIVE_PATH;
-        if(!NetWorkUtil.isConnect(this)) {
-            bundle.putString(MapDisplayService.ONBOARD_MAP_PATH_KEY, onboardMapPath);
-            bundle.putString(MapDisplayService.ONBOARD_MAP_KEYSTORE_PATH_KEY, onboardKeystorePath);
-        }
-        //<-Jerry@20220408 add for onboard map
-        return bundle;
     }
 
     private static InteractiveMode getNewInteractiveMode(InteractiveMode currentMode, CameraType previousCameraType, CameraType newCameraType) {
@@ -362,12 +319,6 @@ public class InteractiveMapActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         cameraStackController.deactivateAllCameraOperators();
-
-        if (mapDisplayServiceBound) {
-            unbindService(connection);
-            mapDisplayServiceBound = false;
-        }
-
         mapHolder.delete();
         mapHolder = null;
         super.onDestroy();
