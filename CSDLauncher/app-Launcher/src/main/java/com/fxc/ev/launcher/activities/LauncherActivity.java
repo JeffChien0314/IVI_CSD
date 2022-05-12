@@ -110,6 +110,7 @@ import com.tomtom.navkit2.guidance.AudioInstructionListener;
 import com.tomtom.navkit2.guidance.Instruction;
 import com.tomtom.navkit2.guidance.NextInstructionListener;
 import com.tomtom.navkit2.guidance.StockTextToSpeechEngine;
+import com.tomtom.navkit2.mapdisplay.MapDisplayService;
 import com.tomtom.navkit2.mapdisplay.trip.TripRendererClickListener;
 import com.tomtom.navkit2.mapmanagement.ErrorCode;
 import com.tomtom.navkit2.mapmanagement.MapUpdateListener;
@@ -212,6 +213,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private List<Marker> searchMarkerList = new ArrayList<>();
     private FragmentManager fragmentManager;
     private boolean isDisappearance = false;
+    private boolean mapDisplayServiceBound = false;
+    private MapDisplayService service;
     //metis@0309 add <--
     //private NetworkDrawer networkDrawer;
 
@@ -401,6 +404,21 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "onServiceDisconnected(SearchOnBoardService)");
             searchOnBoardServiceBound = false;
+        }
+    };
+
+    private ServiceConnection mapDisplayOnBoardServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.d(TAG, "onServiceConnected(MapDisplayOnBoardService)");
+            // this is a Local service - access via cast of IBinder
+            service = ((MapDisplayService.LocalBinder) binder).getService();
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected(MapDisplayOnBoardService)");
+            // Note - this will not be called for a Service started with Context.BIND_AUTO_CREATE
         }
     };
     //<-Jerry@20220412 add for onboard map
@@ -645,7 +663,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         myCameraListener = new MyCameraListener();
         map.getCamera().registerListener(myCameraListener);
 
-        map.setMapClickListener(new MapClickListener() {
+        /*map.setMapClickListener(new MapClickListener() {
             @Override
             public void onMapClick(MapClickEvent e) {
                 if (isFragmentShow || isFragmentHide) {//Jerry@20220401 add:Search fragment show,can't click
@@ -660,7 +678,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                 waypoints.add(wp);
                 tripPlan.setWaypoints(waypoints);
             }
-        });
+        });*/
 
         map.setMapLongClickListener(new MapLongClickListener() {
             @Override
@@ -838,6 +856,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
 
         // Services
         if (permissionsManager.acquirePermissions()) {
+            setupMapDisplayOnBoardServices();
             setupNavigationServices();
             setupOnboardMapServices();//Jerry@20220412
             setupSearchOnboardServices();//Jerry@20220412
@@ -1488,6 +1507,35 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         return bundle;
     }
 
+    private void setupMapDisplayOnBoardServices() {
+        final Bundle bundle = makeMapDisplayServiceBundle();
+        final Intent intent = new Intent(this, MapDisplayService.class);
+        intent.putExtra(MapDisplayService.CONFIGURATION, bundle);
+        mapDisplayServiceBound = bindService(intent, mapDisplayOnBoardServiceConnection, Context.BIND_AUTO_CREATE);
+    }
+
+    private Bundle makeMapDisplayServiceBundle() {
+        final Bundle bundle = new Bundle();
+        bundle.putString(MapDisplayService.AUTH_TOKEN_KEY, BuildConfig.API_KEY);
+        //Jerry@20220408 add for onboard map->
+        // ONBOARD
+        String storageLocation;
+        if (Constants.IS_STORAGE_DOWNLOAD) {
+            storageLocation = Environment.getExternalStoragePublicDirectory(Constants.NDS_MAP_STORAGE_PATH).getAbsolutePath();
+        } else {
+            storageLocation = getExternalFilesDir(null).getAbsolutePath();
+        }
+        onboardMapPath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_ROOT_RELATIVE_PATH;
+        onboardKeystorePath = storageLocation + File.separator + ApplicationPreferences.NDS_MAP_KEYSTORE_RELATIVE_PATH;
+        if (!NetWorkUtil.isConnect(this)) {
+            bundle.putString(MapDisplayService.ONBOARD_MAP_PATH_KEY, onboardMapPath);
+            bundle.putString(MapDisplayService.ONBOARD_MAP_KEYSTORE_PATH_KEY, onboardKeystorePath);
+        }
+        //<-Jerry@20220408 add for onboard map
+        return bundle;
+    }
+
+
     private void removeAllMarkers() {
         markerLayer.removeMarker(destinationMarker);
         destinationMarker = null;
@@ -1523,7 +1571,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (permissionsManager.processRequestPermissionsResult(requestCode, permissions, grantResults)) {
+            setupMapDisplayOnBoardServices();
             setupNavigationServices();
+            setupOnboardMapServices();
+            setupSearchOnboardServices();
+            launchMapUpdateService(getMapUpdateServiceConfiguration());
         } else {
             final String errorText = permissionsManager.getErrorText();
             Log.e(TAG, errorText);
@@ -1593,6 +1645,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         if (searchOnBoardServiceBound) {
             unbindService(searchOnBoardServiceConnection);
             searchOnBoardServiceBound = false;
+        }
+
+        if (mapDisplayServiceBound) {
+            unbindService(mapDisplayOnBoardServiceConnection);
+            mapDisplayServiceBound = false;
         }
 
         if (myCameraListener != null) {
