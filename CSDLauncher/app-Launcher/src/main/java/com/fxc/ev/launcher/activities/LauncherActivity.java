@@ -521,7 +521,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     mEditor.commit();
                     doBindAppWidgetId(currentAppWidgetId, widgetInfo);
 
-                } else if (widgetInfo.label.equals("my test widget")) {
+                } else if (widgetInfo.label.equals("Dynamic")) {
                     currentAppWidgetId = mAppWidgetHost.allocateAppWidgetId();
                     hostView = mAppWidgetHost.createView(mContext, currentAppWidgetId, widgetInfo);
                     widgetList.set(1, hostView);
