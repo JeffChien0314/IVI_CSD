@@ -7,6 +7,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.widget.RemoteViews;
 public class DynamicWidget extends AppWidgetProvider {
@@ -14,6 +15,7 @@ public class DynamicWidget extends AppWidgetProvider {
     private boolean isDynamicModeSportClick = false;
     private boolean isDynamicModeNormalClick = true;
     private boolean isDynamicModeComfortClick = false;
+    private SharedPreferences sp;
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
@@ -23,22 +25,24 @@ public class DynamicWidget extends AppWidgetProvider {
             int buttonId = Integer.parseInt(data.getSchemeSpecificPart());
             switch (buttonId) {
                 case R.id.widget_drive_mode_comfort:
-                    isDynamicModeNormalClick = false;
+                    /*isDynamicModeNormalClick = false;
                     isDynamicModeSportClick = false;
-                    isDynamicModeComfortClick = true;
+                    isDynamicModeComfortClick = true;*/
+                    sp.edit().putInt("DynamicModeClick",1).commit();
                     pushUpdate(context,AppWidgetManager.getInstance(context));
                     break;
                 case R.id.widget_drive_mode_normal:
-                    isDynamicModeNormalClick = true;
+                    /*isDynamicModeNormalClick = true;
                     isDynamicModeSportClick = false;
-                    isDynamicModeComfortClick = false;
+                    isDynamicModeComfortClick = false;*/
+                    sp.edit().putInt("DynamicModeClick",0).commit();
                     pushUpdate(context,AppWidgetManager.getInstance(context));
                     break;
                 case R.id.widget_drive_mode_sport:
-                    isDynamicModeNormalClick = false;
+                    /*isDynamicModeNormalClick = false;
                     isDynamicModeSportClick = true;
-                    isDynamicModeComfortClick = false;
-                    AppWidgetManager appWidgetManager;
+                    isDynamicModeComfortClick = false;*/
+                    sp.edit().putInt("DynamicModeClick",2).commit();
                     pushUpdate(context,AppWidgetManager.getInstance(context));
                     break;
                 case R.id.widget_open:
@@ -54,22 +58,23 @@ public class DynamicWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
-
         pushUpdate(context,appWidgetManager);
     }
 
     private void pushUpdate(Context context, AppWidgetManager appWidgetManager) {
-        if(isDynamicModeNormalClick) {
+        sp=context.getSharedPreferences("user_select",Context.MODE_PRIVATE);
+        if(sp.getInt("DynamicModeClick",0)==0) {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_dynamic_widget_modenormal);
-        }else if(isDynamicModeSportClick){
+        }else if(sp.getInt("DynamicModeClick",0)==2) {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_dynamic_widget_modesport);
-        }else if(isDynamicModeComfortClick){
+        }else if(sp.getInt("DynamicModeClick",0)==1){
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_dynamic_widget_modecomfort);
         }
         remoteViews.setOnClickPendingIntent(R.id.widget_drive_mode_comfort, getPendingIntent(context, R.id.widget_drive_mode_comfort));
         remoteViews.setOnClickPendingIntent(R.id.widget_drive_mode_normal, getPendingIntent(context, R.id.widget_drive_mode_normal));
         remoteViews.setOnClickPendingIntent(R.id.widget_drive_mode_sport, getPendingIntent(context, R.id.widget_drive_mode_sport));
        remoteViews.setOnClickPendingIntent(R.id.widget_open, getPendingIntent(context, R.id.widget_open));
+       sp=context.getSharedPreferences("user",Context.MODE_PRIVATE);
 
         ComponentName componentName = new ComponentName(context, DynamicWidget.class);
         appWidgetManager.updateAppWidget(componentName, remoteViews);
