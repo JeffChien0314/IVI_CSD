@@ -41,7 +41,7 @@
             android:id="@+id/car_nav_text"
             android:layout_height="wrap_content"
             android:layout_width="match_parent"
-            android:layout_marginTop="-8px"
+            android:layout_marginTop="-9px"
             android:text="22°"
             android:animateLayoutChanges="true"
             android:textColor="#ffffff"

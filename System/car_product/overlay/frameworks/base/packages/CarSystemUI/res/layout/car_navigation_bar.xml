@@ -31,7 +31,7 @@
             android:id="@+id/left_temperature_layout"
             android:layout_width="120px"
             android:layout_height="240px"
-            android:layout_marginStart="18px"
+            android:layout_marginLeft="18px"
             android:gravity="center"
             android:orientation="vertical">
 
@@ -52,6 +52,7 @@
                 
                 systemui:useMoreIcon="false"
                 systemui:useText="true"
+                systemui:textSize="38px"
                 systemui:useIcon="false" 
                 systemui:initValue="22°" />
 
@@ -90,7 +91,7 @@
                 systemui:selectedIcon="@drawable/icon_fan_pressed"
                 systemui:useMoreIcon="false" 
                 systemui:useText="true"
-                systemui:textSize="9px"
+                systemui:textSize="22px"
                 systemui:initValue="3"/>
 
             <ImageView
@@ -219,7 +220,7 @@
                 systemui:selectedIcon="@drawable/icon_fan_pressed"
                 systemui:useMoreIcon="false" 
                 systemui:useText="true"
-                systemui:textSize="9px"
+                systemui:textSize="22px"
                 systemui:initValue="3"/>
 
             <ImageView
@@ -256,6 +257,7 @@
                 systemui:componentNames="com.android.systemui/.statusbar.car.climate.TemperatureRightActivity"                     systemui:intent="intent:#Intent;component=com.android.systemui/.statusbar.car.climate.TemperatureRightActivity;launchFlags=0x24000000;end"
                 systemui:useMoreIcon="false"
                 systemui:useText="true"
+                systemui:textSize="38px"
                 systemui:useIcon="false"
                 systemui:initValue="22°"  />
 

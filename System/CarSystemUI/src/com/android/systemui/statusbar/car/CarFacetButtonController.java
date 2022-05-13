@@ -229,7 +229,7 @@ public class CarFacetButtonController {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = null;
+            String action = "";
             if (intent != null) action = intent.getAction();
             if ("temperature.left.change".equals(action) || "temperature.right.change".equals(action) || "air.left.change".equals(action) || "air.right.change".equals(action)) {
                 updateCarStatusBar(intent.getStringExtra("className"), intent.getStringExtra("value"));

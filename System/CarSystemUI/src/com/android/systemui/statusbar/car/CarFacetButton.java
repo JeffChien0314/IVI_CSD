@@ -21,6 +21,7 @@ import android.content.Intent;
 import android.content.res.TypedArray;
 import android.os.UserHandle;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.view.Display;
 import android.view.View;
 import android.widget.ImageView;
@@ -170,7 +171,7 @@ public class CarFacetButton extends LinearLayout {
         mText.setVisibility(mUseText ? VISIBLE : GONE);
         if (mUseText) {
             mTextSize = styledAttributes.getDimension(R.styleable.CarFacetButton_textSize, 15);
-            mText.setTextSize(mTextSize);
+            mText.setTextSize(TypedValue.COMPLEX_UNIT_PX,mTextSize);
             if (mDefaultValue != null) mText.setText(mDefaultValue);
         }
     }

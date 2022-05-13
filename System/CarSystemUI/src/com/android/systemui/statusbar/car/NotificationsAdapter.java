@@ -923,8 +923,8 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         Log.d(TAG, "processHeadLampStatus2: " + getCanData2);
         if (getCanData1.equals("Closed")) {
             ((RadioButton) lightRadio.findViewById(R.id.light_radio4)).setChecked(true);
-            frontFogLightFlag = 0;
-            rearFogLightFlag = 0;
+            frontFogLightFlag = -1;
+            rearFogLightFlag = -1;
         } else if (getCanData1.equals("Opened") && getCanData2.equals("Closed")) {
             ((RadioButton) lightRadio.findViewById(R.id.light_radio2)).setChecked(true);
             frontFogLightFlag = 0;
@@ -935,8 +935,8 @@ class NotificationsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             rearFogLightFlag = 0;
         } else {
             ((RadioButton) lightRadio.findViewById(R.id.light_radio1)).setChecked(true);
-            frontFogLightFlag = -1;
-            rearFogLightFlag = -1;
+            frontFogLightFlag = 0;
+            rearFogLightFlag = 0;
         }
     }
 
