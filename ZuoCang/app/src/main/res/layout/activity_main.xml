@@ -1592,7 +1592,7 @@
                     android:layout_height="60px"
                     android:textSize="40px"
                     android:textColor="#FFFFFF"
-                    android:layout_marginLeft="500px"
+                    android:layout_marginLeft="450px"
                     android:layout_gravity="center_vertical"
                     android:text="数据加载中">
                 </TextView>
