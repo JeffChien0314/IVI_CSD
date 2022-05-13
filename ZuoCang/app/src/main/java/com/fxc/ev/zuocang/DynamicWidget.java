@@ -74,7 +74,7 @@ public class DynamicWidget extends AppWidgetProvider {
         remoteViews.setOnClickPendingIntent(R.id.widget_drive_mode_normal, getPendingIntent(context, R.id.widget_drive_mode_normal));
         remoteViews.setOnClickPendingIntent(R.id.widget_drive_mode_sport, getPendingIntent(context, R.id.widget_drive_mode_sport));
        remoteViews.setOnClickPendingIntent(R.id.widget_open, getPendingIntent(context, R.id.widget_open));
-       sp=context.getSharedPreferences("user",Context.MODE_PRIVATE);
+ 
 
         ComponentName componentName = new ComponentName(context, DynamicWidget.class);
         appWidgetManager.updateAppWidget(componentName, remoteViews);
