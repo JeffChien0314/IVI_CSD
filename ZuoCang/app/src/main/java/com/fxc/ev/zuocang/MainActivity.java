@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -93,12 +94,13 @@ public class MainActivity extends Activity implements View.OnClickListener {
   private LinearLayout mServiceBindInfo;
    private Handler handler = new Handler();
    private IMyAidlInterface2 iMyAidlInterface2;
-   private Boolean isServiceConnectedOk = false;
+   private SharedPreferences sp;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         startAndConnectService();
         setContentView(R.layout.activity_main);
+        sp=this.getSharedPreferences("user",Context.MODE_PRIVATE);
         initView();
         mServiceBindInfo = findViewById(R.id.service_bind_information);
         mServiceBindInfo.postDelayed(new Runnable() {
@@ -108,7 +110,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 loadCurrentSetting();
             }
         }, 2500);
-        loadCurrentSetting();
+
 
     }
     private ServiceConnection conn = new ServiceConnection() {
@@ -281,8 +283,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mFrogFrontLight.setEnabled(true);
         mFrogRearLight.setEnabled(true);
         mExteriorLightAuto.setSelected(true);
-        mDriveModeNormal.setSelected(true);
-        mAmbientModeOriginal.setSelected(true);
+        //mDriveModeNormal.setSelected(true);
+        //mAmbientModeOriginal.setSelected(true);
         mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
         mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_normal);
         resetSteeringToNormal();
@@ -528,9 +530,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mAmbientSwitch.setChecked(true);
+                    sp.edit().putBoolean("mAmbientSwitchOpen",true).commit();
                     mAmbientDisplayLayout.setVisibility(View.VISIBLE);
+
                 } else {
                     mAmbientSwitch.setChecked(false);
+                    sp.edit().putBoolean("mAmbientSwitchOpen",false).commit();
                     mAmbientDisplayLayout.setVisibility(View.GONE);
                 }
             }
@@ -636,8 +641,54 @@ public class MainActivity extends Activity implements View.OnClickListener {
         else mReadingLightl.setSelected(false);
         if (isReadingLightROpen) mReadingLightR.setSelected(true);
         else mReadingLightR.setSelected(false);
+        if(isPubbleLightLOpen)mPuddleLight.setSelected(true);
+        else mPuddleLight.setSelected(false);
         if (isMirrorOpen) mMirrorFolderDisplayIcon.setSelected(true);
         else mMirrorFolderDisplayIcon.setSelected(false);
+        if(sp.getBoolean(("mAmbientSwitchOpen"),false)) {
+            mAmbientSwitch.setChecked(true);
+            mAmbientDisplayLayout.setVisibility(View.VISIBLE);
+
+            if (sp.getInt("mAmbientMode", 0) == 0) {
+                mAmbientModeOriginal.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            }else if (sp.getInt("mAmbientMode", 0) == 1) {
+                mAmbientModePassion.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_passion);
+            }else if (sp.getInt("mAmbientMode", 0) == 2) {
+                mAmbientModeFlowing.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_flowing);
+            }else if (sp.getInt("mAmbientMode", 0) == 3) {
+                mAmbientModeWave.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            }else if (sp.getInt("mAmbientMode", 0) == 4) {
+                mAmbientModeStars.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_stars);
+            }else if (sp.getInt("mAmbientMode", 0) == 5) {
+                mAmbientModeRainBow.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_rainbow);
+            }else if (sp.getInt("mAmbientMode", 0) == 6) {
+                mAmbientModeRunning.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            }else if (sp.getInt("mAmbientMode", 0) == 7) {
+                mAmbientModeRhythm.setSelected(true);
+                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            }
+        }else{
+            mAmbientSwitch.setChecked(false);
+            mAmbientDisplayLayout.setVisibility(View.GONE);
+        }
+        if (sp.getInt("mDriveMode", 0) == 0) {
+            mDriveModeNormal.setSelected(true);
+            mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_normal);
+        }else if (sp.getInt("mDriveMode", 0) == 1) {
+            mDriveModeComfort.setSelected(true);
+            mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_comfort);
+        }else if (sp.getInt("mDriveMode", 0) == 2) {
+            mDriveModeSport.setSelected(true);
+            mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_sport);
+        }
+
 
     }
     private void loadCurrentSetting() {
@@ -1117,24 +1168,28 @@ public class MainActivity extends Activity implements View.OnClickListener {
             }
             return;
         } else if (i == mDriveModeComfort.getId()) {
+            sp.edit().putInt("mDriveMode",1).commit();
             mDriveModeComfort.setSelected(true);
             mDriveModeNormal.setSelected(false);
             mDriveModeSport.setSelected(false);
             mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_comfort);
             return;
         }else if (i == mDriveModeNormal.getId()) {
+            sp.edit().putInt("mDriveMode",0).commit();
             mDriveModeComfort.setSelected(false);
             mDriveModeNormal.setSelected(true);
             mDriveModeSport.setSelected(false);
             mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_normal);
             return;
         }else if (i == mDriveModeSport.getId()) {
+            sp.edit().putInt("mDriveMode",2).commit();
             mDriveModeComfort.setSelected(false);
             mDriveModeNormal.setSelected(false);
             mDriveModeSport.setSelected(true);
             mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_sport);
             return;
         } else if (i == mAmbientModeOriginal.getId()) {
+            sp.edit().putInt("mAmbientMode",0).commit();
             mAmbientModeOriginal.setSelected(true);
             mAmbientModePassion.setSelected(false);
             mAmbientModeFlowing.setSelected(false);
@@ -1146,6 +1201,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
             return;
         } else if (i == mAmbientModePassion.getId()) {
+            sp.edit().putInt("mAmbientMode",1).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(true);
             mAmbientModeFlowing.setSelected(false);
@@ -1157,6 +1213,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_passion);
             return;
         } else if (i == mAmbientModeFlowing.getId()) {
+            sp.edit().putInt("mAmbientMode",2).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
             mAmbientModeFlowing.setSelected(true);
@@ -1168,6 +1225,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_flowing);
             return;
         } else if (i == mAmbientModeWave.getId()) {
+            sp.edit().putInt("mAmbientMode",3).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
             mAmbientModeFlowing.setSelected(false);
@@ -1179,6 +1237,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
             return;
         } else if (i == mAmbientModeStars.getId()) {
+            sp.edit().putInt("mAmbientMode",4).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
             mAmbientModeFlowing.setSelected(false);
@@ -1190,6 +1249,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_stars);
             return;
         } else if (i == mAmbientModeRainBow.getId()) {
+            sp.edit().putInt("mAmbientMode",5).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
             mAmbientModeFlowing.setSelected(false);
@@ -1201,6 +1261,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_rainbow);
             return;
         } else if (i == mAmbientModeRunning.getId()) {
+            sp.edit().putInt("mAmbientMode",6).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
             mAmbientModeFlowing.setSelected(false);
@@ -1212,6 +1273,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
             return;
         } else if (i == mAmbientModeRhythm.getId()) {
+            sp.edit().putInt("mAmbientMode",7).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
             mAmbientModeFlowing.setSelected(false);
@@ -1642,48 +1704,104 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return;
         }
         else if (i ==  mLMirrorUp.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_LMirrorAngle_Req,Move Up");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mLMirrorUp.setSelected(true);
             mLMirrorDown.setSelected(false);
             mLMirrorLeft.setSelected(false);
             mLMirrorRight.setSelected(false);
             return;
         }else if (i ==  mLMirrorDown.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_LMirrorAngle_Req,Move Down");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mLMirrorUp.setSelected(false);
             mLMirrorDown.setSelected(true);
             mLMirrorLeft.setSelected(false);
             mLMirrorRight.setSelected(false);
             return;
         }else if (i ==  mLMirrorLeft.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_LMirrorAngle_Req,Move Left");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mLMirrorUp.setSelected(false);
             mLMirrorDown.setSelected(false);
             mLMirrorLeft.setSelected(true);
             mLMirrorRight.setSelected(false);
             return;
         }else if (i ==  mLMirrorRight.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_LMirrorAngle_Req,Move Right");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mLMirrorUp.setSelected(false);
             mLMirrorDown.setSelected(false);
             mLMirrorLeft.setSelected(false);
             mLMirrorRight.setSelected(true);
             return;
         }else if (i ==  mRMirrorUp.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_RMirrorAngle_Req,Move Up");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mRMirrorUp.setSelected(true);
             mRMirrorDown.setSelected(false);
             mRMirrorLeft.setSelected(false);
             mRMirrorRight.setSelected(false);
             return;
         }else if (i ==  mRMirrorDown.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_RMirrorAngle_Req,Move Down");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mRMirrorUp.setSelected(false);
             mRMirrorDown.setSelected(true);
             mRMirrorLeft.setSelected(false);
             mRMirrorRight.setSelected(false);
             return;
         }else if (i ==  mRMirrorLeft.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_RMirrorAngle_Req,Move Left");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mRMirrorUp.setSelected(false);
             mRMirrorDown.setSelected(false);
             mRMirrorLeft.setSelected(true);
             mRMirrorRight.setSelected(false);
             return;
         }else if (i ==  mRMirrorRight.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("TWO,IVI_RMirrorAngle_Req,Move Right");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mRMirrorUp.setSelected(false);
             mRMirrorDown.setSelected(false);
             mRMirrorLeft.setSelected(false);

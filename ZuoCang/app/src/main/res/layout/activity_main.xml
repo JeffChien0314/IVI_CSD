@@ -676,10 +676,10 @@
                                     android:id="@+id/ambient_title"
                                     android:layout_width="wrap_content"
                                     android:layout_height="46px"
-                                    android:layout_marginRight="36px"
+                                    android:layout_marginRight="30px"
                                     android:text="Ambient"
                                     android:textColor="#FFFFFF"
-                                    android:textSize="38px" />
+                                    android:textSize="28px" />
                                 <Switch
                                     android:id="@+id/ambient_switch"
                                     android:layout_width="84px"
