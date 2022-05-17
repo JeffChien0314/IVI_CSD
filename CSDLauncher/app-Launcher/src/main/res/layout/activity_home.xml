@@ -176,8 +176,8 @@
 
             <ImageView
                 android:id="@+id/widget_edit_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="90px"
+                android:layout_height="90px"
                 android:layout_alignEnd="@id/grid_view"
                 android:layout_alignBottom="@id/grid_view"
                 android:layout_marginEnd="13px"
