@@ -521,7 +521,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
                     mEditor.commit();
                     doBindAppWidgetId(currentAppWidgetId, widgetInfo);
 
-                } else if (widgetInfo.label.equals("Dynamic")) {
+                } else if (widgetInfo.label.equals("Drive Mode")) {
                     currentAppWidgetId = mAppWidgetHost.allocateAppWidgetId();
                     hostView = mAppWidgetHost.createView(mContext, currentAppWidgetId, widgetInfo);
                     widgetList.set(1, hostView);
