@@ -440,7 +440,7 @@
                                          android:layout_width="84px"
                                          android:layout_height="45px"
                                          android:background="@drawable/bg_switch"
-                                         android:id="@+id/door_autoz_lock"
+                                         android:id="@+id/door_auto_lock"
                                          android:thumb="@android:color/transparent">
                                      </Switch>
                                      <TextView
@@ -1400,6 +1400,7 @@
                                 <Switch
                                     android:layout_width="84px"
                                     android:layout_height="45px"
+                                    android:id="@+id/mirror_auto_fold_switch1"
                                     android:background="@drawable/bg_switch"
                                     android:thumb="@android:color/transparent">
                                 </Switch>
@@ -1424,6 +1425,7 @@
                                     android:layout_width="84px"
                                     android:layout_height="45px"
                                     android:background="@drawable/bg_switch"
+                                    android:id="@+id/mirror_auto_tilt_switch"
                                     android:textOff=""
                                     android:textOn=""
                                     android:thumb="@android:color/transparent">
@@ -1448,6 +1450,7 @@
                                 <Switch
                                     android:layout_width="84px"
                                     android:layout_height="45px"
+                                    android:id="@+id/mirror_auto_fold_switch2"
                                     android:background="@drawable/bg_switch"
                                     android:thumb="@android:color/transparent">
                                 </Switch>

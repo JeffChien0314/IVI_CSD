@@ -27,11 +27,20 @@
         android:clickable="true"
         android:src="@drawable/img_widget_dynamic_sport_active" />
     <ImageView
+        android:id="@+id/title"
+        android:layout_width="438px"
+        android:layout_height="36px"
+        android:scaleType="fitStart"
+        android:layout_marginLeft="18px"
+        android:layout_marginTop="15px"
+        android:src="@drawable/title_icon"/>
+    <ImageView
         android:id="@+id/widget_open"
         android:layout_width="60px"
         android:layout_height="60px"
         android:layout_marginTop="10px"
-        android:layout_marginLeft="465px"
+        android:layout_marginLeft="9px"
+        android:layout_toRightOf="@+id/title"
         android:clickable="true"
         android:src="@drawable/icon_widget_openapp" />
 

@@ -16,7 +16,7 @@
             </intent-filter>
         </activity>
         <receiver android:name="com.fxc.ev.zuocang.DynamicWidget"
-            android:label="Dynamic">
+            android:label="Drive Mode">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>

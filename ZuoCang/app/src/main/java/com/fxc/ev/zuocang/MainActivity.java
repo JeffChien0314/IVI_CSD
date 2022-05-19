@@ -26,13 +26,15 @@ import com.fxc.ev.zuocang.adapter.MenuListAdapter;
 import com.fxc.libCanWrapperNDK.IMyAidlInterface2;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends Activity implements View.OnClickListener {
     protected ListView mMenuListView;
     String[] itemName = {"Doors,Windows", "Lights", "Drive Mode", "Seats", "Mirrors", "Steering"};
     private String TAG = "MainActivity";
     private MenuListAdapter mListAdapter;
-    private Switch mAmbientSwitch, mFrontlightSystemSwitch,mKeyNearDoorAutoUnlockSwitch;
+    private Switch mAmbientSwitch, mFrontlightSystemSwitch,mKeyNearDoorAutoUnlockSwitch,mShiftingDoorAutoUnlockSwitch,mDoorAutoLockSwitch,mMirrorAutoFoldSwitch1,mMirrorAutoFoldSwitch2,mMirrorAutoTiltSwitch;
     private LinearLayout mAmbientDisplayLayout;
     private OneButtonDialog oneButtonDialog;
     private TwoButtonDialog twoButtonDialog;
@@ -50,15 +52,8 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private boolean isReadingLightOpen = false;
     private boolean isReadingLightROpen = false;
     private boolean isPubbleLightLOpen = false;
-
-    /*public boolean isWindowLockOpen() {
-        return isWindowLockOpen;
-    }
-
-    public void setWindowLockOpen(boolean windowLockOpen) {
-        isWindowLockOpen = windowLockOpen;
-    }*/
-
+    private DismissControlViewTimerTask mDismissControlViewTimerTask;
+    private Timer mDismissControlViewTimer;
     private boolean isWindowLockOpen;
     private boolean isSunCurtainOpen = false;
     private int frontFogLightFlag=0; //0:normal;1:active;-1:disable
@@ -86,15 +81,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
     private TextView mSteeringInstruction,mSteeringWaringInstruction,mSeatsInstruction,mSeatsWaringInstruction,mSeatsLMessageNumber,mSeatsRMessageNumber,mToastContent;
     private ImageView mLSeatsFallForward,mLSeatsFallBackward,mLSeatsFallUp,mLSeatsFallDown,mLSeatsFallHigh,mLSeatsFallLow,mLSeatsMoveForward,mLSeatsMoveBackward,mLSeat;
     private ImageView mRSeatsFallForward,mRSeatsFallBackward,mRSeatsFallUp,mRSeatsFallDown,mRSeatsFallHigh,mRSeatsFallLow,mRSeatsMoveForward,mRSeatsMoveBackward,mRSeat;
-   private ImageView mLLockMask,mRLockMask;
-   private Button mSeatsLMessageReduce,mSeatsRMessageReduce,mSeatsLMessagePlus,mSeatsRMessagePlus;
-   private ImageView mLMirrorUp,mLMirrorDown,mLMirrorLeft,mLMirrorRight,mRMirrorUp,mRMirrorDown,mRMirrorLeft,mRMirrorRight;
-   private ImageView mSteerControlArrowUp,mSteerControlArrowDown,mSteerControlArrowForward,mSteerControlArrowBackward;
-   private int mLMessageNum,mRMessageNum;
-  private LinearLayout mServiceBindInfo;
-   private Handler handler = new Handler();
-   private IMyAidlInterface2 iMyAidlInterface2;
-   private SharedPreferences sp;
+    private ImageView mLLockMask,mRLockMask;
+    private Button mSeatsLMessageReduce,mSeatsRMessageReduce,mSeatsLMessagePlus,mSeatsRMessagePlus;
+    private ImageView mLMirrorUp,mLMirrorDown,mLMirrorLeft,mLMirrorRight,mRMirrorUp,mRMirrorDown,mRMirrorLeft,mRMirrorRight;
+    private ImageView mSteerControlArrowUp,mSteerControlArrowDown,mSteerControlArrowForward,mSteerControlArrowBackward;
+    private int mLMessageNum,mRMessageNum;
+    private LinearLayout mServiceBindInfo;
+    private Handler handler = new Handler();
+    private IMyAidlInterface2 iMyAidlInterface2;
+    private SharedPreferences sp;
+    private Boolean isAmbientModeOriginalClick=true;
+    private Boolean isAmbientModePassionClick=false;
+    private Boolean isAmbientModeFlowingClick=false;
+    private Boolean isAmbientModeWaveClick=false;
+    private Boolean isAmbientModeStarsClick=false;
+    private Boolean isAmbientModeRainbowClick=false;
+    private Boolean isAmbientModeRunningClick=false;
+    private Boolean isAmbientModeRhythmClick=false;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,6 +166,11 @@ public class MainActivity extends Activity implements View.OnClickListener {
         mAmbientSwitch = findViewById(R.id.ambient_switch);
         mKeyNearDoorAutoUnlockSwitch = findViewById(R.id.key_near_door_auto_unlock_switch);
         mFrontlightSystemSwitch = findViewById(R.id.frontlight_system_switch);
+        mShiftingDoorAutoUnlockSwitch = findViewById(R.id.shifting_door_auto_unlock_switch);
+        mDoorAutoLockSwitch = findViewById(R.id.door_auto_lock);
+        mMirrorAutoFoldSwitch1 = findViewById(R.id.mirror_auto_fold_switch1);
+        mMirrorAutoFoldSwitch2 = findViewById(R.id.mirror_auto_fold_switch2);
+        mMirrorAutoTiltSwitch = findViewById(R.id.mirror_auto_tilt_switch);
         mAmbientDisplayLayout = findViewById(R.id.ambient_layout);
         mDriveModeComfort = findViewById(R.id.drive_mode_comfort);
         mDriveModeNormal = findViewById(R.id.drive_mode_normal);
@@ -374,6 +385,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void onScrollChange(View view, int x, int y, int oldX, int oldY) {
                 if(mAmbientDisplayLayout.getVisibility()==View.GONE) {
                     if(oldY>=0 && y<1189){
+                        sp.edit().putInt("mMenuListClick",0).commit();
                         mMenuListView.getChildAt(0).setSelected(true);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -381,6 +393,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
                     }else if((oldY>=1189 && y<2111)){
+                        sp.edit().putInt("mMenuListClick",1).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(true);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -389,6 +402,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetSeatsToNormal();
                     }else if((oldY>=2111 && y<2705)){
+                        sp.edit().putInt("mMenuListClick",2).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(true);
@@ -397,6 +411,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetMirrorToNormal();
                     }else if((oldY>=2705 && y<3455)){
+                        sp.edit().putInt("mMenuListClick",3).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -405,6 +420,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetSteeringToNormal();
                     }else if((oldY>=3455 && y<4298)){
+                        sp.edit().putInt("mMenuListClick",4).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -413,6 +429,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetSeatsToNormal();
                     }else if((oldY>=4298 && y<5298)){
+                        sp.edit().putInt("mMenuListClick",5).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -423,6 +440,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     }
                 }else{
                     if(oldY>=0 && y<1189){
+                        sp.edit().putInt("mMenuListClick",0).commit();
                         mMenuListView.getChildAt(0).setSelected(true);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -430,6 +448,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(4).setSelected(false);
                         mMenuListView.getChildAt(5).setSelected(false);
                     }else if((oldY>=1189 && y<2761)){
+                        sp.edit().putInt("mMenuListClick",1).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(true);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -438,6 +457,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetSeatsToNormal();
                     }else if((oldY>=2761 && y<3355)){
+                        sp.edit().putInt("mMenuListClick",2).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(true);
@@ -446,6 +466,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetMirrorToNormal();
                     }else if((oldY>=3355 && y<4105)){
+                        sp.edit().putInt("mMenuListClick",3).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -454,6 +475,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetSteeringToNormal();
                     }else if((oldY>=4105 && y<4988)){
+                        sp.edit().putInt("mMenuListClick",4).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -462,6 +484,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                         mMenuListView.getChildAt(5).setSelected(false);
                         resetSeatsToNormal();
                     }else if((oldY>=4948 && y<5948)){
+                        sp.edit().putInt("mMenuListClick",5).commit();
                         mMenuListView.getChildAt(0).setSelected(false);
                         mMenuListView.getChildAt(1).setSelected(false);
                         mMenuListView.getChildAt(2).setSelected(false);
@@ -473,12 +496,12 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
             }
         });
-        mMenuListView.postDelayed(new Runnable() {
+       /* mMenuListView.postDelayed(new Runnable() {
             @Override
             public void run() {
                 mMenuListView.getChildAt(0).setSelected(true);
             }
-        }, 500);
+        }, 500);*/
 
         mMenuListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -486,39 +509,51 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 view.setSelected(true);
                 if(mAmbientDisplayLayout.getVisibility()==View.GONE) {
                     if(position==0){
+                        sp.edit().putInt("mMenuListClick",0).commit();
                         mScrollView.scrollTo(60,0);
                     }else if(position==1){
                         resetSeatsToNormal();
                         mScrollView.scrollTo(60,1195);
+                        sp.edit().putInt("mMenuListClick",1).commit();
                     }else if(position==2){
+                        sp.edit().putInt("mMenuListClick",2).commit();
                         mScrollView.scrollTo(60, 2117);
                         resetMirrorToNormal();
                     }else if(position==3){
+                        sp.edit().putInt("mMenuListClick",3).commit();
                         mScrollView.scrollTo(60, 2715);
                         mScrollView.getHeight();
                         resetSteeringToNormal();
                     }else if(position==4){
+                        sp.edit().putInt("mMenuListClick",4).commit();
                         mScrollView.scrollTo(60, 3461);
                         resetSeatsToNormal();
                     }else if(position==5){
+                        sp.edit().putInt("mMenuListClick",5).commit();
                         resetMirrorToNormal();
                         mScrollView.scrollTo(60, 4304);
                         mMenuListView.getChildAt(5).setSelected(true);
                     }
                 }else{
                     if(position==0){
+                        sp.edit().putInt("mMenuListClick",0).commit();
                         mScrollView.scrollTo(60,0);
                     }else if(position==1){
+                        sp.edit().putInt("mMenuListClick",1).commit();
                         resetSeatsToNormal();
                         mScrollView.scrollTo(60,1195);
                     }else if(position==2){
+                        sp.edit().putInt("mMenuListClick",2).commit();
                         mScrollView.scrollTo(60, 2767);
                     }else if(position==3){
+                        sp.edit().putInt("mMenuListClick",3).commit();
                         mScrollView.scrollTo(60, 3365);
                     }else if(position==4){
+                        sp.edit().putInt("mMenuListClick",4).commit();
                         mScrollView.scrollTo(60, 4111);
                         resetSeatsToNormal();
                     }else if(position==5){
+                        sp.edit().putInt("mMenuListClick",5).commit();
                         mScrollView.scrollTo(60, 4954);
                         mMenuListView.getChildAt(5).setSelected(true);
                     }
@@ -529,11 +564,26 @@ public class MainActivity extends Activity implements View.OnClickListener {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_MoodLightSwitchSet_Req,On");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     mAmbientSwitch.setChecked(true);
                     sp.edit().putBoolean("mAmbientSwitchOpen",true).commit();
+
                     mAmbientDisplayLayout.setVisibility(View.VISIBLE);
 
                 } else {
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_MoodLightSwitchSet_Req,Off");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     mAmbientSwitch.setChecked(false);
                     sp.edit().putBoolean("mAmbientSwitchOpen",false).commit();
                     mAmbientDisplayLayout.setVisibility(View.GONE);
@@ -545,6 +595,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mFrontlightSystemSwitch.setChecked(true);
+                    sp.edit().putBoolean("mFrontLightSystemSwitchOpen",true).commit();
                     oneButtonDialog = new OneButtonDialog(MainActivity.this);
 
                     oneButtonDialog.setMessage("The Adaptive Front Lighting System (AFS) moves the light projector to the left or right automatically with changes in car speed and steering wheel angle. It increase the effective lighting range and allows the driver to see the road clearly when they’re turning towards, helping to avoid blind spots.");
@@ -558,6 +609,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     oneButtonDialog.show();
 
                 } else {
+                    sp.edit().putBoolean("mFrontLightSystemSwitchOpen",false).commit();
                     mFrontlightSystemSwitch.setChecked(false);
                 }
             }
@@ -567,6 +619,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     mKeyNearDoorAutoUnlockSwitch.setChecked(true);
+                    sp.edit().putBoolean("mKeyNearDoorAutoUnlockSwitchOpen",true).commit();
                     oneButtonDialog = new OneButtonDialog(MainActivity.this);
 
                     oneButtonDialog.setMessage("The car will automatically unlock doors when it recognizes your key(or authorized cell phone) is within range(XX meter).\n" +
@@ -582,113 +635,77 @@ public class MainActivity extends Activity implements View.OnClickListener {
                     oneButtonDialog.show();
 
                 } else {
+                    sp.edit().putBoolean("mKeyNearDoorAutoUnlockSwitchOpen",false).commit();
                     mKeyNearDoorAutoUnlockSwitch.setChecked(false);
                 }
             }
         });
 
-
+        mShiftingDoorAutoUnlockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mShiftingDoorAutoUnlockSwitch.setChecked(true);
+                    sp.edit().putBoolean("mShiftingDoorAutoUnlockSwitchOpen",true).commit();
+                } else {
+                    mShiftingDoorAutoUnlockSwitch.setChecked(false);
+                    sp.edit().putBoolean("mShiftingDoorAutoUnlockSwitchOpen",false).commit();
+                }
+            }
+        });
+        mDoorAutoLockSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mDoorAutoLockSwitch.setChecked(true);
+                    sp.edit().putBoolean("mDoorAutoLockSwitchOpen",true).commit();
+                } else {
+                    mDoorAutoLockSwitch.setChecked(false);
+                    sp.edit().putBoolean("mDoorAutoLockSwitchOpen",false).commit();
+                }
+            }
+        });
+        mMirrorAutoFoldSwitch1.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mMirrorAutoFoldSwitch1.setChecked(true);
+                    sp.edit().putBoolean("mMirrorAutoFoldSwitch1Open",true).commit();
+                } else {
+                    mMirrorAutoFoldSwitch1.setChecked(false);
+                    sp.edit().putBoolean("mMirrorAutoFoldSwitch1Open",false).commit();
+                }
+            }
+        });
+        mMirrorAutoFoldSwitch2.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mMirrorAutoFoldSwitch2.setChecked(true);
+                    sp.edit().putBoolean("mMirrorAutoFoldSwitch2Open",true).commit();
+                } else {
+                    mMirrorAutoFoldSwitch2.setChecked(false);
+                    sp.edit().putBoolean("mMirrorAutoFoldSwitch2Open",false).commit();
+                }
+            }
+        });
+        mMirrorAutoTiltSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    mMirrorAutoTiltSwitch.setChecked(true);
+                    sp.edit().putBoolean("mMirrorAutoTiltSwitchOpen",true).commit();
+                } else {
+                    mMirrorAutoTiltSwitch.setChecked(false);
+                    sp.edit().putBoolean("mMirrorAutoTiltSwitchOpen",false).commit();
+                }
+            }
+        });
     }
     @Override
     public void onResume() {
         super.onResume();
         Log.d(TAG, "onResume");
-        if (doorLockLeft1Flag == 1 && doorLockLeft2Flag == 1 && doorLockRight1Flag == 1 && doorLockRight2Flag == 1) {
-            doorLockFlag = 1;
-            luggageTrunkFlag = -1;
-        } else if (doorLockLeft1Flag == -1 || doorLockLeft2Flag == -1 || doorLockRight1Flag == -1 || doorLockRight2Flag == -1) {
-            doorLockFlag = -1;
-        } else {
-            doorLockFlag = 0;
-        }
-        syncDoorLockBehavior();
-        syncLuggageTrunkBehavior();
-        Log.d(TAG, "loadCurrentSetting"+isWindowLockOpen);
-        if(isWindowLockOpen) mWindowLock.setSelected(true);
-        else mWindowLock.setSelected(false);
-        if(isChildLockOpen) mChildLock.setSelected(true);
-        else mChildLock.setSelected(false);
-        if(isSunCurtainOpen) mSunCurtain.setSelected(true);
-        else mSunCurtain.setSelected(false);
-        if(isLuggageFrunkClick) mLuggageFrunk.setSelected(true);
-        else mLuggageFrunk.setSelected(false);
-        if(isLuggageDormerClick) mLuggagedormer.setSelected(true);
-        else mLuggagedormer.setSelected(false);
-        if (frontFogLightFlag == -1) {
-            mFrogFrontLight.setEnabled(false);
-            mFrogFrontLight.setSelected(false);
-        } else if (frontFogLightFlag == 0) {
-            mFrogFrontLight.setEnabled(true);
-            mFrogFrontLight.setSelected(false);
-        } else if (frontFogLightFlag == 1) {
-            mFrogFrontLight.setEnabled(true);
-            mFrogFrontLight.setSelected(true);
-        }
-
-        if (rearFogLightFlag == -1) {
-            mFrogRearLight.setEnabled(false);
-            mFrogRearLight.setSelected(false);
-        } else if (rearFogLightFlag == 0) {
-            mFrogRearLight.setEnabled(true);
-            mFrogRearLight.setSelected(false);
-        } else if (rearFogLightFlag == 1) {
-            mFrogRearLight.setEnabled(true);
-            mFrogRearLight.setSelected(true);
-        }
-        if (isReadingLightOpen) mReadingLight.setSelected(true);
-        else mReadingLight.setSelected(false);
-        if (isReadingLightLOpen) mReadingLightl.setSelected(true);
-        else mReadingLightl.setSelected(false);
-        if (isReadingLightROpen) mReadingLightR.setSelected(true);
-        else mReadingLightR.setSelected(false);
-        if(isPubbleLightLOpen)mPuddleLight.setSelected(true);
-        else mPuddleLight.setSelected(false);
-        if (isMirrorOpen) mMirrorFolderDisplayIcon.setSelected(true);
-        else mMirrorFolderDisplayIcon.setSelected(false);
-        if(sp.getBoolean(("mAmbientSwitchOpen"),false)) {
-            mAmbientSwitch.setChecked(true);
-            mAmbientDisplayLayout.setVisibility(View.VISIBLE);
-
-            if (sp.getInt("mAmbientMode", 0) == 0) {
-                mAmbientModeOriginal.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
-            }else if (sp.getInt("mAmbientMode", 0) == 1) {
-                mAmbientModePassion.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_passion);
-            }else if (sp.getInt("mAmbientMode", 0) == 2) {
-                mAmbientModeFlowing.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_flowing);
-            }else if (sp.getInt("mAmbientMode", 0) == 3) {
-                mAmbientModeWave.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
-            }else if (sp.getInt("mAmbientMode", 0) == 4) {
-                mAmbientModeStars.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_stars);
-            }else if (sp.getInt("mAmbientMode", 0) == 5) {
-                mAmbientModeRainBow.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_rainbow);
-            }else if (sp.getInt("mAmbientMode", 0) == 6) {
-                mAmbientModeRunning.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
-            }else if (sp.getInt("mAmbientMode", 0) == 7) {
-                mAmbientModeRhythm.setSelected(true);
-                mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
-            }
-        }else{
-            mAmbientSwitch.setChecked(false);
-            mAmbientDisplayLayout.setVisibility(View.GONE);
-        }
-        if (sp.getInt("mDriveMode", 0) == 0) {
-            mDriveModeNormal.setSelected(true);
-            mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_normal);
-        }else if (sp.getInt("mDriveMode", 0) == 1) {
-            mDriveModeComfort.setSelected(true);
-            mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_comfort);
-        }else if (sp.getInt("mDriveMode", 0) == 2) {
-            mDriveModeSport.setSelected(true);
-            mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_sport);
-        }
-
 
     }
     private void loadCurrentSetting() {
@@ -754,14 +771,188 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 } else if (mReadingLight.equals("Closed")) {
                     isReadingLightOpen = false;
                 }
-                String mRReadingLight = getLReadLightStatus();
+                String mRReadingLight = getRReadLightStatus();
                 if (mRReadingLight.equals("Opened")) {
                     isReadingLightROpen = true;
                 } else if (mRReadingLight.equals("Closed")) {
                     isReadingLightROpen = false;
                 }
+                String mAmbientLightSwitchStatus = getAmbientLightSwitchStatus();
+                String mAmbientLightAndDriveMode = getAmbientLightAndDriveModeStatus();
+                if(mAmbientLightSwitchStatus.equals("On") || sp.getBoolean(("mAmbientSwitchOpen"),false)) {
+                    mAmbientSwitch.setChecked(true);
+                    mAmbientDisplayLayout.setVisibility(View.VISIBLE);
+                    if (mAmbientLightAndDriveMode.equals("Original") || sp.getInt("mAmbientMode", 0) == 0) {
+                        mAmbientModeOriginal.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+                    }else if (mAmbientLightAndDriveMode.equals("Passion") || sp.getInt("mAmbientMode", 0) == 1) {
+                        mAmbientModePassion.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_passion);
+                    }else if (mAmbientLightAndDriveMode.equals("Flowing") || sp.getInt("mAmbientMode", 0) == 2) {
+                        mAmbientModeFlowing.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_flowing);
+                    }else if (mAmbientLightAndDriveMode.equals("Wave") || sp.getInt("mAmbientMode", 0) == 3) {
+                        mAmbientModeWave.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+                    }else if (mAmbientLightAndDriveMode.equals("Stars") || sp.getInt("mAmbientMode", 0) == 4) {
+                        mAmbientModeStars.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_stars);
+                    }else if (mAmbientLightAndDriveMode.equals("Rainbow") || sp.getInt("mAmbientMode", 0) == 5) {
+                        mAmbientModeRainBow.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_rainbow);
+                    }else if (mAmbientLightAndDriveMode.equals("Running") || sp.getInt("mAmbientMode", 0) == 6) {
+                        mAmbientModeRunning.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+                    }else if (mAmbientLightAndDriveMode.equals("Rhythm") || sp.getInt("mAmbientMode", 0) == 7) {
+                        mAmbientModeRhythm.setSelected(true);
+                        mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+                    }
+                }else if(mAmbientLightSwitchStatus.equals("Off") || sp.getBoolean(("mAmbientSwitchOpen"),false)==false){
+                    mAmbientSwitch.setChecked(false);
+                    mAmbientDisplayLayout.setVisibility(View.GONE);
+                }
+                if (mAmbientLightAndDriveMode.equals("D-Normal") || sp.getInt("mDriveMode", 0) == 0) {
+                    mDriveModeNormal.setSelected(true);
+                    mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_normal);
+                }else if (mAmbientLightAndDriveMode.equals("D-Comfort") || sp.getInt("mDriveMode", 0) == 1) {
+                    mDriveModeComfort.setSelected(true);
+                    mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_comfort);
+                }else if (mAmbientLightAndDriveMode.equals("D-Sport") || sp.getInt("mDriveMode", 0) == 2) {
+                    mDriveModeSport.setSelected(true);
+                    mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_sport);
+                }
               processHeadLampStatus();
+
             }
+        if (doorLockLeft1Flag == 1 && doorLockLeft2Flag == 1 && doorLockRight1Flag == 1 && doorLockRight2Flag == 1) {
+            doorLockFlag = 1;
+            luggageTrunkFlag = -1;
+        } else if (doorLockLeft1Flag == -1 || doorLockLeft2Flag == -1 || doorLockRight1Flag == -1 || doorLockRight2Flag == -1) {
+            doorLockFlag = -1;
+        } else {
+            doorLockFlag = 0;
+        }
+        syncDoorLockBehavior();
+        syncLuggageTrunkBehavior();
+        Log.d(TAG, "loadCurrentSetting"+isWindowLockOpen);
+
+        if(sp.getBoolean("mWindowLock",false)) {
+            mWindowLock.setSelected(true);
+            syncWindowAdjustBehavior(true);
+        } else {
+            mWindowLock.setSelected(false);
+            syncWindowAdjustBehavior(false);
+        }
+
+        if(sp.getBoolean("mChildLockOpen",false)) {
+            mChildLock.setSelected(true);
+            mLeftChildLockIcon.setVisibility(View.VISIBLE);
+            mRightChildLockIcon.setVisibility(View.VISIBLE);
+        } else {
+            mChildLock.setSelected(false);
+            mLeftChildLockIcon.setVisibility(View.GONE);
+            mRightChildLockIcon.setVisibility(View.GONE);
+        }
+        if(sp.getBoolean("mSunCurtainOpen",false)) mSunCurtain.setSelected(true);
+        else mSunCurtain.setSelected(false);
+        if(isLuggageFrunkClick) mLuggageFrunk.setSelected(true);
+        else mLuggageFrunk.setSelected(false);
+        if(isLuggageDormerClick) mLuggagedormer.setSelected(true);
+        else mLuggagedormer.setSelected(false);
+        if (frontFogLightFlag == -1) {
+            mFrogFrontLight.setEnabled(false);
+            mFrogFrontLight.setSelected(false);
+        } else if (frontFogLightFlag == 0) {
+            mFrogFrontLight.setEnabled(true);
+            mFrogFrontLight.setSelected(false);
+        } else if (frontFogLightFlag == 1) {
+            mFrogFrontLight.setEnabled(true);
+            mFrogFrontLight.setSelected(true);
+        }
+
+        if (rearFogLightFlag == -1) {
+            mFrogRearLight.setEnabled(false);
+            mFrogRearLight.setSelected(false);
+        } else if (rearFogLightFlag == 0) {
+            mFrogRearLight.setEnabled(true);
+            mFrogRearLight.setSelected(false);
+        } else if (rearFogLightFlag == 1) {
+            mFrogRearLight.setEnabled(true);
+            mFrogRearLight.setSelected(true);
+        }
+        if (isReadingLightOpen) mReadingLight.setSelected(true);
+        else mReadingLight.setSelected(false);
+        if (isReadingLightLOpen) mReadingLightl.setSelected(true);
+        else mReadingLightl.setSelected(false);
+        if (isReadingLightROpen) mReadingLightR.setSelected(true);
+        else mReadingLightR.setSelected(false);
+        if(isPubbleLightLOpen)mPuddleLight.setSelected(true);
+        else mPuddleLight.setSelected(false);
+        if (isMirrorOpen) mMirrorFolderDisplayIcon.setSelected(true);
+        else mMirrorFolderDisplayIcon.setSelected(false);
+        if (sp.getInt("mMenuListClick", 0) == 0) {
+            mMenuListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mMenuListView.getChildAt(0).setSelected(true);
+                }
+            }, 500);
+        }else if (sp.getInt("mMenuListClick", 0) == 1) {
+            mMenuListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mMenuListView.getChildAt(1).setSelected(true);
+                }
+            }, 500);
+        }else if (sp.getInt("mMenuListClick", 0) == 2) {
+            mMenuListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mMenuListView.getChildAt(2).setSelected(true);
+                }
+            }, 500);
+        }else if (sp.getInt("mMenuListClick", 0) == 3) {
+            mMenuListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mMenuListView.getChildAt(3).setSelected(true);
+                }
+            }, 500);
+        }else if (sp.getInt("mMenuListClick", 0) == 4) {
+            mMenuListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mMenuListView.getChildAt(4).setSelected(true);
+                }
+            }, 500);
+        }else if (sp.getInt("mMenuListClick", 0) == 5) {
+            mMenuListView.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mMenuListView.getChildAt(5).setSelected(true);
+                }
+            }, 500);
+        }
+        if(sp.getBoolean(("mKeyNearDoorAutoUnlockSwitchOpen"),false)) {
+            mKeyNearDoorAutoUnlockSwitch.setChecked(true);
+            oneButtonDialog.dismiss();
+        }
+        else mKeyNearDoorAutoUnlockSwitch.setChecked(false);
+        if(sp.getBoolean(("mShiftingDoorAutoUnlockSwitchOpen"),false)) mShiftingDoorAutoUnlockSwitch.setChecked(true);
+        else mShiftingDoorAutoUnlockSwitch.setChecked(false);
+        if(sp.getBoolean(("mDoorAutoLockSwitchOpen"),false)) mDoorAutoLockSwitch.setChecked(true);
+        else mDoorAutoLockSwitch.setChecked(false);
+        if(sp.getBoolean(("mFrontLightSystemSwitchOpen"),false)){
+            mFrontlightSystemSwitch.setChecked(true);
+            oneButtonDialog.dismiss();
+        }
+        else mFrontlightSystemSwitch.setChecked(false);
+        if(sp.getBoolean(("mMirrorAutoFoldSwitch1Open"),false)) mMirrorAutoFoldSwitch1.setChecked(true);
+        else mMirrorAutoFoldSwitch1.setChecked(false);
+        if(sp.getBoolean(("mMirrorAutoFoldSwitch2Open"),false)) mMirrorAutoFoldSwitch2.setChecked(true);
+        else mMirrorAutoFoldSwitch2.setChecked(false);
+        if(sp.getBoolean(("mMirrorAutoTiltSwitchOpen"),false)) mMirrorAutoTiltSwitch.setChecked(true);
+        else mMirrorAutoTiltSwitch.setChecked(false);
     }
 
 
@@ -774,18 +965,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
         if (i == mWindowLock.getId()) {
             isWindowLockOpen = !isWindowLockOpen;
             if (isWindowLockOpen) {
-                mWindowFrontLeftUp.setEnabled(false);
-                mWindowFrontLeft.setEnabled(false);
-                mWindowFrontLeftDown.setEnabled(false);
-                mWindowRearLeftUp.setEnabled(false);
-                mWindowRearLeft.setEnabled(false);
-                mWindowRearLeftDown.setEnabled(false);
-                mWindowFrontRightUp.setEnabled(false);
-                mWindowFrontRight.setEnabled(false);
-                mWindowFrontRightDown.setEnabled(false);
-                mWindowRearRightUp.setEnabled(false);
-                mWindowRearRight.setEnabled(false);
-                mWindowRearRightDown.setEnabled(false);
+                sp.edit().putBoolean("mWindowLock",true).commit();
                 if (iMyAidlInterface2 != null) {
                     try {
                         iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerDrive_Req,Disable");
@@ -798,18 +978,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 mWindowLock.setSelected(true);
             }else{
-                mWindowFrontLeftUp.setEnabled(true);
-                mWindowFrontLeft.setEnabled(true);
-                mWindowFrontLeftDown.setEnabled(true);
-                mWindowRearLeftUp.setEnabled(true);
-                mWindowRearLeft.setEnabled(true);
-                mWindowRearLeftDown.setEnabled(true);
-                mWindowFrontRightUp.setEnabled(true);
-                mWindowFrontRight.setEnabled(true);
-                mWindowFrontRightDown.setEnabled(true);
-                mWindowRearRightUp.setEnabled(true);
-                mWindowRearRight.setEnabled(true);
-                mWindowRearRightDown.setEnabled(true);
+                sp.edit().putBoolean("mWindowLock",false).commit();
                 if (iMyAidlInterface2 != null) {
                     try {
                         iMyAidlInterface2.setCanData("ONE,IVI_WindowPowerDrive_Req,Enable");
@@ -822,6 +991,7 @@ public class MainActivity extends Activity implements View.OnClickListener {
                 }
                 mWindowLock.setSelected(false);
             }
+            syncWindowAdjustBehavior(isWindowLockOpen);
             return;
         }else if (i == mWindowFrontLeftUp.getId()) {
             if (iMyAidlInterface2 != null) {
@@ -1103,19 +1273,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return;
         } else if (i == mLuggageFrunk.getId()) {
             if (isLuggageFrunkClick == false) {
+                sp.edit().putBoolean("mLuggageFrunkOpen",true).commit();
                 mLuggageFrunk.setSelected(true);
                 isLuggageFrunkClick = true;
             }else{
                 mLuggageFrunk.setSelected(false);
+                sp.edit().putBoolean("mLuggageFrunkOpen",false).commit();
                 isLuggageFrunkClick = false;
             }
             return;
         }else if (i == mLuggagedormer.getId()) {
             if (isLuggageDormerClick == false) {
                 mLuggagedormer.setSelected(true);
+                sp.edit().putBoolean("mLuggageDormerOpen",true).commit();
                 isLuggageDormerClick = true;
             }else{
                 mLuggagedormer.setSelected(false);
+                sp.edit().putBoolean("mLuggageDormerOpen",false).commit();
                 isLuggageDormerClick = false;
             }
             return;
@@ -1147,12 +1321,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
             return;
         } else if (i == mChildLock.getId()) {
             if (isChildLockOpen == false) {
+                sp.edit().putBoolean("mChildLockOpen",true).commit();
                 mChildLock.setSelected(true);
                 isChildLockOpen = true;
                 mLeftChildLockIcon.setVisibility(View.VISIBLE);
                 mRightChildLockIcon.setVisibility(View.VISIBLE);
             }else{
                 mChildLock.setSelected(false);
+                sp.edit().putBoolean("mChildLockOpen",false).commit();
                 isChildLockOpen = false;
                 mLeftChildLockIcon.setVisibility(View.GONE);
                 mRightChildLockIcon.setVisibility(View.GONE);
@@ -1161,34 +1337,67 @@ public class MainActivity extends Activity implements View.OnClickListener {
         } else if (i == mSunCurtain.getId()) {
             if (isSunCurtainOpen == false) {
                 mSunCurtain.setSelected(true);
+                sp.edit().putBoolean("mSunCurtainOpen",true).commit();
                 isSunCurtainOpen = true;
             }else{
+                sp.edit().putBoolean("mSunCurtainOpen",false).commit();
                 mSunCurtain.setSelected(false);
                 isSunCurtainOpen = false;
             }
             return;
         } else if (i == mDriveModeComfort.getId()) {
             sp.edit().putInt("mDriveMode",1).commit();
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,D-Comfort");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             mDriveModeComfort.setSelected(true);
             mDriveModeNormal.setSelected(false);
             mDriveModeSport.setSelected(false);
             mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_comfort);
+            startDismissControlViewTimer();
             return;
         }else if (i == mDriveModeNormal.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,D-Normal");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mDriveMode",0).commit();
             mDriveModeComfort.setSelected(false);
             mDriveModeNormal.setSelected(true);
             mDriveModeSport.setSelected(false);
+            startDismissControlViewTimer();
             mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_normal);
             return;
         }else if (i == mDriveModeSport.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,D-Sport");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mDriveMode",2).commit();
+            startDismissControlViewTimer();
             mDriveModeComfort.setSelected(false);
             mDriveModeNormal.setSelected(false);
             mDriveModeSport.setSelected(true);
             mDriveModeDisplayImage.setBackgroundResource(R.drawable.img_dynamic_sport);
             return;
         } else if (i == mAmbientModeOriginal.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Original");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",0).commit();
             mAmbientModeOriginal.setSelected(true);
             mAmbientModePassion.setSelected(false);
@@ -1199,8 +1408,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(false);
             mAmbientModeRhythm.setSelected(false);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            isAmbientModeOriginalClick=true;
+            isAmbientModePassionClick=false;
+            isAmbientModeFlowingClick=false;
+            isAmbientModeWaveClick=false;
+            isAmbientModeStarsClick=false;
+            isAmbientModeRainbowClick=false;
+            isAmbientModeRunningClick=false;
+            isAmbientModeRhythmClick=false;
             return;
         } else if (i == mAmbientModePassion.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Passion");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",1).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(true);
@@ -1211,8 +1435,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(false);
             mAmbientModeRhythm.setSelected(false);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_passion);
+            isAmbientModeOriginalClick=false;
+            isAmbientModePassionClick=true;
+            isAmbientModeFlowingClick=false;
+            isAmbientModeWaveClick=false;
+            isAmbientModeStarsClick=false;
+            isAmbientModeRainbowClick=false;
+            isAmbientModeRunningClick=false;
+            isAmbientModeRhythmClick=false;
             return;
         } else if (i == mAmbientModeFlowing.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Flowing");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",2).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
@@ -1223,8 +1462,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(false);
             mAmbientModeRhythm.setSelected(false);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_flowing);
+            isAmbientModeOriginalClick=false;
+            isAmbientModePassionClick=false;
+            isAmbientModeFlowingClick=true;
+            isAmbientModeWaveClick=false;
+            isAmbientModeStarsClick=false;
+            isAmbientModeRainbowClick=false;
+            isAmbientModeRunningClick=false;
+            isAmbientModeRhythmClick=false;
             return;
         } else if (i == mAmbientModeWave.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Wave");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",3).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
@@ -1235,8 +1489,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(false);
             mAmbientModeRhythm.setSelected(false);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            isAmbientModeOriginalClick=false;
+            isAmbientModePassionClick=false;
+            isAmbientModeFlowingClick=false;
+            isAmbientModeWaveClick=true;
+            isAmbientModeStarsClick=false;
+            isAmbientModeRainbowClick=false;
+            isAmbientModeRunningClick=false;
+            isAmbientModeRhythmClick=false;
             return;
         } else if (i == mAmbientModeStars.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Stars");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",4).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
@@ -1247,8 +1516,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(false);
             mAmbientModeRhythm.setSelected(false);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_stars);
+            isAmbientModeOriginalClick=false;
+            isAmbientModePassionClick=false;
+            isAmbientModeFlowingClick=false;
+            isAmbientModeWaveClick=false;
+            isAmbientModeStarsClick=true;
+            isAmbientModeRainbowClick=false;
+            isAmbientModeRunningClick=false;
+            isAmbientModeRhythmClick=false;
             return;
         } else if (i == mAmbientModeRainBow.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Rainbow");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",5).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
@@ -1259,8 +1543,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(false);
             mAmbientModeRhythm.setSelected(false);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_rainbow);
+            isAmbientModeOriginalClick=false;
+            isAmbientModePassionClick=false;
+            isAmbientModeFlowingClick=false;
+            isAmbientModeWaveClick=false;
+            isAmbientModeStarsClick=false;
+            isAmbientModeRainbowClick=true;
+            isAmbientModeRunningClick=false;
+            isAmbientModeRhythmClick=false;
             return;
         } else if (i == mAmbientModeRunning.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Running");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",6).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
@@ -1271,8 +1570,23 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(true);
             mAmbientModeRhythm.setSelected(false);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            isAmbientModeOriginalClick=false;
+            isAmbientModePassionClick=false;
+            isAmbientModeFlowingClick=false;
+            isAmbientModeWaveClick=false;
+            isAmbientModeStarsClick=false;
+            isAmbientModeRainbowClick=false;
+            isAmbientModeRunningClick=true;
+            isAmbientModeRhythmClick=false;
             return;
         } else if (i == mAmbientModeRhythm.getId()) {
+            if (iMyAidlInterface2 != null) {
+                try {
+                    iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Rhythm");
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
             sp.edit().putInt("mAmbientMode",7).commit();
             mAmbientModeOriginal.setSelected(false);
             mAmbientModePassion.setSelected(false);
@@ -1283,6 +1597,14 @@ public class MainActivity extends Activity implements View.OnClickListener {
             mAmbientModeRunning.setSelected(false);
             mAmbientModeRhythm.setSelected(true);
             mAmbientModeDisplayImage.setBackgroundResource(R.drawable.car_blur);
+            isAmbientModeOriginalClick=false;
+            isAmbientModePassionClick=false;
+            isAmbientModeFlowingClick=false;
+            isAmbientModeWaveClick=false;
+            isAmbientModeStarsClick=false;
+            isAmbientModeRainbowClick=false;
+            isAmbientModeRunningClick=false;
+            isAmbientModeRhythmClick=true;
             return;
         } else if (i == mExteriorLightAuto.getId()) {
             //if(isExteriorLightAutoOpen) {
@@ -2086,5 +2408,146 @@ public class MainActivity extends Activity implements View.OnClickListener {
         Log.d(TAG, "getRReadLightStatus: " + getCanData);
         return getCanData;
     }
+    private void syncWindowAdjustBehavior(Boolean windowLockFlag) {
+        if (windowLockFlag) {
+            mWindowFrontLeftUp.setEnabled(false);
+            mWindowFrontLeft.setEnabled(false);
+            mWindowFrontLeftDown.setEnabled(false);
+            mWindowRearLeftUp.setEnabled(false);
+            mWindowRearLeft.setEnabled(false);
+            mWindowRearLeftDown.setEnabled(false);
+            mWindowFrontRightUp.setEnabled(false);
+            mWindowFrontRight.setEnabled(false);
+            mWindowFrontRightDown.setEnabled(false);
+            mWindowRearRightUp.setEnabled(false);
+            mWindowRearRight.setEnabled(false);
+            mWindowRearRightDown.setEnabled(false);
+        } else {
+            mWindowFrontLeftUp.setEnabled(true);
+            mWindowFrontLeft.setEnabled(true);
+            mWindowFrontLeftDown.setEnabled(true);
+            mWindowRearLeftUp.setEnabled(true);
+            mWindowRearLeft.setEnabled(true);
+            mWindowRearLeftDown.setEnabled(true);
+            mWindowFrontRightUp.setEnabled(true);
+            mWindowFrontRight.setEnabled(true);
+            mWindowFrontRightDown.setEnabled(true);
+            mWindowRearRightUp.setEnabled(true);
+            mWindowRearRight.setEnabled(true);
+            mWindowRearRightDown.setEnabled(true);
+        }
+    }
+    private String getAmbientLightAndDriveModeStatus() {
+        String getCanData = "";
+        try {
+            getCanData = iMyAidlInterface2.getReqCanData("ONE,NU_MoodLightMode_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "getAmbientLightAndDriveModeStatus: " + getCanData);
+        return getCanData;
+    }
+    private String getAmbientLightSwitchStatus() {
+        String getCanData = "";
+        try {
+            getCanData = iMyAidlInterface2.getReqCanData("ONE,NU_MoodLightSwitch_St");
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG, "getAmbientLightSwitchStatus: " + getCanData);
+        return getCanData;
+    }
+
+    private void startDismissControlViewTimer() {
+        cancelDismissControlViewTimer();
+        mDismissControlViewTimer = new Timer();
+        mDismissControlViewTimerTask = new DismissControlViewTimerTask();
+        mDismissControlViewTimer.schedule(mDismissControlViewTimerTask, mDismissControlTime);
+    }
+    private int mDismissControlTime = 15000;
+    private class DismissControlViewTimerTask extends TimerTask {
+
+        @Override
+        public void run() {
+            if(isAmbientModeOriginalClick){
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Original");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else if(isAmbientModePassionClick) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Passion");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else if(isAmbientModeFlowingClick){
+                    if (iMyAidlInterface2 != null) {
+                        try {
+                            iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Flowing");
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+            }else if(isAmbientModeWaveClick) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Wave");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else if(isAmbientModeStarsClick) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Stars");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else if(isAmbientModeRainbowClick) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Rainbow");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else if(isAmbientModeRunningClick) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Running");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }else if(isAmbientModeRhythmClick) {
+                if (iMyAidlInterface2 != null) {
+                    try {
+                        iMyAidlInterface2.setCanData("ONE,IVI_MoodLightModeSet_Req,Rhythm");
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+    private void cancelDismissControlViewTimer() {
+        if (mDismissControlViewTimer != null) {
+            mDismissControlViewTimer.cancel();
+            mDismissControlViewTimer = null;
+        }
+        if (mDismissControlViewTimerTask != null) {
+            mDismissControlViewTimerTask.cancel();
+            mDismissControlViewTimerTask = null;
+        }
+
+
+    }
+
 
 }
