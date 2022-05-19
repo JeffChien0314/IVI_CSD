@@ -46,6 +46,7 @@ import android.view.WindowManager;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.android.car.notification.CarHeadsUpNotificationManager;
 import com.android.car.notification.CarNotificationListener;
@@ -82,6 +83,11 @@ import com.android.systemui.statusbar.policy.BatteryController;
 import com.android.systemui.statusbar.policy.DeviceProvisionedController;
 import com.android.systemui.statusbar.policy.UserSwitcherController;
 import com.fxc.libCanWrapperNDK.IMyAidlInterface2;
+import com.fxc.libCanWrapperNDK.ICanStCallback;
+import android.content.SharedPreferences;
+import android.text.TextUtils;
+
+import android.os.RemoteException;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
@@ -189,6 +195,22 @@ public class CarStatusBar extends StatusBar implements
                 mNotificationList.setAdapter(mNotificationsAdapter);
             }
 
+            //alan@20220517 register CAN Service callback function -->
+            try {
+                iMyAidlInterface2.registerCallback(mICanStCallback);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+            /*for test*/
+            try {
+                Log.d(TAG, "setCanData");
+                iMyAidlInterface2.setCanData("ONE,IVI_DoorLockRR_Req,Lock");
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+            //<-- alan@20220517 register CAN Service callback function
+
         }
 
         @Override
@@ -202,6 +224,50 @@ public class CarStatusBar extends StatusBar implements
             }
         }
     };
+
+    //alan@20220517 register CAN Service callback function -->
+    private ICanStCallback mICanStCallback = new ICanStCallback.Stub() {
+        @Override
+        public void onCallback(String aString) throws RemoteException {
+            Log.d(TAG, "onCallback: " + aString);
+            String[] test = aString.split(",");
+            if(test[1].equals("KNEO_FaceDetect_St")) {
+                String faceID = "KneoFaceID" + test[2];
+                String userName = mContext.getSharedPreferences(faceID, Context.MODE_PRIVATE).getString("USER_NAME", "Guest");
+                Log.d(TAG, "onCallback: userName = " + userName);
+                setDriveDoorOpenToCAN();
+            }
+            /*for test*/
+            String userName = mContext.getSharedPreferences("KneoFaceID1", Context.MODE_PRIVATE).getString("USER_NAME", "Guest");
+            Log.d(TAG, "onCallback: userName = " + userName);
+			Intent intent = new Intent("user_name_change");
+            intent.putExtra("userName", userName);
+            LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+        }
+    };
+
+    private void setDriveDoorOpenToCAN() throws RemoteException {
+        if(iMyAidlInterface2 != null){
+            iMyAidlInterface2.setCanData("ONE,IVI_DoorLockDrive_Req,2");//IVI_DoorLockDrive_Req:駕駛座車門; 0:無動作 1:上鎖 2:解鎖
+        } else {
+            Log.d(TAG, "iMyAidlInterface2 == null,can't send Signal");
+        }
+    }
+
+    private void initSharedPreferences() {
+        Log.d(TAG, "initSharedPreferences");
+        SharedPreferences kneronSharedPreferences = mContext.getSharedPreferences("KneoFaceID1",Context.MODE_PRIVATE);
+        String userName = kneronSharedPreferences.getString("USER_NAME",null);
+        if(TextUtils.isEmpty(userName)){
+            /*create Kneron User SharedPreference*/
+            SharedPreferences.Editor editor = kneronSharedPreferences.edit();
+            editor.putString("USER_NAME","Alan");
+            boolean editStatus = editor.commit();
+            Log.d(TAG, "editStatus = " + editStatus);
+        }
+    }
+    //<-- alan@20220517 register CAN Service callback function
+
     private void startAndConnectService(){
         Intent intent = new Intent();
         intent.setPackage("com.fxc.libCanWrapper");
@@ -225,6 +291,7 @@ public class CarStatusBar extends StatusBar implements
 
     @Override
     public void start() {
+        initSharedPreferences();//alan@20220517 register CAN Service callback function
         startAndConnectService(); //连接快捷功能服务 
         // get the provisioned state before calling the parent class since it's that flow that
         // builds the nav bar

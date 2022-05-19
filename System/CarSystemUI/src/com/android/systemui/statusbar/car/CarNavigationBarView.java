@@ -17,7 +17,11 @@
 package com.android.systemui.statusbar.car;
 
 import android.content.Context;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -55,6 +59,10 @@ class CarNavigationBarView extends LinearLayout {
 
     private CarUserManagerHelper mCarUserManagerHelper;
 
+	private View mUserInfo;
+	private LocalBroadcastManager localBroadcastManager;
+	private BroadcastReceiver mUsernameChangeReceiver;
+
     //EV温控
     private LinearLayout mEvClimateLayout;
     private ImageView mLeftTemperatureUp;
@@ -78,6 +86,10 @@ class CarNavigationBarView extends LinearLayout {
         super(context, attrs);
         mContext = context;
         mCarUserManagerHelper=new CarUserManagerHelper(mContext);
+		
+		localBroadcastManager=LocalBroadcastManager.getInstance(mContext);
+		mUsernameChangeReceiver=new UsernameChangeReceiver();
+		localBroadcastManager.registerReceiver(mUsernameChangeReceiver, new IntentFilter("user_name_change"));
     }
 
     @Override
@@ -101,7 +113,7 @@ class CarNavigationBarView extends LinearLayout {
         }
         // needs to be clickable so that it will receive ACTION_MOVE events
 
-        View mUserInfo = findViewById(R.id.user_info);
+        mUserInfo = findViewById(R.id.user_info);
         if (mUserInfo != null) {
             //int userId= mCarUserManagerHelper.getCurrentProcessUserId();
             //UserManager userManager= (UserManager)mContext.getSystemService(Context.USER_SERVICE);
@@ -351,4 +363,23 @@ class CarNavigationBarView extends LinearLayout {
 
         mNotificationsButton.setUnseen(hasUnseen);
     }
+	
+	class UsernameChangeReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent == null) return;
+
+
+            if ("user_name_change".equals(intent.getAction())) {
+                String userName = intent.getStringExtra("userName");
+				if (mUserInfo != null) {
+                ((TextView) findViewById(R.id.user_name)).setText(userName);
+            
+                }        
+                
+            }
+        }
+    }
+    
 }
