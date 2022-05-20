@@ -19,10 +19,11 @@ import android.widget.RelativeLayout;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentActivity;
 
 import com.fxc.ev.launcher.R;
 
-public class BaseActivity extends AppCompatActivity {
+public class BaseActivity extends FragmentActivity {
 
     public RelativeLayout mMainLayout;
     public FrameLayout mContentContainer;
