@@ -73,6 +73,7 @@ import com.fxc.ev.launcher.utils.CameraStackController;
 import com.fxc.ev.launcher.utils.CameraStackController.CameraType;
 import com.fxc.ev.launcher.utils.DistanceConversions;
 import com.fxc.ev.launcher.utils.EtaFormatter;
+import com.fxc.ev.launcher.utils.LocationUtils;
 import com.fxc.ev.launcher.utils.NetWorkUtil;
 import com.fxc.ev.launcher.utils.PermissionsManager;
 import com.fxc.ev.launcher.utils.SharedPreferenceUtils;
@@ -215,6 +216,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
     private boolean isDisappearance = false;
     private boolean mapDisplayServiceBound = false;
     private MapDisplayService service;
+    public static final Double LATITUDE = 25.0520;
+    public static final Double LONGITUDE = 121.2866;
     //metis@0309 add <--
     //private NetworkDrawer networkDrawer;
 
@@ -860,6 +863,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             setupNavigationServices();
             setupOnboardMapServices();//Jerry@20220412
             setupSearchOnboardServices();//Jerry@20220412
+            LocationUtils.setMock(this, LATITUDE, LONGITUDE, 0);
         }
 
         navigation.addRouteDeviatedListener(new RouteDeviatedListener() {
@@ -1576,6 +1580,7 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             setupOnboardMapServices();
             setupSearchOnboardServices();
             launchMapUpdateService(getMapUpdateServiceConfiguration());
+            LocationUtils.setMock(this, LATITUDE, LONGITUDE, 0);
         } else {
             final String errorText = permissionsManager.getErrorText();
             Log.e(TAG, errorText);
