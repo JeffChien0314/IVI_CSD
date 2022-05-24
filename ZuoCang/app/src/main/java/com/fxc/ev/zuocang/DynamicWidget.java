@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.RemoteViews;
 public class DynamicWidget extends AppWidgetProvider {
     private RemoteViews remoteViews;
@@ -19,6 +20,7 @@ public class DynamicWidget extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
+        sp = context.getSharedPreferences("user_select", Context.MODE_PRIVATE);
         String action = intent.getAction();
         if (intent.hasCategory(Intent.CATEGORY_ALTERNATIVE)) { //操作widget
             Uri data = intent.getData();
@@ -58,11 +60,12 @@ public class DynamicWidget extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         super.onUpdate(context, appWidgetManager, appWidgetIds);
+        sp = context.getSharedPreferences("user_select", Context.MODE_PRIVATE);
         pushUpdate(context,appWidgetManager);
     }
 
     private void pushUpdate(Context context, AppWidgetManager appWidgetManager) {
-        sp=context.getSharedPreferences("user_select",Context.MODE_PRIVATE);
+
         if(sp.getInt("DynamicModeClick",0)==0) {
             remoteViews = new RemoteViews(context.getPackageName(), R.layout.layout_dynamic_widget_modenormal);
         }else if(sp.getInt("DynamicModeClick",0)==2) {
