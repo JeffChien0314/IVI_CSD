@@ -46,7 +46,8 @@ public class Frg_WidgetsEdit extends Fragment {
         pakageModList.add(new PakageMod(null, "Music", getResources().getDrawable(R.drawable.icon_widget_edit_music), null));
         pakageModList.add(new PakageMod(null, "my test widget", null, null));
 		pakageModList.add(new PakageMod(null, "Drive Mode", getResources().getDrawable(R.drawable.icon_widget_edit_dynamic), null));
-
+        pakageModList.add(new PakageMod(null, "Recents", getResources().getDrawable(R.drawable.icon_widget_edit_recents), null));
+		
         List<String> mAllWidgetLabelList = new ArrayList<>();
         for (PakageMod p : pakageModList) {
             mAllWidgetLabelList.add(p.name);
@@ -140,6 +141,12 @@ public class Frg_WidgetsEdit extends Fragment {
                 for (int i = 0; i < mIncludedWidgetLabelList.size(); i++) {
                     ((LauncherActivity) getActivity()).mEditor.putString("widget" + (i + 1), mIncludedWidgetLabelList.get(i));
                     ((LauncherActivity) getActivity()).mEditor.commit();
+                }
+				if (mIncludedWidgetLabelList.size() >= 2 && mIncludedWidgetLabelList.size() < 4) {
+                    for (int j = mIncludedWidgetLabelList.size(); j < 4; j++) {
+                        ((LauncherActivity) getActivity()).mEditor.putString("widget" + (j + 1), "");
+                        ((LauncherActivity) getActivity()).mEditor.commit();
+                    }
                 }
                 getActivity().onBackPressed();
             }

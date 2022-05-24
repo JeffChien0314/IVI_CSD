@@ -30,6 +30,7 @@ public class HomeWidgetAdapter extends BaseAdapter {
     public void setData(List<View> widgetList) {
         mWidgetList.clear();
         mWidgetList.addAll(widgetList);
+		convertView0=null;
     }
 
     @Override
@@ -50,23 +51,23 @@ public class HomeWidgetAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         //getView position=0执行多次
-        if (getCount() > 1) {
+        /*if (getCount() > 1) {
             if (lastPosition == 0 && position == 0 && convertView != null) {
                 return convertView;
             }
         }
-        lastPosition = position;
+        lastPosition = position;*/
 
         if (convertView == null) {
             // 给单个的View通过inflater填充个layout文件
             convertView = LayoutInflater.from(mContext).inflate(R.layout.widget_item, parent, false);
         }
 
-        /*if (position == 0 && convertView0 == null) {
+        if (position == 0 && convertView0 == null) {
             convertView0 = convertView;
         } else if (position == 0 && convertView0 != null) {
             return convertView0;
-        }*/
+        }
 
         FrameLayout itemView = (FrameLayout) convertView.findViewById(R.id.item_view);
         View widgetItem = mWidgetList.get(position);
