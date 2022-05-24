@@ -590,10 +590,11 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
         }
 
         if (homeWidgetAdapter == null) {
-            homeWidgetAdapter = new HomeWidgetAdapter(mContext, widgetList);
+            homeWidgetAdapter = new HomeWidgetAdapter(mContext);
+            homeWidgetAdapter.setData(widgetList);
             gridView.setAdapter(homeWidgetAdapter);
         } else {
-            homeWidgetAdapter = new HomeWidgetAdapter(mContext, widgetList);
+            homeWidgetAdapter.setData(widgetList);
             homeWidgetAdapter.notifyDataSetChanged();
         }
     }
