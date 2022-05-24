@@ -595,7 +595,8 @@ public class LauncherActivity extends InteractiveMapActivity implements SearchFr
             gridView.setAdapter(homeWidgetAdapter);
         } else {
             homeWidgetAdapter.setData(widgetList);
-            homeWidgetAdapter.notifyDataSetChanged();
+            //homeWidgetAdapter.notifyDataSetChanged();
+			gridView.setAdapter(homeWidgetAdapter);
         }
     }
 
