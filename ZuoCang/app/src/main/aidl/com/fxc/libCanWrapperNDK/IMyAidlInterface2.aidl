@@ -8,5 +8,6 @@ interface IMyAidlInterface2 {
     String getCanData();
     void setCanData(String aString);
     String getReqCanData(String aString);
-    //void register(ICanStCallback callback);
+    void registerCallback(ICanStCallback cb);
+    void unregisterCallback(ICanStCallback cb);
 }
