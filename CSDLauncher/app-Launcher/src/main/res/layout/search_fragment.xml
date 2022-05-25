@@ -28,7 +28,6 @@
             android:layout_width="252px"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15px"
-            android:layout_marginRight="15px"
             android:background="@null"
             android:hint="搜索"
             android:inputType="text"
@@ -38,10 +37,9 @@
 
         <ImageView
             android:id="@+id/clear_all"
-            android:layout_width="30px"
-            android:layout_height="30px"
+            android:layout_width="60px"
+            android:layout_height="60px"
             android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="15px"
             android:scaleType="fitXY"
             android:src="@drawable/icon_clear_all"
             android:visibility="gone"></ImageView>

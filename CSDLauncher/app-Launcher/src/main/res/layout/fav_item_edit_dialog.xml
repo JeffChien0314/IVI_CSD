@@ -45,11 +45,9 @@
 
             <ImageView
                 android:id="@+id/dialog_fav_clear_all"
-                android:layout_width="30px"
-                android:layout_height="30px"
+                android:layout_width="60px"
+                android:layout_height="60px"
                 android:layout_gravity="right|center_vertical"
-                android:layout_marginLeft="15px"
-                android:layout_marginRight="15px"
                 android:scaleType="fitXY"
                 android:src="@drawable/icon_clear_all"
                 android:visibility="visible"></ImageView>
@@ -133,9 +131,9 @@
 
     <ImageView
         android:id="@+id/dialog_delete"
-        android:layout_width="60px"
-        android:layout_height="60px"
-        android:layout_margin="54px"
+        android:layout_width="72px"
+        android:layout_height="72px"
+        android:layout_margin="48px"
         android:src="@drawable/icon_delete_normal"></ImageView>
 
 
